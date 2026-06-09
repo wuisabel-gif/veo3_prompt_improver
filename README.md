@@ -70,7 +70,7 @@ The app will use the local backend automatically.
 
 ## Using Your Own API Key
 
-The public demo may use a free API tier, which can sometimes be delayed by rate limits. Running the project locally with your own key gives you more control and usually better performance.
+My current public online demo is using a free API tier of Google Gemini Flash 2.5, which can sometimes be delayed by rate limits. Running the project locally with your own key gives you more control and usually better performance. You can also plug it into your own Gemini setup and use a more advanced model through `.env`.
 
 The API key is stored only in `.env` and read by `server.mjs`. The browser never needs to know the secret key directly. This is important because putting an API key inside frontend code would expose it to anyone who opens the page.
 
