@@ -10,7 +10,7 @@ For more examples of my Veo 3 videos, visit my website: [Bella PI](https://wuisa
 
 - Rewrites rough visual ideas into structured Veo 3 prompts.
 - Uses aesthetic categories such as Runway Couture, Beauty Editorial, Minimalist Atmosphere, Cinematic Storytelling, Architectural Muse, and more.
-- Includes a saved aesthetic library with ready-made cinematic prompt references.
+- Includes a saved prompt library with ready-made cinematic prompt references.
 - Lets users copy generated prompt text or refine it with micro-aesthetic adjustments.
 - Plays rotating demo videos from hosted Cloudinary assets.
 - Can run as a local project with your own API key for better reliability.
@@ -23,7 +23,6 @@ For more examples of my Veo 3 videos, visit my website: [Bella PI](https://wuisa
 - `asset/` - Local demo video files.
 - `cloudinary-videos.json` - Uploaded Cloudinary video metadata.
 - `scripts/upload-cloudinary.mjs` - Optional helper for uploading demo videos to Cloudinary.
-- `Agent.md` - Creative brief source notes and prompt library material.
 
 ## Run Locally
 
