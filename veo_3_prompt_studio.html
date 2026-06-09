@@ -1,237 +1,1747 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Veo 3 Prompt Studio - Placeholder Prototype</title>
-
-  <!-- Tailwind is loaded from the CDN so this can stay as one HTML file. -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Veo 3 Video Prompt Improver</title>
+  
+  <!-- Tailwind is loaded from the CDN so this stays as a single-file app. -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neutral: {
+              850: '#202020',
+              950: '#0a0a0a',
+            }
+          }
+        }
+      }
+    }
+  </script>
 
   <!-- React runs directly in the browser for this lightweight prototype. -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+  <!-- Icons come from Lucide when the CDN is available. -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Display, body, and mono fonts used throughout the interface. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
   <style>
     body {
-      background: #050505;
-      color: #f5f5f5;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #050505;
+    }
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Keep horizontal category rails usable without showing heavy scrollbars. */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.05); }
+    }
+    .animate-pulse-glow {
+      animation: pulse-glow 8s infinite ease-in-out;
     }
   </style>
 </head>
-<body class="min-h-full bg-neutral-950 text-neutral-100">
-  <div id="root"></div>
+<body class="h-full text-neutral-100 antialiased overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-300">
 
+  <!-- App mount point. -->
+  <div id="root" class="min-h-full flex flex-col justify-between"></div>
+
+  <!-- Main React app. -->
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect, useRef } = React;
 
-    const STYLE_CATEGORIES = [
-      "Fashion",
-      "Music Video",
-      "Cinematic",
-      "Experimental"
+    const Icon = ({ name, className = "" }) => {
+      const iconKey = name.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
+      const icon = window.lucide?.icons?.[iconKey];
+
+      if (!icon || typeof icon.toSvg !== 'function') {
+        return <span aria-hidden="true" className={`inline-block shrink-0 ${className}`}></span>;
+      }
+
+      return (
+        <span
+          aria-hidden="true"
+          className={`inline-block shrink-0 ${className}`}
+          dangerouslySetInnerHTML={{ __html: icon.toSvg({ class: "w-full h-full" }) }}
+        />
+      );
+    };
+
+    const QUICK_VIBE_STARTERS = [
+      "studying alone at night",
+      "empty hotel lobby after midnight",
+      "quiet apartment overlooking the city",
+      "rainy afternoon in Tokyo",
+      "walking through Paris in autumn",
+      "late-night train ride",
+      "fashion week backstage",
+      "ocean view at blue hour",
+      "alone in a luxury penthouse",
+      "summer afternoon by the pool",
+      "rooftop overlooking downtown",
+      "black suit, white sofa",
+      "city lights through the window",
+      "slow walk through an art museum",
+      "waiting in a hotel room",
+      "coffee shop on a rainy day",
+      "empty office after hours",
+      "sunlight through curtains",
+      "driving through the city at night",
+      "watching the waves from a balcony"
     ];
 
-    const PLACEHOLDER_PROMPTS = [
+    const getRandomVibeStarters = (count = 4) => {
+      return [...QUICK_VIBE_STARTERS]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, count);
+    };
+
+    const DEMO_VIDEOS = [
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965867/veo3-prompt-improver/01.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965870/veo3-prompt-improver/02.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965872/veo3-prompt-improver/03.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965876/veo3-prompt-improver/04.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965879/veo3-prompt-improver/05.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965881/veo3-prompt-improver/06.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965884/veo3-prompt-improver/07.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965887/veo3-prompt-improver/08.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965889/veo3-prompt-improver/09.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965893/veo3-prompt-improver/10.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965896/veo3-prompt-improver/11.mov",
+      "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965897/veo3-prompt-improver/12.mov"
+    ];
+
+    const getShuffledDemoVideos = (lastVideo = "") => {
+      const shuffled = [...DEMO_VIDEOS];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      if (lastVideo && shuffled.length > 1 && shuffled[0] === lastVideo) {
+        [shuffled[0], shuffled[1]] = [shuffled[1], shuffled[0]];
+      }
+
+      return shuffled;
+    };
+
+    // Built-in prompts that seed the library on first load.
+    const INITIAL_PROMPTS = [
       {
-        id: "placeholder-1",
-        title: "Fashion Placeholder",
-        category: "Fashion",
-        prompt: "[PLACEHOLDER FASHION PROMPT]"
+        id: "starter-1",
+        title: "Runway Couture Elevator",
+        category: "Runway Couture",
+        tags: ["runway", "couture", "elevator", "black-dress", "opera-gloves"],
+        mood: "Mysterious, elegant, emotionally distant futuristic nightlife",
+        prompt: `Dark futuristic Y2K visualizer inside a glowing blue-green elevator, mysterious girl with sleek black hair styled into sharp cyberpunk spikes and long face-framing strands. She wears a fitted black dress with thin straps, long opera gloves, dark red lipstick, and a black velvet choker. Her skin glows softly under cold fluorescent lighting while she moves slowly inside the confined metallic space.
+
+The atmosphere feels hypnotic and detached: blurry neon reflections, distorted glass, green lens flares, grainy digital camera texture, and dreamy low-resolution early-2000s aesthetics. She leans against the elevator walls, turning her head slowly while the camera captures dramatic side profiles and close-up beauty shots.
+
+Visual style inspired by underground cyber-Y2K fashion editorials, early internet aesthetics, experimental club photography, and melancholic futuristic femininity.
+
+Camera style:
+• Slow-motion turning movements.
+• Handheld camcorder feel.
+• Mirrored elevator reflections.
+• Soft focus close-ups.
+• Dramatic overhead fluorescent lighting.
+• Subtle glitch and VHS texture.
+• Cinematic zoom-ins through haze.
+Mood: Mysterious, elegant, emotionally distant, futuristic nightlife energy, cool-toned dreamscape.
+Color palette: Icy blue, neon green, black chrome, silver reflections, soft fluorescent white.`
       },
       {
-        id: "placeholder-2",
-        title: "Music Video Placeholder",
-        category: "Music Video",
-        prompt: "[PLACEHOLDER MUSIC VIDEO PROMPT]"
+        id: "starter-2",
+        title: "Sparkling Siren Poolside",
+        category: "Poolside Muse",
+        tags: ["silver-sequin", "sunglasses", "infinity-pool", "sunset", "glamour"],
+        mood: "Sun-soaked luxury, carefree, opulent",
+        prompt: `Ultra-cinematic Poolside Muse visualizer inspired by retro Hollywood leisure campaigns and warm summer dreams.
+A blonde subject lounging elegantly on a custom white leather daybed beside a pristine cliffside infinity pool at sunset.
+Scene visuals:
+• She wears a silver sequin bikini that throws glittering, dazzling reflections of sunlight onto her sun-kissed skin.
+• A close-up of her wearing oversized black acetate sunglasses, the golden ocean horizon reflecting perfectly in her lenses.
+• She slowly lifts an icy crystal glass of champagne, condensation droplets glistening in the warm direct sunlight.
+Visual style: Vintage 35mm warm film saturation, intense anamorphic lens bloom, soft summer haze overlays.
+Color palette: Warm liquid gold, reflective silver-chrome, deep ocean turquoise, and sand-white.
+Mood: Carefree luxury, untouchable glamour, absolute peace.
+Camera: Super slow-motion push-in, floating gently as if hovering above the pool.
+Music style: Ambient lounge disco, vintage analog warm synthesizer pads, slow organic percussion.
+Reference mood:
+"A golden hour paradise where time stands completely still."`
       },
       {
-        id: "placeholder-3",
-        title: "Cinematic Placeholder",
-        category: "Cinematic",
-        prompt: "[PLACEHOLDER CINEMATIC PROMPT]"
+        id: "starter-3",
+        title: "Ice Queen in Baby Blue Fur",
+        category: "Ice Queen Muse",
+        tags: ["fur-coat", "platinum-waves", "old-hollywood", "cold-wealth"],
+        mood: "Chic dominance, untouchable, cool",
+        prompt: `Ultra-cinematic Ice Queen Muse visualizer inspired by vintage high-society campaigns and Winter Aspen luxury.
+A platinum-blonde subject with structured vintage waves sitting in the back of a luxury limousine, staring directly through the tinted window.
+Scene visuals:
+• She is draped in a plush, luxurious baby-blue faux fur coat that catches soft ambient winter light.
+• Large diamond cluster earrings shimmering under passing streetlights, cast against her flawless porcelain skin.
+• Her manicured hand holding a crystal tumbler, ice cubes shifting slowly as she gazes with cool detachment.
+Visual style: Ultra-sharp high-contrast detail, micro-mist atmosphere, cool diffused ring lighting.
+Color palette: Pastel baby blue, platinum silver, diamond white, and deep cold graphite.
+Mood: Aloof, detached, high-fashion winter wealth.
+Camera: Slowly rotating horizontal dolly tracking her profile, soft zoom-in on the eyes.
+Music style: Cold ambient lo-fi, minimalist piano, crisp vinyl static.
+Reference mood:
+"Elegance frozen in place, demanding silent observation."`
       },
       {
-        id: "placeholder-4",
-        title: "Experimental Placeholder",
-        category: "Experimental",
-        prompt: "[PLACEHOLDER EXPERIMENTAL PROMPT]"
+        id: "starter-4",
+        title: "Angel Wings Neon Haze",
+        category: "Angel Haze",
+        tags: ["angel-wings", "euphoria", "neon", "glitter", "y2k"],
+        mood: "Melancholic, nostalgic, hyperfeminine late-night dreamscape",
+        prompt: `Dreamy cinematic music visualizer, ultra-realistic HBO Euphoria-inspired atmosphere. A blonde girl with wet platinum hair and soft glitter makeup stands in a purple-blue neon haze at a crowded late-night house party. Large white angel wings glow softly behind her, creating an ethereal silhouette under shifting violet and warm golden lighting.
+
+Her makeup is smudged and sparkly in an artistic way, with subtle rhinestones around her eyes and glossy lips reflecting the light. She wears a flowing white satin dress with delicate straps, glowing softly under the neon lights. Her expression feels distant and thoughtful as she slowly moves through the room in slow motion.
+
+The environment is dreamy and surreal: blurry silhouettes dancing in the background, shimmering haze, floating glitter particles, soft fog, reflective surfaces, warm lamp light mixing with cool neon purple tones. Camera movement is handheld and cinematic, alternating between slow close-ups, side profiles, soft-focus beauty shots, and wide atmospheric party scenes.
+
+Visual texture: Grainy 35mm film, lens bloom, subtle chromatic aberration, disposable-camera flash aesthetic, soft motion blur, realistic skin texture, non-AI-looking cinematography.
+Mood: Melancholic, nostalgic, emotionally cinematic, hyperfeminine Y2K dreamscape, poetic late-night energy.
+Loopable visualizer motions:
+• Slow blinking and breathing.
+• Glitter drifting through the air.
+• Wings softly moving in haze.
+• Hair sticking to glowing skin.
+• Blurred dancers moving behind her.
+• Slow neon light flickers synchronized to music.
+• Gentle camera sway like a memory or dream.`
+      },
+      {
+        id: "starter-5",
+        title: "Architectural Muse",
+        category: "Architectural Muse",
+        tags: ["architecture", "couture", "museum", "minimalist", "soft-light"],
+        mood: "Powerful stillness, quiet armor, cinematic",
+        prompt: `Ultra-cinematic Architectural Muse visualizer inspired by modern couture in minimalist architectural environments.
+A striking dark-haired subject standing completely solitary on an empty concrete rooftop parking structure under an overcast, pale sky.
+No dialogue.
+No dancing.
+No storytelling.
+Scene visuals:
+• She wears a structured matte black silk gown with sharp architectural shoulders, cinched with a sculptural leather corset.
+• Close-up of glossy, heavy knee-high leather boots standing firm against the raw gray concrete slab.
+• She slowly tilts her face toward a cold wind, eyes half-lidded, completely unfazed by the vast open void around her.
+Visual style: Arthouse slow cinema grain, diffuse overhead overcast lighting, ultra-minimalist wide frames.
+Color palette: Industrial gray concrete, deep matte black, pale slate sky, and desaturated natural skin tones.
+Mood: Powerful isolation, architectural fashion, effortless dominance.
+Camera: Very slow mechanical push-in along the center axis, cutting to a stark profile frame.
+Music style: Dark minimal wave, slow-pacing kick drums, echoing industrial hums.
+Reference mood:
+"A monuments of silent control standing alone in the gray wind."`
+      },
+      {
+        id: "starter-6",
+        title: "Campus K-Pop Off-Duty",
+        category: "Campus K-Style",
+        tags: ["cardigan", "jennie", "school", "pastel", "sunlight"],
+        mood: "Effortless, fresh, idol aesthetic",
+        prompt: `Ultra-cinematic Campus K-Style visualizer inspired by Jennie-style off-duty fashion and golden university afternoons.
+An effortlessly cool student with soft dark hair walking between classes under sun-dappled jacaranda trees.
+No dialogue.
+No dancing.
+No storytelling.
+Scene visuals:
+• She wears a fitted pastel lilac cardigan styled slightly off one shoulder, paired with a neat pleated skirt and chunky leather loafers.
+• Her dewy, glossed lips catch the golden morning sunbeams filtering down through the swaying purple leaves.
+• As she passes massive glass library panels, her crisp reflection glides smoothly alongside her.
+Visual style: Rich dewy skin highlights, golden lens flares, soft-focus dreamy edges, vintage camcorder tone.
+Color palette: Soft lilac, ivory white, jacaranda violet, warm red brick, and golden hour sunshine.
+Mood: Approachable yet iconic, polished, nostalgic.
+Camera: Smooth tracking shot, keeping pace with her walk, slowly focusing on fabric details and her calm gaze.
+Music style: Upbeat bedroom pop, bubbly acoustic guitars, light percussive snaps.
+Reference mood:
+"Effortlessly grabbing the spotlight without even trying."`
+      },
+      {
+        id: "starter-7",
+        title: "Lazy Morning Light",
+        category: "Seoul Morning",
+        tags: ["seoul-apartment", "morning", "sunlight", "duvet", "warm"],
+        mood: "Nostalgic, intimate, quiet",
+        prompt: `Ultra-cinematic Seoul Morning visualizer inspired by modern Korean arthouse films and cozy intimate portraits.
+A quiet scene in a minimalist high-rise Seoul apartment, where warm morning light filters through gauzy cream curtains.
+No dialogue.
+No dancing.
+No storytelling.
+Scene visuals:
+• A girl with messy, tousled dark hair wrapped loosely in a soft soft linen duvet, smiling softly as light stripes across the bed.
+• A young man standing near the sunlit window in an oversized gray tee, stretching his arms with comfortable relaxation.
+• Visible dust motes drifting lazily through hot shafts of golden volumetric sunlight near a boiling silver kettle.
+Visual style: Shallow depth of field, natural warm diffuse lighting, beautiful slow-motion micro-movements.
+Color palette: Cream white, natural linen gray, warm golden-hour honey, and soft peach tones.
+Mood: Serene comfort, intimate peace, slow living.
+Camera: Slow hand-held organic drift, starting from details of the bed linens to the window frame.
+Music style: Lo-fi acoustic guitar pluck, soft vinyl clicks, distant morning ambient city hums.
+Reference mood:
+"A lazy sanctuary of light, holding onto the morning forever."`
+      },
+      {
+        id: "starter-8",
+        title: "Euphoria Neon Party",
+        category: "K-Street",
+        tags: ["euphoria", "y2k", "nightclub", "chainmail", "party"],
+        mood: "Dreamy, reckless, hyperfeminine neon melancholy",
+        prompt: `Cinematic Euphoria-inspired party scene, hyperfeminine Y2K glam aesthetic, dreamy neon nightclub with shimmering purple tinsel curtains and hanging metallic stars, chaotic teenage house party atmosphere, sweaty dance floor glow, handheld camera movement, grainy 35mm film texture, soft flash photography look.
+
+A mysterious girl stands in the center wearing a sparkling silver chainmail halter top and matching low-rise skirt, rhinestone face jewels covering her eyes and cheeks, glossy skin reflecting pink and violet lights, dark hair in a messy updo with loose strands framing her face. She slowly adjusts her outfit while staring into the distance with an emotionally detached expression.
+
+Background filled with blurred partygoers, slow-motion dancing, glitter makeup, red and blue LED lighting, reflective sequins, dreamy haze, nostalgic 2010s teen drama mood, emotional and reckless energy. Camera alternates between close-up beauty shots, shaky candid movements, flash-frame transitions, mirror reflections, and slow cinematic zooms.
+
+No dialogue.
+No storytelling.
+Visual style: Ultra realistic, not AI-looking, cinematic depth of field, sensual but artistic atmosphere, high-detail skin texture, subtle film burn overlays, emotional melancholy mixed with glamour.
+Color palette: Neon magenta, deep purple, silver chrome, electric blue.
+Style references: Euphoria HBO, Petra Collins photography, early 2000s club fashion editorials, music video cinematography.
+Optional motion details:
+• Glitter falling through the air.
+• Cigarette smoke drifting in neon light.
+• Mascara tears catching sparkles.
+• Slow head turns toward camera.
+• Flickering strobe lights synced to bass.
+• Friends laughing in blurred background.
+• Reflective makeup sparkling under flash photography.`
+      },
+      {
+        id: "starter-9",
+        title: "Cinematic Storytelling Penthouse",
+        category: "Cinematic Storytelling",
+        tags: ["short-film", "penthouse", "city-lights", "emotional-world", "cold"],
+        mood: "Cold, empty, symmetrical, obsessive",
+        prompt: `Ultra-cinematic Luxury Noir visualizer inspired by American Psycho and cold high-rise minimalism.
+A sharp-featured subject in a bespoke charcoal wool suit sitting perfectly centered in an empty penthouse apartment overlooking a rain-slicked metropolis at midnight.
+No dialogue.
+No dancing.
+No storytelling.
+Scene visuals:
+• Floor-to-ceiling glass windows casting deep reflections of amber and ice-blue city lights.
+• The subject slowly raises an empty lead-crystal glass, staring completely detached into the lens.
+• Perfect symmetrical framing with minimalist Italian leather furniture lit by a harsh single spotlight.
+Visual style: High-end luxury campaign film, 35mm anamorphic lens, razor-sharp focus with misty halation.
+Color palette: Monochromatic deep charcoals, desaturated midnight blue, ice-blue backlight.
+Mood: Obsessive, clinical, detached, cold wealth.
+Camera: Extremely slow, mechanical push-in along the center axis. Zero hand-shake.
+Music style: Ambient coldwave, slowed synthwave, hypnotic kick drum.
+Reference mood:
+"The perfect illusion of control, masking absolute emptiness."`
+      },
+      {
+        id: "starter-10",
+        title: "White Space Dream",
+        category: "Minimalist Atmosphere",
+        tags: ["dreamcore", "sci-fi", "white-space", "fog", "glowing-path"],
+        mood: "Ethereal, transcendent, mysterious futuristic solitude",
+        prompt: `Surreal futuristic visualizer inside an endless fog-filled white space, glowing circular lights embedded into the floor forming a pathway through darkness. A mysterious girl in an elegant flowing white dress runs and dances across the glowing circles as if floating between dreams. Her short dark hair moves softly while bright white light illuminates her silhouette against the pale blue haze.
+
+The atmosphere feels ethereal, lonely, and cinematic: minimalist sci-fi environment, soft glowing reflections, floating fog, dreamlike emptiness, and slow graceful movement. The camera follows her from far away before slowly pushing into close-up shots as she spins and runs across the illuminated path.
+
+Visual style inspired by futuristic art films, experimental fashion editorials, dreamcore aesthetics, and emotional sci-fi cinema.
+
+No dialogue.
+No storytelling.
+Camera style:
+• Wide symmetrical shots.
+• Floating tracking camera.
+• Slow-motion running and spinning.
+• Glowing reflections on the floor.
+• Soft focus close-ups.
+• Dreamy haze and bloom.
+• Cinematic aerial perspectives.
+Visual texture: Ultra-realistic soft lighting, subtle film grain, soft lens bloom, atmospheric fog, clean futuristic minimalism, non-AI-looking cinematography.
+Mood: Ethereal, transcendent, mysterious, dreamlike, emotional futuristic solitude.`
+      },
+      {
+        id: "starter-11",
+        title: "Rain Memory City",
+        category: "Runway Couture",
+        tags: ["rain", "flashback", "runway", "heartbreak", "neon-city"],
+        mood: "Nostalgic heartbreak, quiet acceptance, futuristic melancholy",
+        prompt: `Melancholic cinematic flashback scene in the rain, the transformed futuristic girl walks alone through a neon-lit city at night while memories of her past relationship begin appearing around her like fragments of a dream. Heavy rain falls across empty streets, reflecting green and blue lights on wet pavement.
+
+As she walks silently with wet black hair sticking to her face, brief flashback moments appear in soft faded overlays:
+• Laughing together under one umbrella.
+• Holding hands while running through the rain.
+• Sitting together inside a car with fogged-up windows.
+• Smiling at each other under glowing streetlights.
+• Dancing together on an empty crosswalk at night.
+
+The memories feel warm and nostalgic compared to the cold futuristic present. Every flashback disappears quickly like fading reflections in puddles. Her expression remains calm but emotionally distant, as if she is learning to let go while still carrying those memories with her.
+
+No dialogue.
+No storytelling.
+Camera style:
+• Extreme close-ups with rain dripping down her face.
+• Slow-motion walking shots.
+• Blurry flashback overlays mixed with present scenes.
+• Reflections in puddles and windows.
+• Handheld cinematic movement.
+• Soft focus memory transitions.
+• Neon lights streaking across the lens.
+Visual style: Ultra-realistic cyber-Y2K cinematography, rainy futuristic city, subtle 35mm film grain, soft lens bloom, realistic skin texture, dreamy emotional atmosphere, non-AI-looking visuals.
+Mood: Nostalgic heartbreak, quiet acceptance, emotional solitude, futuristic melancholy, cinematic memory dreamscape.`
+      },
+      {
+        id: "agent-01",
+        title: "Desert Rave Jewels",
+        category: "Y2K Glamour",
+        tags: ["desert-rave", "body-chain", "bohemian", "gold", "nightlife"],
+        mood: "Mysterious, glamorous, hypnotic, surreal nightlife elegance",
+        prompt: `Ultra-cinematic desert rave visualizer inspired by futuristic bohemian Y2K fashion. A mysterious girl with long jet-black hair and soft bangs walks slowly through a warm golden-lit underground party, wearing an intricate jeweled body chain top covered in crystals, beads, and metallic details. Flowing pink and gold fabrics trail behind her as she moves through the haze like a dream. A tropical flower tucked into her hair glows softly under amber lighting.
+
+The atmosphere feels hypnotic and luxurious: warm desert tones, candlelight reflections, floating fabric curtains, smoky air, and blurry silhouettes dancing in the background. She moves confidently through the space with an emotionally detached but magnetic expression, like the center of an otherworldly nightlife fantasy.
+
+Scene visuals:
+• Slow-motion walking through flowing curtains.
+• Close-up shots of jeweled body chains sparkling.
+• Fabric moving dramatically in warm wind.
+• Dancing beneath hanging lanterns and fairy lights.
+• Side-profile beauty shots with glowing skin.
+• Reflections on gold jewelry and glossy lips.
+• Handheld camera circling around her while she dances.
+• Slow spins causing fabrics and chains to shimmer.
+Visual style: Ultra-realistic fashion-editorial cinematography, dreamy desert rave atmosphere, warm golden lighting, subtle 35mm film grain, soft lens bloom, realistic skin texture, luxury Y2K fantasy aesthetic, non-AI-looking visuals.
+Color palette: Gold, amber, dusty pink, bronze, black silk, warm candlelight tones.
+Mood: Mysterious, glamorous, hypnotic, feminine, surreal nightlife elegance.`
+      },
+      {
+        id: "agent-02",
+        title: "Downtown Sequin Night",
+        category: "Y2K Glamour",
+        tags: ["city", "sequins", "taxi", "rain", "nightlife"],
+        mood: "Lonely city glamour, mysterious nightlife energy",
+        prompt: `Cinematic nighttime city visualizer featuring a glamorous girl with short layered black hair standing alone on a busy downtown street at dusk. She leans against a metal street pole while traffic lights, taxis, and glowing storefronts blur behind her in warm orange and green city light.
+
+She wears a sparkling black sequin top with dramatic cutouts, layered gold necklaces, and metallic arm jewelry that reflects the headlights around her. Her expression is calm, mysterious, and emotionally distant as cars pass by in slow motion through the rainy city atmosphere.
+
+The visualizer follows her wandering through the city alone at night:
+• Standing beneath traffic lights while wind moves her hair.
+• Slow-motion walking across empty crosswalks.
+• Reflections of neon signs on wet pavement.
+• Close-up beauty shots illuminated by passing headlights.
+• Sitting in the backseat of a taxi staring out the window.
+• Blurry nightlife crowds moving around her.
+• Cigarette smoke and steam rising from subway vents.
+• Holding eye contact with the camera under glowing streetlights.
+Visual style: Ultra-realistic cinematic nightlife aesthetic, luxury cyber-Y2K fashion, handheld camera movement, subtle 35mm film grain, realistic skin texture, warm city glow mixed with cool neon reflections, non-AI-looking cinematography.
+Color palette: Black sequins, gold jewelry, neon green, amber streetlights, rainy silver reflections.
+Mood: Lonely city glamour, mysterious nightlife energy, emotional independence, cinematic late-night confidence.`
+      },
+      {
+        id: "agent-03",
+        title: "Canal Fan Daydream",
+        category: "Y2K Glamour",
+        tags: ["riverboat", "canal", "fan", "bohemian", "summer"],
+        mood: "Romantic freedom, dreamy summer nostalgia",
+        prompt: `Dreamy daytime riverboat visualizer with the same glamorous bob-haired girl drifting through a sunny European-style canal city. Warm golden sunlight reflects across the water while soft wind moves her black hair and flowing fabrics. She leans against the railing of a ferry boat holding a delicate pink folding fan, wearing layered silver coin jewelry, low-rise bohemian fabrics, and translucent pink bracelets that glow in the sunlight. A soft pink flower tucked into her hair gives the scene a romantic Y2K fantasy feeling.
+
+The atmosphere feels nostalgic, feminine, and cinematic: sparkling water reflections, slow-moving boats, tree shadows dancing across her skin, and warm spring air filling the frame. Her expression is calm and dreamy as she slowly opens and closes the fan while staring into the distance.
+
+Scene visuals:
+• Sunlight flickering through moving trees.
+• Slow-motion hair movement in the wind.
+• Close-up shots of jewelry sparkling.
+• Reflections dancing across the river water.
+• Handheld shots from the moving boat.
+• Soft eye contact with the camera.
+• Fabric and fan moving gently in the breeze.
+• Dreamy golden-hour lighting across her face.
+Visual style: Ultra-realistic Y2K bohemian fashion editorial, dreamy European summer aesthetic, soft film grain, warm natural sunlight, realistic skin texture, nostalgic handheld cinematography, non-AI-looking visuals.
+Color palette: Golden sunlight, soft pink, black silk, silver jewelry, emerald river reflections.
+Mood: Romantic freedom, dreamy summer nostalgia, feminine elegance, peaceful cinematic beauty.`
+      },
+      {
+        id: "agent-04",
+        title: "Birthday Beach Melancholy",
+        category: "Y2K Glamour",
+        tags: ["beach", "birthday", "cake", "pink", "flash"],
+        mood: "Lonely birthday nostalgia, dreamy summer night",
+        prompt: `Dreamy tropical-night visualizer on an empty beach at sunset, glamorous girl with a soft brown bob haircut kneeling in the sand beside a pastel birthday cake and a large bouquet of pink lilies. She wears a glowing hot-pink bikini with layered silver necklaces and a flower tucked behind her ear, illuminated by warm golden flash photography against the dark blue ocean behind her.
+
+The atmosphere feels nostalgic, feminine, and bittersweet, like celebrating a birthday while emotionally lost in thought. Wind moves through her hair and flowing pink fabric while waves crash softly nearby. The cake candles flicker in the night air as city lights shimmer faintly across the water in the distance.
+
+Scene visuals:
+• Close-up shots of glossy skin under flash lighting.
+• Flower petals moving in ocean wind.
+• Birthday cake glowing in the dark.
+• Slow-motion beach walking at night.
+• Holding the bouquet while staring at the horizon.
+• Warm disposable-camera flash aesthetic.
+• Reflections on wet sand and jewelry.
+• Dreamy handheld shots around the shoreline.
+Visual style: Ultra-realistic Y2K beach glamour, cinematic nighttime photography, soft 35mm film grain, realistic skin texture, dreamy flash-lit cinematography, nostalgic feminine energy, non-AI-looking visuals.
+Color palette: Hot pink, warm gold, ocean blue, silver jewelry reflections, sunset purple tones.
+Mood: Lonely birthday nostalgia, dreamy summer night, feminine softness, emotional elegance, cinematic beach melancholy.`
+      },
+      {
+        id: "agent-05",
+        title: "Red Car Suburban Dream",
+        category: "Y2K Glamour",
+        tags: ["red-car", "suburban", "street-racing", "gold", "sunset"],
+        mood: "Rebellious elegance, nostalgic freedom",
+        prompt: `Cinematic suburban street visualizer at golden-hour sunset, glamorous girl with soft black layered hair standing confidently in front of a bright red modified sports car parked in the middle of a quiet neighborhood street. She wears a flowing red-and-gold embroidered dress with matching draped fabrics moving dramatically in the cold evening wind.
+
+The atmosphere feels nostalgic and rebellious: warm sunset light reflecting across the car paint, empty suburban streets, distant school buses, winter air, and cinematic silence before nightfall. Her expression is calm, powerful, and emotionally untouchable while she leans against the car like the main character of a late-2000s street-racing dream.
+
+Scene visuals:
+• Slow-motion fabric flowing behind her.
+• Close-up shots of gold embroidery sparkling.
+• Headlights turning on at dusk.
+• Cinematic shots sitting on the hood of the car.
+• Wind moving her hair softly.
+• Reflections of sunset light on the car body.
+• Slow walking through the empty street.
+• Handheld camera circling around her and the vehicle.
+Visual style: Ultra-realistic Y2K street-racing aesthetic, cinematic suburban sunset lighting, soft 35mm film grain, realistic skin texture, dreamy handheld cinematography, non-AI-looking visuals, luxury nostalgic fashion-editorial mood.
+Color palette: Deep red, gold embroidery, sunset orange, cold winter gray, glossy car reflections.
+Mood: Rebellious elegance, nostalgic freedom, feminine confidence, cinematic suburban dreamscape.`
+      },
+      {
+        id: "agent-06",
+        title: "Platinum Flash Beauty",
+        category: "Y2K Glamour",
+        tags: ["beauty", "platinum", "flash", "glitter", "close-up"],
+        mood: "Dreamy glamour, feminine elegance, hypnotic beauty",
+        prompt: `Ultra-cinematic beauty visualizer focused on a glamorous blonde girl with glowing porcelain skin and long platinum hair illuminated by warm flash photography. Her makeup is dreamy and hyperfeminine: shimmering pink-lavender eyeshadow, glossy lips, sparkling highlighter, and soft glitter reflecting light across her face like glass.
+
+The camera stays extremely close to her face while she moves slowly through a luxurious late-night atmosphere filled with warm golden lighting and soft shadows. Her expression feels calm, hypnotic, and emotionally distant as she stares into the lens like a fashion editorial come to life.
+
+Scene visuals:
+• Extreme close-up beauty shots.
+• Glossy skin reflecting flash lighting.
+• Slow blinking and subtle head turns.
+• Platinum hair moving softly in warm air.
+• Reflections in mirrors and glass.
+• Glitter makeup sparkling during movement.
+• Blurred luxury interiors in the background.
+• Soft-focus handheld camera movement.
+Visual style: Ultra-realistic luxury beauty cinematography, soft 35mm film grain, dreamy lens bloom, realistic skin texture, warm flash-photo aesthetic, Y2K glam editorial visuals, non-AI-looking cinematography.
+Color palette: Champagne gold, pearl white, soft pink shimmer, silver reflections, warm amber shadows.
+Mood: Dreamy glamour, feminine elegance, hypnotic beauty, luxurious nighttime softness.`
+      },
+      {
+        id: "agent-07",
+        title: "Golden Veil Muse",
+        category: "Y2K Glamour",
+        tags: ["veil", "gold", "desert-night", "jewelry", "flash"],
+        mood: "Mysterious femininity, hypnotic glamour",
+        prompt: `Luxury desert-night visualizer with the same mysterious black-haired girl under warm flash photography, holding up a translucent gold veil covered in tiny reflective sequins. Her piercing icy-blue eyes stare directly into the camera while golden jewelry and crystal body chains shimmer intensely under harsh late-night lighting. A soft orange flower tucked into her hair adds a dreamy tropical contrast to the dark glamour.
+
+The atmosphere feels hypnotic and cinematic: warm golden haze, sheer fabrics floating through the air, blurry silhouettes moving in the background, and intense disposable-camera flash creating dramatic shadows and glowing skin. She moves slowly behind the veil like a mysterious fashion muse inside a surreal midnight party.
+
+Scene visuals:
+• Close-up shots through transparent gold fabric.
+• Jewelry sparkling during slow movements.
+• Direct eye contact with the camera.
+• Warm flash lighting over glowing skin.
+• Soft wind moving long black hair.
+• Fabric drifting across the lens.
+• Slow-motion turns and veil reveals.
+• Handheld editorial-style camera movement.
+Visual style: Ultra-realistic Y2K luxury fashion cinematography, warm flash-photo aesthetic, subtle 35mm film grain, realistic skin texture, dreamy nightlife glamour, non-AI-looking visuals.
+Color palette: Gold, amber, crystal silver, black silk, warm champagne lighting.
+Mood: Mysterious femininity, hypnotic glamour, surreal beauty, luxurious nightlife fantasy.`
+      },
+      {
+        id: "agent-08",
+        title: "Tropical Villa Dance",
+        category: "Y2K Glamour",
+        tags: ["villa", "dance", "red-skirt", "gold-jewelry", "tropical"],
+        mood: "Confident feminine energy, hypnotic elegance",
+        prompt: `Cinematic tropical-night dance visualizer featuring the same glamorous girl with long black hair, layered gold jewelry, and a sparkling red skirt dancing confidently inside a luxurious open-air villa at night. Warm candlelight and pink-orange sunset tones reflect across marble floors while soft tropical wind moves the flowing red fabric around her waist.
+
+Scene visuals:
+• Slow-motion belly dancing and graceful arm movements.
+• Close-up shots of gold jewelry sparkling.
+• Sheer red fabrics flowing dramatically.
+• Flower details moving during spins.
+• Warm lanterns and candles glowing in the background.
+• Handheld cinematic camera movement.
+• Soft wind moving her hair and skirt.
+• Dreamy rooftop overlooking ocean lights.
+Visual style: Ultra-realistic tropical Y2K glamour, dreamy luxury nightlife aesthetic, subtle 35mm film grain, realistic skin texture, warm cinematic lighting, fashion-editorial cinematography, non-AI-looking visuals.
+Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.`
       }
     ];
 
+    const syncPromptLibrary = (savedPrompts) => {
+      const currentStartersById = new Map(INITIAL_PROMPTS.map(prompt => [prompt.id, prompt]));
+      const savedCustomPrompts = savedPrompts.filter(prompt => !currentStartersById.has(prompt.id));
+      return [...INITIAL_PROMPTS, ...savedCustomPrompts];
+    };
+
+    // Aesthetic families used for filtering and generation context.
+    const STYLE_CATEGORIES = [
+      { 
+        name: "Runway Couture", 
+        icon: "👠", 
+        desc: "High fashion, luxury campaigns, Paris Fashion Week.",
+        accent: "from-pink-950 to-neutral-900",
+        border: "border-pink-900/60",
+        keywords: ["high fashion", "luxury campaign", "Paris Fashion Week", "runway couture", "editorial styling"]
+      },
+      {
+        name: "Beauty Editorial",
+        icon: "📸",
+        desc: "Close-ups, jewelry, makeup, Vogue-style beauty campaigns.",
+        accent: "from-violet-950 to-neutral-900",
+        border: "border-violet-900/50",
+        keywords: ["beauty close-up", "jewelry", "makeup", "Vogue-style campaign", "editorial portrait"]
+      },
+      {
+        name: "Y2K Glamour",
+        icon: "✦",
+        desc: "Luxury Y2K fashion visuals, warm flash photography, jeweled details, tropical nightlife.",
+        accent: "from-rose-950 to-neutral-900",
+        border: "border-rose-900/50",
+        keywords: ["Y2K glam editorial", "gold jewelry", "warm flash photography", "bohemian fabrics", "non-AI-looking cinematography"]
+      },
+      { 
+        name: "Poolside Muse", 
+        icon: "🕶️", 
+        desc: "Sun-soaked old-Hollywood glamour, silver sequin bikinis, golden infinity pools.",
+        accent: "from-amber-950 to-neutral-900",
+        border: "border-amber-900/50",
+        keywords: ["silver sequin bikini", "oversized sunglasses", "infinity pool", "golden sunset reflections"]
+      },
+      { 
+        name: "Ice Queen Muse", 
+        icon: "❄️", 
+        desc: "Cool dominance, luxury baby-blue fur coats, diamond drop earrings, cool winter wealth.",
+        accent: "from-cyan-950 to-neutral-900",
+        border: "border-cyan-900/50",
+        keywords: ["baby-blue fur coat", "platinum-blonde waves", "diamond earrings", "porcelain skin"]
+      },
+      { 
+        name: "Angel Haze", 
+        icon: "🐚", 
+        desc: "Angel-wing neon haze, wet platinum hair, glitter makeup, violet house-party dreamscape.",
+        accent: "from-teal-950 to-neutral-900",
+        border: "border-teal-900/60",
+        keywords: ["glowing white angel wings", "wet platinum hair", "purple-blue neon haze", "glitter makeup", "35mm dream blur"]
+      },
+      { 
+        name: "Architectural Muse", 
+        icon: "🏛️", 
+        desc: "Modern couture in minimalist architectural environments, clean lines, museum aesthetics, soft natural light, and understated luxury.",
+        accent: "from-slate-900 to-neutral-900",
+        border: "border-slate-800",
+        keywords: ["modern couture", "minimalist architecture", "clean lines", "museum aesthetics", "soft natural light", "understated luxury"]
+      },
+      { 
+        name: "Campus K-Style", 
+        icon: "🌸", 
+        desc: "K-pop idol off-duty style. Pastel cardigans, pleated skirts, effortless schoolyard chic.",
+        accent: "from-fuchsia-950 to-neutral-900",
+        border: "border-fuchsia-900/40",
+        keywords: ["pastel cardigan", "pleated skirt", "chunky loafers", "jacaranda blossoms"]
+      },
+      { 
+        name: "Seoul Morning", 
+        icon: "🌅", 
+        desc: "Seoul minimal apartments, warm cozy duvet sheets, lazy volumetric rays, coffee haze.",
+        accent: "from-orange-950 to-neutral-900",
+        border: "border-orange-900/40",
+        keywords: ["minimalist korean apartment", "tousled hair", "linen duvet", "steam rays"]
+      },
+      { 
+        name: "K-Street", 
+        icon: "🎤", 
+        desc: "Euphoria-inspired Y2K party glamour, neon nightclub haze, chainmail, rhinestones, handheld flash.",
+        accent: "from-indigo-950 to-neutral-900",
+        border: "border-indigo-900/50",
+        keywords: ["Y2K glam", "purple tinsel curtains", "silver chainmail", "rhinestone makeup", "35mm flash photography"]
+      },
+      { 
+        name: "Cinematic Storytelling", 
+        icon: "🎬", 
+        desc: "Short films, narrative scenes, emotional visual worlds.",
+        accent: "from-slate-950 to-neutral-900",
+        border: "border-slate-800/80",
+        keywords: ["short film", "narrative scene", "emotional visual world", "cinematic storytelling", "character atmosphere"]
+      },
+      {
+        name: "Minimalist Atmosphere",
+        icon: "☁️",
+        desc: "White Space Dream, art-house minimalism, solitude, dreamcore, architectural emptiness.",
+        accent: "from-sky-950 to-neutral-900",
+        border: "border-sky-900/50",
+        keywords: ["White Space Dream", "art-house minimalism", "solitude", "dreamcore", "architectural emptiness"]
+      }
+    ];
+
+    // Main workspace shell.
     function App() {
-      const [roughInput, setRoughInput] = useState("");
-      const [selectedCategory, setSelectedCategory] = useState("Fashion");
-      const [outputPrompt, setOutputPrompt] = useState("");
-      const [activeTab, setActiveTab] = useState("studio");
+      const [activeTab, setActiveTab] = useState('improver'); // 'improver', 'library', 'about'
+      const [roughInput, setRoughInput] = useState(() => getRandomVibeStarters(1)[0]);
+      const [selectedCategory, setSelectedCategory] = useState(STYLE_CATEGORIES[0].name);
+      const [enhancedOutput, setEnhancedOutput] = useState('');
+      const [isGenerating, setIsGenerating] = useState(false);
+      const [randomVibeStarters] = useState(() => getRandomVibeStarters());
+      const [demoPlaylist, setDemoPlaylist] = useState(() => ({ queue: getShuffledDemoVideos(), index: 0 }));
+      const [demoStarted, setDemoStarted] = useState(false);
+      const demoVideoRef = useRef(null);
+      const demoVideo = demoPlaylist.queue[demoPlaylist.index];
+      
+      // Library state and filters.
+      const [prompts, setPrompts] = useState([]);
+      const [searchTerm, setSearchTerm] = useState('');
+      const [libraryFilter, setLibraryFilter] = useState('all');
+      
+      // Short feedback messages.
+      const [toast, setToast] = useState(null);
+      
+      // Save-dialog state.
+      const [showSaveModal, setShowSaveModal] = useState(false);
+      const [newPromptTitle, setNewPromptTitle] = useState('');
 
-      const generatePlaceholderPrompt = () => {
-        const template = PLACEHOLDER_PROMPTS.find(
-          item => item.category === selectedCategory
-        );
+      // Keep built-in templates fresh while preserving user-created ones.
+      useEffect(() => {
+        const saved = localStorage.getItem('veo3_prompts_library_ext');
+        if (saved) {
+          try {
+            const syncedPrompts = syncPromptLibrary(JSON.parse(saved));
+            setPrompts(syncedPrompts);
+            localStorage.setItem('veo3_prompts_library_ext', JSON.stringify(syncedPrompts));
+          } catch (e) {
+            setPrompts(INITIAL_PROMPTS);
+          }
+        } else {
+          setPrompts(INITIAL_PROMPTS);
+          localStorage.setItem('veo3_prompts_library_ext', JSON.stringify(INITIAL_PROMPTS));
+        }
+      }, []);
 
-        setOutputPrompt(`Ultra-cinematic ${selectedCategory} visualizer.
+      const saveToStorage = (updatedList) => {
+        setPrompts(updatedList);
+        localStorage.setItem('veo3_prompts_library_ext', JSON.stringify(updatedList));
+      };
 
-Input idea:
-${roughInput || "[USER IDEA PLACEHOLDER]"}
+      const showNotification = (message, type = 'success') => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 3500);
+      };
 
-Generated prompt:
-${template.prompt}
+      const playDemoWithSound = () => {
+        const video = demoVideoRef.current;
+        if (!video) return;
 
+        video.muted = false;
+        video.volume = 1;
+        if (video.ended) {
+          video.currentTime = 0;
+        }
+        video.play().catch(() => {
+          showNotification("Click the video controls to start audio.", "error");
+        });
+      };
+
+      const advanceDemoVideo = () => {
+        setDemoPlaylist(currentPlaylist => {
+          const { queue, index } = currentPlaylist;
+          if (index < queue.length - 1) {
+            return { queue, index: index + 1 };
+          }
+
+          return {
+            queue: getShuffledDemoVideos(queue[index]),
+            index: 0
+          };
+        });
+      };
+
+      const handleSoundOnClick = () => {
+        if (!demoStarted) {
+          setDemoStarted(true);
+        }
+        setTimeout(playDemoWithSound, 0);
+      };
+
+      useEffect(() => {
+        if (demoStarted) {
+          const video = demoVideoRef.current;
+          if (video) {
+            video.load();
+          }
+          setTimeout(playDemoWithSound, 0);
+        }
+      }, [demoVideo, demoStarted]);
+
+      const handleCopyText = (text) => {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showNotification("Prompt copied to clipboard!", "success");
+        } catch (e) {
+          showNotification("Failed to copy", "error");
+        }
+        document.body.removeChild(textArea);
+      };
+
+      // Prompt rewriting flow.
+      const handleImprovePrompt = async (presetModifier = "") => {
+        if (!roughInput.trim()) {
+          showNotification("Write a brief concept idea first.", "error");
+          return;
+        }
+
+        setIsGenerating(true);
+
+        // Pull a couple of nearby examples from the selected aesthetic.
+        const related = prompts.filter(p => p.category === selectedCategory);
+        const contextualExamples = related.slice(0, 2);
+
+        const examplesText = contextualExamples.map((ex, i) => `
+### EXAMPLE ${i + 1}:
+Category: ${ex.category}
+Tags: ${ex.tags.join(', ')}
+Output Brief:
+${ex.prompt}
+`).join("\n");
+
+        const selectedStyle = STYLE_CATEGORIES.find(c => c.name === selectedCategory);
+        const styleKeywords = selectedStyle ? selectedStyle.keywords.join(', ') : '';
+
+        const systemPrompt = `You are an elite, award-winning fashion film Creative Director behind the visual styling of premium AI visualizers. 
+Transform the user's rough description into a highly structured, ultra-cinematic visual director's brief suitable for premium generators like Veo 3.
+
+You MUST follow this exact format below. Do not output conversational introductions, pleasantries, or preamble. Start directly with the prompt:
+
+Ultra-cinematic [Style Family] visualizer inspired by [Atmospheric Director / High-End Brand / Cinema].
+A [Subject Details] in [Precise Setting]...
+No dialogue.
+No dancing.
+No storytelling.
 Scene visuals:
-• [PLACEHOLDER VISUAL DETAIL 1]
-• [PLACEHOLDER VISUAL DETAIL 2]
-• [PLACEHOLDER VISUAL DETAIL 3]
+• [Visual focal point bullet 1]
+• [Visual focal point bullet 2]
+• [Visual focal point bullet 3]
+Visual style: [Detailed camera lenses (e.g., 35mm, anamorphic), lighting setups, and visual texture]
+Color palette: [Highly specific color coordination, desaturation levels]
+Mood: [Deep artistic, sensory or emotional feelings]
+Camera: [Clean cinematic motion cues, dolly, or horizontal crane tracks]
+Music style: [Vibe-matching sounds, BPM, or specific tone]
+Reference mood:
+"[A single artistic philosophical quote mapping to the scene's core essence]"
 
-Visual style:
-[PLACEHOLDER CAMERA / LIGHTING / TEXTURE]
+IMPORTANT RULES:
+- Never use generic words like "beautiful", "high-quality", or "photorealistic". Use technical cinematic framing.
+- Integrate the aesthetic language matching the selected visual category.
+- Focus strictly on photographic atmosphere, textures, reflection refractions, and micro-motion.`;
 
-Color palette:
-[PLACEHOLDER COLORS]
+        const userContent = `Convert this rough concept:
+"${roughInput}"
 
-Mood:
-[PLACEHOLDER MOOD]
+Category chosen: ${selectedCategory}
+Target keywords to naturally weave in: ${styleKeywords}
 
-Camera:
-[PLACEHOLDER CAMERA MOVEMENT]
+${presetModifier ? `MODIFIER DEMAND: Change the style of the prompt to match this request: "${presetModifier}"` : ""}
 
-Music style:
-[PLACEHOLDER MUSIC STYLE]`);
+Use these high-quality visual briefs as your absolute style, structural, and pacing guides. Match their exact level of detail and formatting:
+${examplesText}
+
+Begin rewriting directly. No pre-text or greetings:`;
+
+        const backendBaseUrl = window.location.protocol === 'file:'
+          ? 'http://localhost:8787'
+          : window.location.origin;
+        const url = `${backendBaseUrl}/api/improve-prompt`;
+
+        let backoffDelay = 1000;
+        const maxRetries = 5;
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            const response = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                systemPrompt,
+                userContent
+              })
+            });
+
+            if (response.ok) {
+              const resData = await response.json();
+              const generatedText = resData.text;
+              if (generatedText) {
+                setEnhancedOutput(generatedText);
+                showNotification("Prompt enhanced successfully!", "success");
+                setIsGenerating(false);
+                return;
+              }
+              throw new Error("Empty text returned");
+            }
+            throw new Error(`API response error ${response.status}`);
+          } catch (err) {
+            if (attempt === maxRetries) {
+              console.error(err);
+              showNotification("Using local fallback template.", "error");
+              
+              // If the API is unavailable, still give the user a usable draft.
+              const matchedTemplate = prompts.find(p => p.category === selectedCategory) || prompts[0];
+              const fallbackText = matchedTemplate.prompt.replace(/A (.*?) in (.*?)\./g, `A ${roughInput} in a stylized high-end environment.`);
+              setEnhancedOutput(fallbackText);
+              setIsGenerating(false);
+              return;
+            }
+            await new Promise(res => setTimeout(res, backoffDelay));
+            backoffDelay *= 2;
+          }
+        }
       };
 
-      const copyOutput = () => {
-        navigator.clipboard.writeText(outputPrompt);
+      const handleModifier = (modifierStr) => {
+        if (!enhancedOutput) {
+          showNotification("Generate a prompt first, then apply adjustments.", "error");
+          return;
+        }
+        handleImprovePrompt(modifierStr);
       };
+
+      const handleSaveClick = () => {
+        if (!enhancedOutput) return;
+        const draftTitle = `${selectedCategory} - ${roughInput.split(' ').slice(0, 3).join(' ') || 'Visual'}`;
+        setNewPromptTitle(draftTitle);
+        setShowSaveModal(true);
+      };
+
+      const confirmSavePrompt = () => {
+        if (!newPromptTitle.trim()) {
+          showNotification("Please provide a title.", "error");
+          return;
+        }
+
+        const customObj = {
+          id: `user-${Date.now()}`,
+          title: newPromptTitle,
+          category: selectedCategory,
+          tags: [selectedCategory.toLowerCase().replace(/\s+/g, '-'), 'custom-creation'],
+          mood: "Custom Visual Project",
+          prompt: enhancedOutput
+        };
+
+        const updated = [customObj, ...prompts];
+        saveToStorage(updated);
+        setShowSaveModal(false);
+        showNotification("Visual template saved!", "success");
+      };
+
+      const deletePromptTemplate = (id) => {
+        const filtered = prompts.filter(p => p.id !== id);
+        saveToStorage(filtered);
+        showNotification("Template deleted.", "success");
+      };
+
+      const loadToWorkspace = (item) => {
+        setRoughInput(item.title);
+        setSelectedCategory(item.category);
+        setEnhancedOutput(item.prompt);
+        setActiveTab('improver');
+        showNotification("Template loaded into studio workspace!", "success");
+      };
+
+      const filteredLibrary = prompts.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                              p.prompt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              p.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesCategory = libraryFilter === 'all' || p.category === libraryFilter;
+        return matchesSearch && matchesCategory;
+      });
 
       return (
-        <div className="min-h-screen flex flex-col">
-          <header className="border-b border-neutral-800 bg-neutral-950 px-6 py-4">
-            <div className="max-w-5xl mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <h1 className="text-xl font-bold">Veo 3 Prompt Studio</h1>
-                <p className="text-sm text-neutral-400">Primitive placeholder prototype</p>
+        <div className="flex-1 flex flex-col justify-between">
+          
+          {/* Lightweight feedback for copy, save, and generation actions. */}
+          {toast && (
+            <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-neutral-900/90 border border-neutral-800 px-5 py-4 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] backdrop-blur-md transition-all duration-300">
+              <div className={`w-3 h-3 rounded-full ${toast.type === 'success' ? 'bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.6)]' : 'bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.6)]'}`} />
+              <p className="text-xs font-semibold text-neutral-200">{toast.message}</p>
+            </div>
+          )}
+
+          {/* Soft background glow behind the workspace. */}
+          <div className="absolute top-0 left-0 w-full h-[500px] pointer-events-none overflow-hidden z-0">
+            <div className="absolute top-[-20%] left-[10%] w-[600px] h-[600px] rounded-full bg-cyan-500/10 blur-[130px] animate-pulse-glow" />
+            <div className="absolute top-[-10%] right-[5%] w-[500px] h-[500px] rounded-full bg-indigo-500/10 blur-[140px] animate-pulse-glow" style={{ animationDelay: '-3s' }} />
+          </div>
+
+          {/* Header and primary navigation. */}
+          <header className="sticky top-0 z-40 bg-neutral-950/80 backdrop-blur-md border-b border-neutral-900/60 px-6 py-4">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+              
+              <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setActiveTab('improver')}>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-pink-500 p-[1.5px] shadow-[0_0_20px_rgba(6,182,212,0.15)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all duration-500">
+                  <div className="w-full h-full bg-neutral-950 rounded-[10px] flex items-center justify-center">
+                    <Icon name="sparkles" className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-md font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-neutral-50 via-neutral-100 to-neutral-400 font-display leading-tight">Be Your Own Director</span>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 bg-cyan-950/80 text-cyan-400 border border-cyan-800/30 rounded-full">STUDIO EDITION</span>
+                  </div>
+                  <p className="text-[9px] text-neutral-500 tracking-widest uppercase font-mono">VEO 3 PROMPT CREATION</p>
+                </div>
               </div>
 
-              <nav className="flex gap-2">
+              {/* Main tabs. */}
+              <nav className="flex items-center bg-neutral-900/60 border border-neutral-850 p-1 rounded-xl">
                 <button
-                  onClick={() => setActiveTab("studio")}
-                  className={`px-4 py-2 rounded-lg text-sm ${activeTab === "studio" ? "bg-cyan-500 text-neutral-950" : "bg-neutral-900 text-neutral-300"}`}
+                  onClick={() => setActiveTab('improver')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+                    activeTab === 'improver' ? 'bg-neutral-800 text-white shadow-md' : 'text-neutral-400 hover:text-neutral-200'
+                  }`}
                 >
-                  Studio
+                  <Icon name="zap" className="w-3.5 h-3.5" />
+                  <span>Studio Space</span>
                 </button>
                 <button
-                  onClick={() => setActiveTab("library")}
-                  className={`px-4 py-2 rounded-lg text-sm ${activeTab === "library" ? "bg-cyan-500 text-neutral-950" : "bg-neutral-900 text-neutral-300"}`}
+                  onClick={() => setActiveTab('library')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+                    activeTab === 'library' ? 'bg-neutral-800 text-white shadow-md' : 'text-neutral-400 hover:text-neutral-200'
+                  }`}
                 >
-                  Library
+                  <Icon name="book-open" className="w-3.5 h-3.5" />
+                  <span>Aesthetic Library</span>
+                  <span className="text-[9px] bg-neutral-950 px-1.5 py-0.5 rounded-full text-neutral-400 border border-neutral-800">{prompts.length}</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('about')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+                    activeTab === 'about' ? 'bg-neutral-800 text-white shadow-md' : 'text-neutral-400 hover:text-neutral-200'
+                  }`}
+                >
+                  <Icon name="info" className="w-3.5 h-3.5" />
+                  <span>Creative Brief</span>
                 </button>
               </nav>
+
+              {/* Small system status badge. */}
+              <div className="hidden lg:flex items-center gap-2 text-[11px] bg-neutral-900 border border-neutral-850 px-3 py-1.5 rounded-xl text-neutral-400 font-mono">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                <span>RAG Context Loaded</span>
+              </div>
+
             </div>
           </header>
 
-          <main className="flex-1 max-w-5xl w-full mx-auto px-6 py-8">
-            {activeTab === "studio" && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <section className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-5">
+          {/* Main content area. */}
+          <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-6 py-8 z-10 relative">
+            
+            {/* Studio workspace. */}
+            {activeTab === 'improver' && (
+              <div className="space-y-8 animate-fade-in">
+                
+                {/* Opening copy. */}
+                <div className="max-w-3xl space-y-2">
+                  <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight font-display">
+                    Your AI Visual Director for{' '}
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-pink-400">
+                      Veo 3
+                    </span>
+                  </h1>
+                  <p className="text-xs md:text-sm text-neutral-400 max-w-2xl leading-relaxed">
+                    Transform rough ideas, lyrics, moods, and visual concepts into cinematic Veo 3 prompts inspired by fashion editorials, luxury campaigns, fantasy worlds, and curated visual aesthetics.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                  
+                  {/* Prompt controls. */}
+                  <div className="lg:col-span-7 space-y-6">
+                    
+                    {/* Raw idea input. */}
+                    <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-4 backdrop-blur-md">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-bold tracking-widest text-cyan-400 uppercase flex items-center gap-2 font-mono">
+                          <Icon name="sparkles" className="w-4 h-4 font-bold" />
+                          1. Input Idea or Lyric Snippet
+                        </label>
+                        <button 
+                          onClick={() => setRoughInput('')}
+                          className="text-[10px] text-neutral-500 hover:text-rose-400 flex items-center gap-1 transition font-mono"
+                        >
+                          <Icon name="rotate-ccw" className="w-3 h-3" />
+                          Clear
+                        </button>
+                      </div>
+
+                      <div className="relative">
+                        <textarea
+                          value={roughInput}
+                          onChange={(e) => setRoughInput(e.target.value)}
+                          placeholder="Describe a mood, setting, lyric fragment, or visual concept..."
+                          className="w-full h-32 bg-neutral-950 border border-neutral-850 rounded-xl p-4 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/40 focus:border-cyan-500/40 transition resize-none leading-relaxed font-mono"
+                        />
+                        <div className="absolute bottom-2.5 right-3 text-[9px] text-neutral-600 font-mono">
+                          {roughInput.length} characters
+                        </div>
+                      </div>
+
+                      {/* Random starter ideas. */}
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] text-neutral-500 font-bold tracking-wide">Quick Vibe Starts:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {randomVibeStarters.map((tPreset, pIdx) => (
+                            <button
+                              key={pIdx}
+                              onClick={() => setRoughInput(tPreset)}
+                              className="text-[10px] bg-neutral-950 border border-neutral-850/60 hover:border-neutral-700 hover:text-neutral-200 text-neutral-400 px-3 py-1.5 rounded-lg transition text-left truncate max-w-full"
+                            >
+                              "{tPreset}"
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Aesthetic selector. */}
+                    <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-4 backdrop-blur-md">
+                      <div>
+                        <label className="text-[10px] font-bold tracking-widest text-purple-400 uppercase flex items-center gap-2 font-mono">
+                          <Icon name="compass" className="w-4 h-4" />
+                          2. Target Aesthetic Style Model
+                        </label>
+                        <p className="text-[10px] text-neutral-500 mt-1">Configures specific visualizer rules, props, and negative prompts.</p>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {STYLE_CATEGORIES.map((cat) => {
+                          const isSelected = selectedCategory === cat.name;
+                          return (
+                            <button
+                              key={cat.name}
+                              onClick={() => setSelectedCategory(cat.name)}
+                              className={`text-left p-3 rounded-xl border transition-all duration-300 relative group ${
+                                isSelected 
+                                  ? `bg-gradient-to-br ${cat.accent} border-transparent shadow-[0_4px_25px_rgba(0,0,0,0.6)]`
+                                  : 'bg-neutral-950 border-neutral-850 hover:border-neutral-700'
+                              }`}
+                            >
+                              <div className="flex justify-between items-center">
+                                <span className="text-lg">{cat.icon}</span>
+                                {isSelected && (
+                                  <span className="text-[8px] bg-neutral-950/80 px-1.5 py-0.5 rounded text-neutral-300 border border-neutral-800 font-mono">
+                                    ACTIVE
+                                  </span>
+                                )}
+                              </div>
+                              <h4 className={`font-bold text-xs mt-2 transition-colors ${isSelected ? 'text-white' : 'text-neutral-300 group-hover:text-neutral-100'}`}>
+                                {cat.name}
+                              </h4>
+                              <p className="text-[9px] text-neutral-500 line-clamp-2 mt-0.5 leading-normal group-hover:text-neutral-400">
+                                {cat.desc}
+                              </p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Prompt generation action. */}
+                    <button
+                      onClick={() => handleImprovePrompt()}
+                      disabled={isGenerating}
+                      className="w-full h-14 bg-gradient-to-r from-cyan-400 via-indigo-500 to-pink-500 text-neutral-950 font-bold rounded-xl shadow-[0_6px_20px_rgba(6,182,212,0.25)] hover:shadow-[0_6px_30px_rgba(6,182,212,0.4)] hover:brightness-110 active:scale-[0.99] disabled:opacity-40 flex items-center justify-center gap-3 transition-all"
+                    >
+                      {isGenerating ? (
+                        <div className="flex items-center gap-2 font-mono text-xs text-neutral-900 uppercase">
+                          <div className="w-4 h-4 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
+                          <span>Generating creative direction...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+                          <Icon name="sparkles" className="w-4 h-4" />
+                          <span>Rewrite Prompt for Veo 3</span>
+                        </div>
+                      )}
+                    </button>
+                    <p className="text-[10px] text-neutral-500 leading-relaxed px-1">
+                      ⚠️ This demo runs on a free API tier, so responses may occasionally be delayed due to rate limits. If you have your own API key, you can run the project locally by configuring a .env file for improved performance.
+                    </p>
+
+                  </div>
+
+                  {/* Output and demo monitor. */}
+                  <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
+                    <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-5 flex flex-col justify-between min-h-[460px] backdrop-blur-md relative overflow-hidden">
+                      
+                      <div className="flex items-center justify-between border-b border-neutral-800/80 pb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
+                          <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase font-mono">
+                            VEO3 Prompt Output Panel
+                          </span>
+                        </div>
+                        {enhancedOutput && (
+                          <span className="text-[9px] font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-2.5 py-0.5 rounded-full">
+                            Curated Output
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Monitor body. */}
+                      <div className="flex-1 flex flex-col justify-between pt-4">
+                        {isGenerating ? (
+                          <div className="space-y-4 py-8 animate-pulse">
+                            <div className="h-5 bg-neutral-850 rounded w-2/3" />
+                            <div className="h-3 bg-neutral-850 rounded w-1/2" />
+                            <div className="space-y-2 pt-6">
+                              <div className="h-2.5 bg-neutral-850 rounded w-full" />
+                              <div className="h-2.5 bg-neutral-850 rounded w-5/6" />
+                              <div className="h-2.5 bg-neutral-850 rounded w-full" />
+                              <div className="h-2.5 bg-neutral-850 rounded w-3/4" />
+                            </div>
+                            <div className="h-10 bg-neutral-850 rounded w-full mt-8" />
+                          </div>
+                        ) : enhancedOutput ? (
+                          <div className="space-y-4 flex-1 flex flex-col justify-between">
+                            
+                            <div className="bg-neutral-950 border border-neutral-850 p-4 rounded-xl max-h-[320px] overflow-y-auto font-mono text-[11px] text-neutral-300 leading-relaxed space-y-3">
+                              {enhancedOutput.split('\n').map((line, lIdx) => {
+                                if (line.startsWith('Ultra-cinematic')) {
+                                  return <p key={lIdx} className="text-cyan-400 font-bold">{line}</p>;
+                                }
+                                if (line.startsWith('Scene visuals:') || line.startsWith('Visual style:') || line.startsWith('Color palette:') || line.startsWith('Mood:') || line.startsWith('Camera:') || line.startsWith('Music style:') || line.startsWith('Reference mood:')) {
+                                  return <p key={lIdx} className="text-indigo-400 font-bold mt-3">{line}</p>;
+                                }
+                                if (line.startsWith('No ')) {
+                                  return <span key={lIdx} className="inline-block bg-neutral-900 border border-neutral-800/80 text-[9px] text-neutral-400 px-2 py-0.5 rounded mr-1.5 font-sans mb-1">{line}</span>;
+                                }
+                                if (line.startsWith('•')) {
+                                  return <p key={lIdx} className="text-neutral-200 pl-2">{line}</p>;
+                                }
+                                return <p key={lIdx} className="text-neutral-400">{line}</p>;
+                              })}
+                            </div>
+
+                            {/* Quick refinement buttons. */}
+                            <div className="space-y-2">
+                              <p className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase font-mono flex items-center gap-1.5">
+                                <Icon name="sliders" className="w-3 h-3 text-cyan-400" />
+                                Micro-Aesthetic Adjustments
+                              </p>
+                              <div className="grid grid-cols-2 gap-2">
+                                {[
+                                  { label: "Cyber Elevator", query: "inside a glowing blue-green elevator with black chrome reflections, opera gloves, VHS glitch texture, and cold fluorescent lighting" },
+                                  { label: "Angel Haze", query: "with glowing white angel wings, wet platinum hair, glitter makeup, purple-blue neon haze, and dreamy 35mm motion blur" },
+                                  { label: "Euphoria Party", query: "with hyperfeminine Y2K nightclub glamour, purple tinsel curtains, silver chainmail, rhinestone makeup, and handheld flash photography" },
+                                  { label: "Poolside Blue Hour", query: "with silver sequin swimwear details, ocean-view blue hour light, reflective pool water, and soft luxury campaign lens bloom" }
+                                ].map((adj, aIdx) => (
+                                  <button
+                                    key={aIdx}
+                                    onClick={() => handleModifier(adj.query)}
+                                    className="bg-neutral-950 border border-neutral-850 hover:border-neutral-700 p-2 rounded-lg text-[10px] text-neutral-300 hover:text-white transition-all text-left truncate"
+                                  >
+                                    ➕ <span className="font-semibold">{adj.label}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Output actions. */}
+                            <div className="grid grid-cols-2 gap-3 pt-3">
+                              <button
+                                onClick={() => handleCopyText(enhancedOutput)}
+                                className="bg-neutral-800 hover:bg-neutral-750 text-white text-xs font-semibold py-2.5 rounded-xl flex justify-center items-center gap-2 transition"
+                              >
+                                <Icon name="copy" className="w-4 h-4 text-cyan-400" />
+                                Copy Brief
+                              </button>
+                              <button
+                                onClick={handleSaveClick}
+                                className="bg-cyan-500 hover:bg-cyan-600 text-neutral-950 text-xs font-bold py-2.5 rounded-xl flex justify-center items-center gap-2 transition"
+                              >
+                                <Icon name="bookmark" className="w-4 h-4" />
+                                Save Template
+                              </button>
+                            </div>
+
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
+                            <div className="w-full overflow-hidden rounded-xl border border-neutral-850 bg-neutral-950 shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                              <video
+                                ref={demoVideoRef}
+                                src={demoVideo}
+                                className="w-full aspect-video object-cover bg-neutral-950"
+                                autoPlay
+                                muted={!demoStarted}
+                                onEnded={advanceDemoVideo}
+                                playsInline
+                                controls
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <h5 className="text-xs font-bold text-neutral-300 uppercase tracking-wide">Monitor Standby</h5>
+                              <p className="text-[11px] text-neutral-500 max-w-xs mx-auto leading-relaxed">
+                                Preview a shuffled demo sequence while you build a cinematic Veo 3 prompt.
+                              </p>
+                            </div>
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={handleSoundOnClick}
+                                className="text-[11px] bg-neutral-950 border border-neutral-850 hover:border-neutral-700 text-neutral-300 hover:text-white px-4 py-2 rounded-xl transition flex items-center gap-2"
+                              >
+                                <Icon name="volume-2" className="w-3.5 h-3.5" />
+                                Sound On
+                              </button>
+                              <button
+                                onClick={advanceDemoVideo}
+                                className="text-[11px] bg-neutral-950 border border-neutral-850 hover:border-neutral-700 text-neutral-300 hover:text-white px-4 py-2 rounded-xl transition flex items-center gap-2"
+                              >
+                                <Icon name="shuffle" className="w-3.5 h-3.5" />
+                                Next Video
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+
+            {/* Aesthetic library. */}
+            {activeTab === 'library' && (
+              <div className="space-y-6 animate-fade-in">
+                
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      1. Rough idea
-                    </label>
-                    <textarea
-                      value={roughInput}
-                      onChange={event => setRoughInput(event.target.value)}
-                      placeholder="Type a simple idea here..."
-                      className="w-full h-40 bg-neutral-950 border border-neutral-700 rounded-xl p-4 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-cyan-400"
+                    <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2 font-display">
+                      <Icon name="book-open" className="w-6 h-6 text-cyan-400" />
+                      Aesthetic Prompt Repository
+                    </h2>
+                    <p className="text-xs text-neutral-400 mt-1">
+                      Direct access to successful templates representing extreme high fashion and visual pop cultures.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setRoughInput('');
+                      setSelectedCategory('Runway Couture');
+                      setActiveTab('improver');
+                    }}
+                    className="bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 text-neutral-200 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition"
+                  >
+                    <Icon name="plus" className="w-4 h-4 text-cyan-400" />
+                    Write New Template
+                  </button>
+                </div>
+
+                {/* Search and category filters. */}
+                <div className="bg-neutral-900/30 border border-neutral-850 p-4 rounded-2xl flex flex-col md:flex-row items-center gap-4 backdrop-blur-md">
+                  
+                  <div className="relative w-full md:w-72">
+                    <Icon name="search" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                    <input
+                      type="text"
+                      placeholder="Search parameters, motifs, tags..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full bg-neutral-950 border border-neutral-850 rounded-xl py-2 pl-10 pr-4 text-xs text-neutral-200 placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/50"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      2. Category
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {STYLE_CATEGORIES.map(category => (
-                        <button
-                          key={category}
-                          onClick={() => setSelectedCategory(category)}
-                          className={`p-3 rounded-xl border text-sm text-left ${selectedCategory === category ? "bg-cyan-500 text-neutral-950 border-cyan-500" : "bg-neutral-950 text-neutral-300 border-neutral-700"}`}
+                  {/* Category rail. */}
+                  <div className="flex items-center gap-2 overflow-x-auto w-full no-scrollbar">
+                    <button
+                      onClick={() => setLibraryFilter('all')}
+                      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wide uppercase whitespace-nowrap transition-all ${
+                        libraryFilter === 'all'
+                          ? 'bg-cyan-500 text-neutral-950 shadow-md'
+                          : 'bg-neutral-950 text-neutral-400 hover:text-neutral-200 border border-neutral-850'
+                      }`}
+                    >
+                      All Aesthetics
+                    </button>
+                    {STYLE_CATEGORIES.map(cat => (
+                      <button
+                        key={cat.name}
+                        onClick={() => setLibraryFilter(cat.name)}
+                        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wide uppercase whitespace-nowrap transition-all ${
+                          libraryFilter === cat.name
+                            ? 'bg-indigo-500 text-white shadow-md'
+                            : 'bg-neutral-950 text-neutral-400 hover:text-neutral-200 border border-neutral-850'
+                        }`}
+                      >
+                        {cat.icon} {cat.name}
+                      </button>
+                    ))}
+                  </div>
+
+                </div>
+
+                {/* Library cards. */}
+                {filteredLibrary.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredLibrary.map((item) => {
+                      const styleRef = STYLE_CATEGORIES.find(c => c.name === item.category);
+                      const isUserCreated = item.id.startsWith('user-');
+                      return (
+                        <div 
+                          key={item.id}
+                          className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-5 flex flex-col justify-between hover:border-neutral-700 transition duration-300 relative group overflow-hidden"
                         >
-                          {category}
-                        </button>
+                          {styleRef && (
+                            <div className={`absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${styleRef.accent}`} />
+                          )}
+
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-start">
+                              <span className="text-[9px] uppercase font-bold tracking-wider text-cyan-400 flex items-center gap-1 font-mono">
+                                <span>{styleRef?.icon}</span>
+                                <span>{item.category}</span>
+                              </span>
+
+                              {isUserCreated && (
+                                <button
+                                  onClick={() => deletePromptTemplate(item.id)}
+                                  className="p-1.5 text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition"
+                                >
+                                  <Icon name="trash-2" className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+
+                            <div>
+                              <h4 className="font-bold text-sm text-neutral-100 group-hover:text-cyan-400 transition font-display">
+                                {item.title}
+                              </h4>
+                              <p className="text-[10px] text-neutral-500 mt-0.5 italic">
+                                {item.mood}
+                              </p>
+                            </div>
+
+                            {/* Prompt excerpt. */}
+                            <div className="bg-neutral-950 border border-neutral-850 p-3 rounded-lg text-[10px] font-mono text-neutral-400 leading-relaxed max-h-32 overflow-y-auto">
+                              {item.prompt}
+                            </div>
+
+                            {/* Prompt tags. */}
+                            <div className="flex flex-wrap gap-1 pt-1">
+                              {item.tags.map(t => (
+                                <span key={t} className="text-[9px] bg-neutral-900 text-neutral-400 px-2.5 py-0.5 rounded-full border border-neutral-850">
+                                  #{t}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-neutral-800/60 font-mono">
+                            <button
+                              onClick={() => handleCopyText(item.prompt)}
+                              className="bg-neutral-950 border border-neutral-850 hover:border-neutral-700 text-[10px] font-bold text-neutral-300 py-2 rounded-lg transition flex items-center justify-center gap-1.5"
+                            >
+                              <Icon name="copy" className="w-3 h-3" />
+                              Copy Text
+                            </button>
+                            <button
+                              onClick={() => loadToWorkspace(item)}
+                              className="bg-neutral-800 hover:bg-neutral-750 text-[10px] font-bold text-white py-2 rounded-lg transition flex items-center justify-center gap-1.5"
+                            >
+                              <Icon name="sliders" className="w-3 h-3" />
+                              Edit Model
+                            </button>
+                          </div>
+
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="bg-neutral-900/10 border border-neutral-900 rounded-2xl p-16 text-center space-y-4">
+                    <div className="w-12 h-12 bg-neutral-900 border border-neutral-800 rounded-xl flex items-center justify-center mx-auto text-neutral-600">
+                      <Icon name="filter" className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-neutral-300 text-sm">No Templates Found</h4>
+                      <p className="text-[11px] text-neutral-500 max-w-xs mx-auto mt-1">
+                        Try searching for simpler words or switch back to "All Aesthetics".
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => { setSearchTerm(''); setLibraryFilter('all'); }}
+                      className="bg-neutral-900 text-neutral-300 border border-neutral-800 px-4 py-2 rounded-xl text-xs font-semibold transition"
+                    >
+                      Reset Repository Filters
+                    </button>
+                  </div>
+                )}
+
+              </div>
+            )}
+
+            {/* Creative brief documentation. */}
+            {activeTab === 'about' && (
+              <div className="max-w-5xl mx-auto space-y-10 animate-fade-in">
+                
+                <div className="text-center space-y-3">
+                  <span className="text-[9px] font-bold tracking-widest text-cyan-400 bg-cyan-950/80 border border-cyan-800/40 px-3 py-1 rounded-full uppercase font-mono">
+                    System Architecture Documentation
+                  </span>
+                  <h2 className="text-3xl md:text-5xl font-extrabold font-display">
+                    Visual Prompt Engineering Framework
+                  </h2>
+                  <p className="text-xs md:text-sm text-neutral-400 max-w-2xl mx-auto leading-relaxed">
+                    VEO 3 Prompt Creation is a structured visual-direction system for turning rough ideas, lyrics, moods, images, and aesthetic references into production-ready cinematic prompts.
+                  </p>
+                </div>
+
+                <div className="bg-neutral-900/30 border border-neutral-850 p-7 rounded-2xl space-y-3">
+                  <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">System Purpose</h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed">
+                    Instead of generating prompts from scratch, the platform combines prompt engineering, aesthetic retrieval, visual metadata, and creative-direction rules to construct detailed visual briefs suitable for AI video generation.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  
+                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-3">
+                    <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                      <Icon name="camera" className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">Cinematic Camera Language</h4>
+                    <p className="text-xs text-neutral-400 leading-relaxed">
+                      Vague words like "high quality" are replaced with concrete production terms: anamorphic compression, editorial beauty close-ups, runway tracking, studio flash, golden-hour backlight, and shallow depth of field.
+                    </p>
+                  </div>
+
+                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-3">
+                    <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                      <Icon name="map" className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">Environmental World Building</h4>
+                    <p className="text-xs text-neutral-400 leading-relaxed">
+                      Simple ideas expand into complete visual worlds: architecture, geography, lighting, weather, interior design, fashion styling, luxury objects, and spatial composition.
+                    </p>
+                  </div>
+
+                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-3">
+                    <div className="w-9 h-9 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
+                      <Icon name="sliders" className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">Structural Negations</h4>
+                    <p className="text-xs text-neutral-400 leading-relaxed">
+                      Rules like "No dialogue. No dancing. No storytelling." prevent drift and keep generation focused on atmosphere, styling, camera work, and visual motion.
+                    </p>
+                  </div>
+
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {[
+                    {
+                      title: "Visualizer Mode",
+                      body: "Built for music visualizers, fashion films, beauty campaigns, moodboards, and luxury editorials. Focuses on atmosphere, cinematography, fashion, environment, mood, and movement."
+                    },
+                    {
+                      title: "Music Video Mode",
+                      body: "Supports lyric-inspired visuals, performance-driven scenes, artist shots, visual rhythm, performance energy, and music-video progression when explicitly requested."
+                    },
+                    {
+                      title: "Short Film Mode",
+                      body: "Designed for narrative scenes with dialogue, narration, character interaction, continuity, scene structure, and cinematic storytelling."
+                    }
+                  ].map((mode) => (
+                    <div key={mode.title} className="bg-neutral-900/30 border border-neutral-850 p-5 rounded-2xl space-y-2">
+                      <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">{mode.title}</h4>
+                      <p className="text-xs text-neutral-400 leading-relaxed">{mode.body}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bg-neutral-900/30 border border-neutral-850 p-7 rounded-2xl space-y-4">
+                  <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">Aesthetic Model Retrieval</h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed">
+                    The platform retrieves patterns from a curated visual library instead of relying on blank-slate generation. Each aesthetic model carries reusable visual DNA: fashion cues, camera language, lighting styles, environmental motifs, color palettes, and mood descriptors.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {STYLE_CATEGORIES.map(cat => (
+                      <span key={cat.name} className="text-[10px] bg-neutral-950 border border-neutral-850 text-neutral-400 px-3 py-1 rounded-full font-mono">
+                        {cat.icon} {cat.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-neutral-900/30 border border-neutral-850 p-8 rounded-3xl space-y-4 shadow-sm">
+                  <h3 className="text-md font-bold text-white flex items-center gap-2 font-display">
+                    <Icon name="sparkles" className="w-4 h-4 text-cyan-400" />
+                    Standardized Visual Brief Specification
+                  </h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed">
+                    All outputs follow a consistent creative-director structure so prompts stay visually coherent, stylistically consistent, and optimized for cinematic Veo 3 generation.
+                  </p>
+
+                  <div className="bg-neutral-950 border border-neutral-850 rounded-xl p-5 font-mono text-[11px] text-neutral-300 leading-relaxed space-y-2">
+                    <p className="text-cyan-400 font-bold">### Ultra-cinematic [Style Family] visualizer inspired by [Visual Reference]...</p>
+                    <p className="text-neutral-200">A [Main Subject] in [Environment]...</p>
+                    <p className="text-indigo-400 font-bold mt-3 uppercase tracking-wider text-[10px]">Scene visuals:</p>
+                    <p className="text-neutral-400">• [Visual Detail]</p>
+                    <p className="text-neutral-400">• [Motion Cue]</p>
+                    <p className="text-neutral-400">• [Environmental Cue]</p>
+                    <p className="text-indigo-400 font-bold mt-3 uppercase tracking-wider text-[10px]">Visual style:</p>
+                    <p className="text-neutral-400">[Camera Direction]</p>
+                    <p className="text-neutral-400">[Lighting Design]</p>
+                    <p className="text-neutral-400">[Cinematic References]</p>
+                    <p className="text-indigo-400 font-bold mt-3 uppercase tracking-wider text-[10px]">Color palette:</p>
+                    <p className="text-neutral-400">[Primary Colors]</p>
+                    <p className="text-neutral-400">[Accent Colors]</p>
+                    <p className="text-neutral-400">[Lighting Tints]</p>
+                    <p className="text-indigo-400 font-bold mt-3 uppercase tracking-wider text-[10px]">Mood:</p>
+                    <p className="text-neutral-400">[Atmosphere]</p>
+                    <p className="text-indigo-400 font-bold mt-3 uppercase tracking-wider text-[10px]">Camera:</p>
+                    <p className="text-neutral-400">[Shot Design]</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-4">
+                    <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">Dialogue Handling</h3>
+                    <p className="text-xs text-neutral-400 leading-relaxed">
+                      Dialogue is treated as a separate generation parameter. The system should only generate dialogue when explicitly requested.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {["No Dialogue", "Ambient Background Speech", "Character Dialogue", "Narration", "Voiceover"].map(option => (
+                        <span key={option} className="text-[10px] bg-neutral-950 border border-neutral-850 text-neutral-400 px-3 py-1 rounded-full font-mono">
+                          {option}
+                        </span>
                       ))}
                     </div>
                   </div>
 
-                  <button
-                    onClick={generatePlaceholderPrompt}
-                    className="w-full bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold py-3 rounded-xl"
-                  >
-                    Generate Placeholder Prompt
-                  </button>
-                </section>
-
-                <section className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-semibold">Output</h2>
-                    {outputPrompt && (
-                      <button
-                        onClick={copyOutput}
-                        className="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded-lg"
-                      >
-                        Copy
-                      </button>
-                    )}
+                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-4">
+                    <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">Music Handling</h3>
+                    <p className="text-xs text-neutral-400 leading-relaxed">
+                      Music is treated as a separate generation parameter. Music metadata influences pacing, atmosphere, editing rhythm, and scene design. The system does not generate music.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {["No Music Reference", "Existing Song Visualizer", "Phonk", "Electropop", "Fashion Runway", "Festival EDM", "Cinematic Score"].map(option => (
+                        <span key={option} className="text-[10px] bg-neutral-950 border border-neutral-850 text-neutral-400 px-3 py-1 rounded-full font-mono">
+                          {option}
+                        </span>
+                      ))}
+                    </div>
                   </div>
+                </div>
 
-                  <pre className="min-h-[360px] whitespace-pre-wrap bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-xs leading-relaxed text-neutral-300">
-                    {outputPrompt || "[GENERATED PLACEHOLDER PROMPT WILL APPEAR HERE]"}
-                  </pre>
-                </section>
               </div>
             )}
 
-            {activeTab === "library" && (
-              <section className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
-                <h2 className="text-lg font-bold mb-4">Placeholder Prompt Library</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {PLACEHOLDER_PROMPTS.map(item => (
-                    <article
-                      key={item.id}
-                      className="bg-neutral-950 border border-neutral-800 rounded-xl p-4 space-y-3"
-                    >
-                      <div>
-                        <h3 className="font-semibold">{item.title}</h3>
-                        <p className="text-xs text-cyan-400">{item.category}</p>
-                      </div>
-                      <p className="text-sm text-neutral-400">{item.prompt}</p>
-                      <button
-                        onClick={() => {
-                          setSelectedCategory(item.category);
-                          setOutputPrompt(item.prompt);
-                          setActiveTab("studio");
-                        }}
-                        className="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded-lg"
-                      >
-                        Load Placeholder
-                      </button>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            )}
           </main>
 
-          <footer className="border-t border-neutral-800 px-6 py-4 text-center text-xs text-neutral-500">
-            © 2026 Veo 3 Prompt Studio Placeholder Prototype
+          {/* Save prompt dialog. */}
+          {showSaveModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in font-sans">
+              <div className="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-[0_12px_40px_rgba(0,0,0,0.8)]">
+                
+                <div className="flex justify-between items-center">
+                  <h3 className="font-bold text-neutral-100 flex items-center gap-2 text-sm font-display">
+                    <Icon name="bookmark" className="w-4 h-4 text-cyan-400" />
+                    Save Custom Prompt Model
+                  </h3>
+                  <button 
+                    onClick={() => setShowSaveModal(false)}
+                    className="text-neutral-400 hover:text-white p-1 rounded-lg transition"
+                  >
+                    <Icon name="x" className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-neutral-400 uppercase font-mono">Template Name</label>
+                  <input
+                    type="text"
+                    value={newPromptTitle}
+                    onChange={(e) => setNewPromptTitle(e.target.value)}
+                    className="w-full bg-neutral-950 border border-neutral-850 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/50"
+                  />
+                </div>
+
+                <div className="space-y-1 text-xs text-neutral-400">
+                  <span className="font-semibold block text-[10px] font-mono uppercase text-neutral-500">Categorized under:</span>
+                  <span className="inline-block bg-neutral-950 px-3 py-1.5 rounded-lg border border-neutral-850 text-cyan-400 font-bold text-[11px] font-mono">
+                    {selectedCategory}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-neutral-850">
+                  <button
+                    onClick={() => setShowSaveModal(false)}
+                    className="bg-neutral-950 border border-neutral-850 text-xs font-semibold text-neutral-400 py-2.5 rounded-xl transition hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmSavePrompt}
+                    className="bg-cyan-500 hover:bg-cyan-600 text-neutral-950 text-xs font-bold py-2.5 rounded-xl transition"
+                  >
+                    Confirm Save
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {/* Footer links and credit. */}
+          <footer className="bg-neutral-950 border-t border-neutral-900/60 py-8 px-6 mt-16 text-center text-[11px] text-neutral-500 space-y-2 z-10 relative">
+            <p>© 2026 Veo 3 Video Prompt Improver. All rights by wuisabel-gif on GitHub.</p>
+            <div className="flex justify-center gap-4 text-neutral-600 font-mono">
+              <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('about'); }} className="hover:text-neutral-400 transition">Brief Specification</a>
+              <span>•</span>
+              <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('library'); }} className="hover:text-neutral-400 transition">Aesthetics Index</a>
+              <span>•</span>
+              <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('improver'); }} className="hover:text-neutral-400 transition">Launch Studio</a>
+            </div>
           </footer>
+
         </div>
       );
     }
 
-    const root = ReactDOM.createRoot(document.getElementById("root"));
+    // Mount the app.
+    const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
+
 </body>
 </html>
