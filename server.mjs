@@ -42,6 +42,7 @@ const MODEL = process.env.CREATIVE_MODEL || DEFAULT_MODEL;
 const API_KEY = process.env.CREATIVE_API_KEY;
 const MAX_BODY_BYTES = 1_000_000;
 const PROVIDER_MAX_RETRIES = 3;
+const SAFETY_BLOCK_REASONS = new Set(['SAFETY', 'PROHIBITED_CONTENT', 'BLOCKLIST', 'RECITATION']);
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -137,6 +138,23 @@ async function callCreativeProvider({ systemPrompt, userContent }) {
     }
 
     const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const finishReason = data.candidates?.[0]?.finishReason;
+    const promptBlockReason = data.promptFeedback?.blockReason;
+
+    if (promptBlockReason || SAFETY_BLOCK_REASONS.has(finishReason)) {
+      throw Object.assign(
+        new Error('Safety notice: the creative provider blocked this request because it may include sensitive or unsafe content. Please revise the idea and try again.'),
+        {
+          status: 422,
+          details: {
+            promptBlockReason,
+            finishReason,
+            safetyRatings: data.promptFeedback?.safetyRatings || data.candidates?.[0]?.safetyRatings,
+          },
+        }
+      );
+    }
+
     if (!generatedText) {
       throw Object.assign(new Error('Creative API returned an empty response'), { status: 502 });
     }

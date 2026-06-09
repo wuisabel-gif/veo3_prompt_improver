@@ -839,10 +839,55 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
         document.body.removeChild(textArea);
       };
 
+      const safetyChecks = [
+        {
+          label: "graphic violence",
+          pattern: /\b(kill|murder|torture|gore|gory|behead|dismember|massacre|bloodbath|shooting|stabbing)\b/i
+        },
+        {
+          label: "self-harm",
+          pattern: /\b(suicide|self-harm|self harm|cutting myself|kill myself|hang myself|overdose)\b/i
+        },
+        {
+          label: "sexual exploitation",
+          pattern: /\b(minor sexual|underage sexual|child sexual|teen nude|nude child|sexual assault|rape)\b/i
+        },
+        {
+          label: "hate or harassment",
+          pattern: /\b(nazi propaganda|racial slur|ethnic cleansing|genocide propaganda|hate crime)\b/i
+        },
+        {
+          label: "illegal weapons or instructions",
+          pattern: /\b(make a bomb|build a bomb|explosive recipe|weapon instructions|how to poison)\b/i
+        }
+      ];
+
+      const getSafetyIssue = (text) => {
+        const normalized = text.trim();
+        if (!normalized) return null;
+        return safetyChecks.find(check => check.pattern.test(normalized));
+      };
+
+      const safetyNotice = (issue) => (
+        `Safety notice: this request appears to include ${issue.label}. Please revise it into a non-graphic, non-harmful cinematic concept.`
+      );
+
+      const isProviderSafetyError = (message = "") => (
+        /safety|sensitive|blocked|policy|prohibited|harm|unsafe|responsible/i.test(message)
+      );
+
       // Prompt rewriting flow.
       const handleImprovePrompt = async (presetModifier = "") => {
         if (!roughInput.trim()) {
           showNotification("Write a brief concept idea first.", "error");
+          return;
+        }
+
+        const safetyIssue = getSafetyIssue(`${roughInput} ${presetModifier}`);
+        if (safetyIssue) {
+          const notice = safetyNotice(safetyIssue);
+          setEnhancedOutput(notice);
+          showNotification("Please revise the prompt for safety.", "error");
           return;
         }
 
@@ -892,6 +937,8 @@ Reference mood:
 "[A single artistic philosophical quote mapping to the scene's core essence]"
 
 IMPORTANT RULES:
+- Follow safety guidelines. Refuse or redirect requests involving graphic violence, self-harm, sexual exploitation, hate, harassment, illegal instructions, or other harmful content.
+- If the user request is unsafe or sensitive, do not generate the cinematic prompt. Return a brief safety notice asking the user to revise the idea into a safe, non-graphic concept.
 - Never use generic words like "beautiful", "high-quality", or "photorealistic". Use technical cinematic framing.
 - Integrate the aesthetic language matching the selected visual category.
 - Focus strictly on photographic atmosphere, textures, reflection refractions, and micro-motion.
@@ -948,10 +995,21 @@ Begin rewriting directly. No pre-text or greetings:`;
               }
               throw new Error("Empty text returned");
             }
-            throw new Error(`API response error ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `API response error ${response.status}`);
           } catch (err) {
+            if (isProviderSafetyError(err.message)) {
+              console.error(err);
+              const notice = "Safety notice: Gemini could not generate this request because it may include sensitive or unsafe content. Please revise the idea into a non-graphic, non-harmful cinematic concept and try again.";
+              setEnhancedOutput(notice);
+              showNotification("Generation blocked for safety.", "error");
+              setIsGenerating(false);
+              return;
+            }
+
             if (attempt === maxRetries) {
               console.error(err);
+
               showNotification("Using local fallback template.", "error");
               
               // If the API is unavailable, still give the user a usable draft.
