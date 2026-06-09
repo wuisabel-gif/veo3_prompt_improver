@@ -74,6 +74,7 @@ function App() {
     STYLE_CATEGORIES[0].name
   );
   const [enhancedOutput, setEnhancedOutput] = useState("");
+  const [copyMessage, setCopyMessage] = useState("");
   const [prompts] = useState(INITIAL_PROMPTS);
 
   const handleGeneratePrompt = () => {
@@ -95,10 +96,29 @@ Cinematic lighting, slow camera movement, atmospheric detail, and polished fashi
     );
   };
 
+  const handleCopyPrompt = async () => {
+    if (!enhancedOutput) {
+      setCopyMessage("Generate a prompt first.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(enhancedOutput);
+      setCopyMessage("Prompt copied to clipboard.");
+    } catch (error) {
+      setCopyMessage("Copy failed. Select the text manually.");
+    }
+
+    setTimeout(() => {
+      setCopyMessage("");
+    }, 2500);
+  };
+
   const loadTemplate = (template) => {
     setSelectedCategory(template.category);
     setRoughInput(template.prompt);
     setEnhancedOutput("");
+    setCopyMessage("");
   };
 
   return (
@@ -199,13 +219,28 @@ Cinematic lighting, slow camera movement, atmospheric detail, and polished fashi
         </div>
 
         <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-5 min-h-[400px]">
-          <h2 className="font-bold mb-4">
-            Prompt Output
-          </h2>
+          <div className="flex justify-between items-center gap-4 mb-4">
+            <h2 className="font-bold">
+              Prompt Output
+            </h2>
+
+            <button
+              onClick={handleCopyPrompt}
+              className="bg-neutral-800 hover:bg-neutral-700 px-3 py-1 rounded text-sm"
+            >
+              Copy
+            </button>
+          </div>
 
           <pre className="whitespace-pre-wrap text-sm text-neutral-300 leading-relaxed">
             {enhancedOutput || "Generated prompt will appear here..."}
           </pre>
+
+          {copyMessage && (
+            <p className="mt-4 text-xs text-cyan-400">
+              {copyMessage}
+            </p>
+          )}
         </div>
       </div>
     </div>
