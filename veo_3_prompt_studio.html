@@ -24,17 +24,32 @@
 <div id="root"></div>
 
 <script type="text/babel">
+const { useState } = React;
+
 function App() {
+  const [roughInput, setRoughInput] = useState("");
+
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-5xl font-bold">
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="w-full max-w-2xl">
+        <h1 className="text-5xl font-bold text-center">
           Veo 3 Prompt Studio
         </h1>
 
-        <p className="mt-4 text-neutral-400">
+        <p className="mt-4 text-neutral-400 text-center">
           AI-powered cinematic prompt generation.
         </p>
+
+        <textarea
+          value={roughInput}
+          onChange={(e) => setRoughInput(e.target.value)}
+          placeholder="Describe a mood or scene..."
+          className="w-full mt-8 h-32 p-4 rounded-lg bg-neutral-900 border border-neutral-700"
+        />
+
+        <div className="mt-2 text-sm text-neutral-500">
+          {roughInput.length} characters
+        </div>
       </div>
     </div>
   );
