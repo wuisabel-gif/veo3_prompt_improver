@@ -24,7 +24,9 @@
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState } = React;
+const { useState, useEffect } = React;
+
+const STORAGE_KEY = "veo3_prompt_templates";
 
 const STYLE_CATEGORIES = [
   {
@@ -75,7 +77,26 @@ function App() {
   );
   const [enhancedOutput, setEnhancedOutput] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
-  const [prompts] = useState(INITIAL_PROMPTS);
+  const [prompts, setPrompts] = useState(INITIAL_PROMPTS);
+
+  useEffect(() => {
+    const savedPrompts = localStorage.getItem(STORAGE_KEY);
+
+    if (savedPrompts) {
+      try {
+        setPrompts(JSON.parse(savedPrompts));
+      } catch (error) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROMPTS));
+      }
+    } else {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROMPTS));
+    }
+  }, []);
+
+  const savePrompts = (updatedPrompts) => {
+    setPrompts(updatedPrompts);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPrompts));
+  };
 
   const handleGeneratePrompt = () => {
     if (!roughInput.trim()) {
@@ -108,6 +129,27 @@ Cinematic lighting, slow camera movement, atmospheric detail, and polished fashi
     } catch (error) {
       setCopyMessage("Copy failed. Select the text manually.");
     }
+
+    setTimeout(() => {
+      setCopyMessage("");
+    }, 2500);
+  };
+
+  const handleSaveOutput = () => {
+    if (!enhancedOutput || enhancedOutput === "Write a scene idea first.") {
+      setCopyMessage("Generate a prompt before saving.");
+      return;
+    }
+
+    const newPrompt = {
+      id: Date.now(),
+      title: roughInput.split(" ").slice(0, 3).join(" ") || "Untitled Prompt",
+      category: selectedCategory,
+      prompt: enhancedOutput
+    };
+
+    savePrompts([newPrompt, ...prompts]);
+    setCopyMessage("Prompt saved to library.");
 
     setTimeout(() => {
       setCopyMessage("");
@@ -224,12 +266,21 @@ Cinematic lighting, slow camera movement, atmospheric detail, and polished fashi
               Prompt Output
             </h2>
 
-            <button
-              onClick={handleCopyPrompt}
-              className="bg-neutral-800 hover:bg-neutral-700 px-3 py-1 rounded text-sm"
-            >
-              Copy
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleCopyPrompt}
+                className="bg-neutral-800 hover:bg-neutral-700 px-3 py-1 rounded text-sm"
+              >
+                Copy
+              </button>
+
+              <button
+                onClick={handleSaveOutput}
+                className="bg-cyan-500 hover:bg-cyan-400 text-black px-3 py-1 rounded text-sm font-semibold"
+              >
+                Save
+              </button>
+            </div>
           </div>
 
           <pre className="whitespace-pre-wrap text-sm text-neutral-300 leading-relaxed">
