@@ -862,6 +862,12 @@ ${ex.prompt}
 
         const selectedStyle = STYLE_CATEGORIES.find(c => c.name === selectedCategory);
         const styleKeywords = selectedStyle ? selectedStyle.keywords.join(', ') : '';
+        const generationControls = {
+          visualModel: selectedCategory,
+          dialogueMode: selectedDialogueMode,
+          musicMode: selectedMusicMode,
+          outputType: selectedOutputType
+        };
 
         const systemPrompt = `You are an elite, award-winning fashion film Creative Director behind the visual styling of premium AI visualizers. 
 Transform the user's rough description into a highly structured, ultra-cinematic visual director's brief suitable for premium generators like Veo 3.
@@ -870,9 +876,9 @@ You MUST follow this exact format below. Do not output conversational introducti
 
 Ultra-cinematic [Style Family] visualizer inspired by [Atmospheric Director / High-End Brand / Cinema].
 A [Subject Details] in [Precise Setting]...
-No dialogue.
-No dancing.
-No storytelling.
+Dialogue handling: [Follow the selected dialogue mode exactly]
+Music context: [Follow the selected music mode as pacing, atmosphere, rhythm, and scene-design metadata only]
+Output type: [Follow the selected output type and adapt structure accordingly]
 Scene visuals:
 • [Visual focal point bullet 1]
 • [Visual focal point bullet 2]
@@ -888,13 +894,22 @@ Reference mood:
 IMPORTANT RULES:
 - Never use generic words like "beautiful", "high-quality", or "photorealistic". Use technical cinematic framing.
 - Integrate the aesthetic language matching the selected visual category.
-- Focus strictly on photographic atmosphere, textures, reflection refractions, and micro-motion.`;
+- Focus strictly on photographic atmosphere, textures, reflection refractions, and micro-motion.
+- Dialogue is only allowed when the selected dialogue mode explicitly requests it.
+- Music metadata should influence atmosphere, pacing, visual rhythm, editing style, and scene design. Do not generate lyrics or audio.
+- If output type is Visualizer, keep it atmospheric with no storytelling unless the user explicitly asks.
+- If output type is Music Video, allow performance scenes and rhythm-driven editing.
+- If output type is Short Film, allow narrative structure and dialogue only when the dialogue mode permits it.
+- If output type is Fashion Film, prioritize editorial styling, cinematography, wardrobe, pose language, and luxury campaign pacing.`;
 
         const userContent = `Convert this rough concept:
 "${roughInput}"
 
 Category chosen: ${selectedCategory}
 Target keywords to naturally weave in: ${styleKeywords}
+
+Generation controls:
+${JSON.stringify(generationControls, null, 2)}
 
 ${presetModifier ? `MODIFIER DEMAND: Change the style of the prompt to match this request: "${presetModifier}"` : ""}
 
@@ -1078,10 +1093,30 @@ Begin rewriting directly. No pre-text or greetings:`;
                 </button>
               </nav>
 
-              {/* Small system status badge. */}
-              <div className="hidden lg:flex items-center gap-2 text-[11px] bg-neutral-900 border border-neutral-850 px-3 py-1.5 rounded-xl text-neutral-400 font-mono">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                <span>RAG Context Loaded</span>
+              {/* Social links. */}
+              <div className="hidden lg:flex items-center gap-2">
+                <a
+                  href="https://github.com/wuisabel-gif"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="wuisabel-gif on GitHub"
+                  className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-850 text-neutral-400 hover:text-white hover:border-neutral-700 flex items-center justify-center transition"
+                >
+                  <svg viewBox="0 0 98 96" aria-hidden="true" className="w-5 h-5 fill-current">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M48.85 0C21.86 0 0 22 0 49.22c0 21.76 14.01 40.22 33.44 46.73 2.43.45 3.33-1.06 3.33-2.36 0-1.17-.04-5.03-.07-9.13-13.6 2.98-16.46-5.84-16.46-5.84-2.22-5.7-5.43-7.22-5.43-7.22-4.44-3.06.34-3 .34-3 4.91.35 7.49 5.08 7.49 5.08 4.36 7.54 11.44 5.36 14.23 4.1.44-3.19 1.7-5.36 3.1-6.59-10.86-1.24-22.28-5.48-22.28-24.36 0-5.38 1.91-9.78 5.04-13.23-.51-1.24-2.18-6.25.48-13.03 0 0 4.11-1.33 13.46 5.05a46.37 46.37 0 0 1 12.26-1.66c4.16.02 8.35.57 12.27 1.66 9.34-6.38 13.44-5.05 13.44-5.05 2.67 6.78.99 11.79.49 13.03 3.14 3.45 5.03 7.85 5.03 13.23 0 18.93-11.44 23.1-22.34 24.32 1.75 1.53 3.31 4.55 3.31 9.17 0 6.62-.06 11.95-.06 13.58 0 1.31.88 2.84 3.36 2.36C83.99 89.43 98 70.97 98 49.22 98 22 76.02 0 48.85 0Z" />
+                  </svg>
+                </a>
+                <a
+                  href="https://www.youtube.com/results?search_query=Bella+PI"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Bella PI on YouTube"
+                  className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-850 text-neutral-400 hover:text-red-400 hover:border-neutral-700 flex items-center justify-center transition"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" className="w-5 h-5 fill-current">
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.55 3.6 12 3.6 12 3.6s-7.55 0-9.4.5A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.85.5 9.4.5 9.4.5s7.55 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8ZM9.6 15.6V8.4L15.85 12 9.6 15.6Z" />
+                  </svg>
+                </a>
               </div>
 
             </div>
@@ -1197,6 +1232,85 @@ Begin rewriting directly. No pre-text or greetings:`;
                             </button>
                           );
                         })}
+                      </div>
+                    </div>
+
+                    {/* Generation controls. */}
+                    <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-5 backdrop-blur-md">
+                      <div>
+                        <label className="text-[10px] font-bold tracking-widest text-cyan-400 uppercase flex items-center gap-2 font-mono">
+                          <Icon name="sliders" className="w-4 h-4" />
+                          3. Generation Controls
+                        </label>
+                        <p className="text-[10px] text-neutral-500 mt-1">Configure dialogue, music, and output behavior before prompt generation.</p>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <p className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Dialogue</p>
+                          <div className="flex flex-wrap gap-2">
+                            {DIALOGUE_OPTIONS.map(option => {
+                              const isSelected = selectedDialogueMode === option;
+                              return (
+                                <button
+                                  key={option}
+                                  onClick={() => setSelectedDialogueMode(option)}
+                                  className={`text-[10px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                    isSelected
+                                      ? 'bg-cyan-500/15 border-cyan-400/60 text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.12)]'
+                                      : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
+                                  }`}
+                                >
+                                  {option}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Music</p>
+                          <div className="flex flex-wrap gap-2">
+                            {MUSIC_OPTIONS.map(option => {
+                              const isSelected = selectedMusicMode === option;
+                              return (
+                                <button
+                                  key={option}
+                                  onClick={() => setSelectedMusicMode(option)}
+                                  className={`text-[10px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                    isSelected
+                                      ? 'bg-indigo-500/15 border-indigo-400/60 text-indigo-200 shadow-[0_0_18px_rgba(129,140,248,0.12)]'
+                                      : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
+                                  }`}
+                                >
+                                  {option}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Output Type</p>
+                          <div className="flex flex-wrap gap-2">
+                            {OUTPUT_TYPE_OPTIONS.map(option => {
+                              const isSelected = selectedOutputType === option;
+                              return (
+                                <button
+                                  key={option}
+                                  onClick={() => setSelectedOutputType(option)}
+                                  className={`text-[10px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                    isSelected
+                                      ? 'bg-pink-500/15 border-pink-400/60 text-pink-200 shadow-[0_0_18px_rgba(244,114,182,0.12)]'
+                                      : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
+                                  }`}
+                                >
+                                  {option}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -1573,31 +1687,61 @@ Begin rewriting directly. No pre-text or greetings:`;
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   
-                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-3">
+                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-4 min-h-[420px]">
                     <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono text-center">Research Motivation</h4>
-                    <p className="text-xs text-neutral-400 leading-relaxed">
-                      The project originated from long-term experimentation with AI video generation systems. After testing hundreds of prompts across multiple visual styles, it became clear that successful outputs were often driven by recurring prompt structures rather than isolated keywords. This platform was developed to capture, organize, and reuse those patterns in a systematic way.
-                    </p>
+                    <ul className="text-xs text-neutral-400 leading-relaxed space-y-3">
+                      <li className="flex gap-2">
+                        <span className="text-cyan-400 mt-0.5">•</span>
+                        <span>Built from long-term testing across Veo 3 video styles, moods, and visual categories.</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-cyan-400 mt-0.5">•</span>
+                        <span>Identifies repeatable prompt patterns behind stronger cinematic generations.</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-cyan-400 mt-0.5">•</span>
+                        <span>Turns successful examples into reusable visual-direction structures.</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-cyan-400 mt-0.5">•</span>
+                        <span>Reduces guesswork by organizing style, mood, camera, and atmosphere into a system.</span>
+                      </li>
+                    </ul>
                   </div>
 
-                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-3">
+                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-4 min-h-[420px]">
                     <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono text-center">Enhanced Prompt Engineering</h4>
-                    <p className="text-xs text-neutral-400 leading-relaxed">
-                      Instead of generating prompts from a blank slate, the platform retrieves information from a curated library of visual models. Each model contains reusable metadata describing fashion cues, camera language, environmental motifs, lighting conditions, color palettes, and atmospheric characteristics. These components are then combined to construct a structured Veo 3 prompt.
-                    </p>
+                    <ul className="text-xs text-neutral-400 leading-relaxed space-y-3">
+                      <li className="flex gap-2">
+                        <span className="text-indigo-400 mt-0.5">•</span>
+                        <span>Retrieves curated visual models instead of generating from a blank prompt.</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-indigo-400 mt-0.5">•</span>
+                        <span>Combines fashion cues, camera language, lighting, color, and environment metadata.</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-indigo-400 mt-0.5">•</span>
+                        <span>Uses selected generation controls to shape dialogue, music context, and output type.</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-indigo-400 mt-0.5">•</span>
+                        <span>Assembles each result into a structured creative brief for more consistent Veo 3 output.</span>
+                      </li>
+                    </ul>
                   </div>
 
-                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-3">
+                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-4 min-h-[420px]">
                     <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono text-center">Visual Model Architecture</h4>
                     <div className="text-xs text-neutral-400 leading-relaxed font-mono space-y-1 text-center">
                       {[
                         "💡 User Idea",
-                        "📚 Prompt Retrieval",
-                        "🎭 Visual Models",
-                        "🧬 Visual DNA Assembly",
-                        "⚙ Generation Controls",
-                        "🎬 Visual Director Brief",
-                        "✨ Veo 3 Output"
+                        "🎭 Visual Model Selection",
+                        "🎙 Dialogue Selection",
+                        "🎵 Music Selection",
+                        "🎬 Output Type",
+                        "⚙ Prompt Architecture Engine",
+                        "✨ Veo 3 Prompt Output"
                       ].map((step, index, flow) => (
                         <React.Fragment key={step}>
                           <p>{step}</p>
@@ -1651,36 +1795,6 @@ Begin rewriting directly. No pre-text or greetings:`;
                     <p className="text-neutral-400">[Atmosphere]</p>
                     <p className="text-indigo-400 font-bold mt-3 uppercase tracking-wider text-[10px]">Camera:</p>
                     <p className="text-neutral-400">[Shot Design]</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-4">
-                    <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">Dialogue Handling</h3>
-                    <p className="text-xs text-neutral-400 leading-relaxed">
-                      Dialogue is treated as a separate generation parameter. The system should only generate dialogue when explicitly requested.
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {["No Dialogue", "Ambient Background Speech", "Character Dialogue", "Narration", "Voiceover"].map(option => (
-                        <span key={option} className="text-[10px] bg-neutral-950 border border-neutral-850 text-neutral-400 px-3 py-1 rounded-full font-mono">
-                          {option}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-neutral-900/30 border border-neutral-850 p-6 rounded-2xl space-y-4">
-                    <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">Music Handling</h3>
-                    <p className="text-xs text-neutral-400 leading-relaxed">
-                      Music is treated as a separate generation parameter. Music metadata influences pacing, atmosphere, editing rhythm, and scene design. The system does not generate music.
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {["No Music Reference", "Existing Song Visualizer", "Phonk", "Electropop", "Fashion Runway", "Festival EDM", "Cinematic Score"].map(option => (
-                        <span key={option} className="text-[10px] bg-neutral-950 border border-neutral-850 text-neutral-400 px-3 py-1 rounded-full font-mono">
-                          {option}
-                        </span>
-                      ))}
-                    </div>
                   </div>
                 </div>
 
