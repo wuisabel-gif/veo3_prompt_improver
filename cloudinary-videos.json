@@ -1,0 +1,98 @@
+[
+  {
+    "file": "asset/01.mov",
+    "publicId": "veo3-prompt-improver/01",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965867/veo3-prompt-improver/01.mov",
+    "format": "mov",
+    "bytes": 4728150,
+    "duration": 8
+  },
+  {
+    "file": "asset/02.mov",
+    "publicId": "veo3-prompt-improver/02",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965870/veo3-prompt-improver/02.mov",
+    "format": "mov",
+    "bytes": 3422179,
+    "duration": 10
+  },
+  {
+    "file": "asset/03.mov",
+    "publicId": "veo3-prompt-improver/03",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965872/veo3-prompt-improver/03.mov",
+    "format": "mov",
+    "bytes": 2612738,
+    "duration": 8
+  },
+  {
+    "file": "asset/04.mov",
+    "publicId": "veo3-prompt-improver/04",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965876/veo3-prompt-improver/04.mov",
+    "format": "mov",
+    "bytes": 6825410,
+    "duration": 8
+  },
+  {
+    "file": "asset/05.mov",
+    "publicId": "veo3-prompt-improver/05",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965879/veo3-prompt-improver/05.mov",
+    "format": "mov",
+    "bytes": 4774658,
+    "duration": 10
+  },
+  {
+    "file": "asset/06.mov",
+    "publicId": "veo3-prompt-improver/06",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965881/veo3-prompt-improver/06.mov",
+    "format": "mov",
+    "bytes": 3477614,
+    "duration": 10
+  },
+  {
+    "file": "asset/07.mp4",
+    "publicId": "veo3-prompt-improver/07",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965884/veo3-prompt-improver/07.mov",
+    "format": "mov",
+    "bytes": 4350750,
+    "duration": 10
+  },
+  {
+    "file": "asset/08.mov",
+    "publicId": "veo3-prompt-improver/08",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965887/veo3-prompt-improver/08.mov",
+    "format": "mov",
+    "bytes": 4421834,
+    "duration": 8
+  },
+  {
+    "file": "asset/09.mov",
+    "publicId": "veo3-prompt-improver/09",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965889/veo3-prompt-improver/09.mov",
+    "format": "mov",
+    "bytes": 3139697,
+    "duration": 10
+  },
+  {
+    "file": "asset/10.mov",
+    "publicId": "veo3-prompt-improver/10",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965893/veo3-prompt-improver/10.mov",
+    "format": "mov",
+    "bytes": 8505233,
+    "duration": 10
+  },
+  {
+    "file": "asset/11.mov",
+    "publicId": "veo3-prompt-improver/11",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965896/veo3-prompt-improver/11.mov",
+    "format": "mov",
+    "bytes": 4086213,
+    "duration": 10
+  },
+  {
+    "file": "asset/12.mov",
+    "publicId": "veo3-prompt-improver/12",
+    "secureUrl": "https://res.cloudinary.com/ds2z90h0x/video/upload/v1780965897/veo3-prompt-improver/12.mov",
+    "format": "mov",
+    "bytes": 1335624,
+    "duration": 8
+  }
+]
