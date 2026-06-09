@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "start": "node server.mjs",
+    "upload:cloudinary": "node scripts/upload-cloudinary.mjs"
+  }
+}
