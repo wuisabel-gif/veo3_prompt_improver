@@ -1,10 +1,26 @@
-# Veo 3 Video Prompt Improver
+# Be Your Own Director — AI-Powered Veo 3 Prompt Studio
 
 Veo 3 Video Prompt Improver is a cinematic prompt studio for turning rough ideas, moods, lyrics, aesthetics, and visual concepts into polished Veo 3-ready creative briefs.
 
-This app is built from my successful trained examples for different types of videos, including fashion editorials, luxury campaigns, music visualizers, fantasy worlds, cinematic storytelling, beauty campaigns, runway direction, and curated visual aesthetics.
+Over the past year, I have spent a significant amount of time experimenting with Veo 3 and other AI video-generation models while creating music visualizers, fashion films, fantasy scenes, and cinematic concepts for my Bella Pi YouTube channel.
 
 For more examples of my Veo 3 videos, visit my website: [Bella PI](https://wuisabel-gif.github.io/Bella_PI/index.html).
+
+Through hundreds of prompt iterations, I began documenting recurring patterns that consistently produced stronger visual results. This project is an attempt to organize those observations into a reusable prompt-engineering framework that helps transform rough ideas into structured cinematic briefs.
+
+The platform combines prompt retrieval, visual metadata modeling, aesthetic classification, and structured prompt assembly to generate more coherent Veo 3 prompts across fashion editorials, luxury campaigns, fantasy worlds, runway films, and music-video concepts.
+
+**Project Status:** Active Prototype (Potential Future Product)
+
+**Try the prototype:** [YOUR_LINK_HERE]
+
+## Why AI Video Generation?
+
+Generative AI is rapidly changing how visual content is created across advertising, entertainment, fashion, social media, and digital marketing. Companies increasingly use AI-generated video to prototype campaigns, explore creative concepts, build promotional content, and accelerate production workflows.
+
+As video-generation models become more capable, the challenge is no longer simply generating content. It is directing the model toward a specific visual outcome.
+
+This project explores how structured prompt engineering, visual metadata, and reusable aesthetic models can improve controllability and consistency in AI-generated video. By organizing successful visual patterns into reusable frameworks, the platform helps creators communicate visual intent more effectively and produce stronger cinematic results.
 
 ## What It Does
 
