@@ -1537,7 +1537,7 @@ Begin rewriting directly. No pre-text or greetings:`;
                 <div className="bg-neutral-900/30 border border-neutral-850 p-7 rounded-2xl space-y-3">
                   <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">System Purpose</h3>
                   <p className="text-xs text-neutral-400 leading-relaxed">
-                    Instead of generating prompts from scratch, the platform combines prompt engineering, aesthetic retrieval, visual metadata, and creative-direction rules to construct detailed visual briefs suitable for AI video generation.
+                    This project explores how structured prompt engineering influences AI video generation. Through extensive experimentation with Veo 3 and other generative video models, recurring visual patterns were identified and organized into a reusable framework for cinematic prompt construction, aesthetic retrieval, and visual-direction modeling. Rather than relying on one-off prompt generation, the platform combines prompt architecture, aesthetic retrieval, visual metadata, and generation constraints to produce more consistent and controllable Veo 3 outputs. The goal is to transform rough concepts into structured visual briefs that preserve style, atmosphere, and cinematographic intent.
                   </p>
                 </div>
 
@@ -1547,9 +1547,9 @@ Begin rewriting directly. No pre-text or greetings:`;
                     <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
                       <Icon name="camera" className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">Cinematic Camera Language</h4>
+                    <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">Research Motivation</h4>
                     <p className="text-xs text-neutral-400 leading-relaxed">
-                      Vague words like "high quality" are replaced with concrete production terms: anamorphic compression, editorial beauty close-ups, runway tracking, studio flash, golden-hour backlight, and shallow depth of field.
+                      The project originated from long-term experimentation with AI video generation systems. After testing hundreds of prompts across multiple visual styles, it became clear that successful outputs were often driven by recurring prompt structures rather than isolated keywords. This platform was developed to capture, organize, and reuse those patterns in a systematic way.
                     </p>
                   </div>
 
@@ -1557,9 +1557,9 @@ Begin rewriting directly. No pre-text or greetings:`;
                     <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
                       <Icon name="map" className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">Environmental World Building</h4>
+                    <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">Enhanced Prompt Engineering</h4>
                     <p className="text-xs text-neutral-400 leading-relaxed">
-                      Simple ideas expand into complete visual worlds: architecture, geography, lighting, weather, interior design, fashion styling, luxury objects, and spatial composition.
+                      Instead of generating prompts from a blank slate, the platform retrieves information from a curated library of visual models. Each model contains reusable metadata describing fashion cues, camera language, environmental motifs, lighting conditions, color palettes, and atmospheric characteristics. These components are then combined to construct a structured Veo 3 prompt.
                     </p>
                   </div>
 
@@ -1573,28 +1573,6 @@ Begin rewriting directly. No pre-text or greetings:`;
                     </p>
                   </div>
 
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  {[
-                    {
-                      title: "Visualizer Mode",
-                      body: "Built for music visualizers, fashion films, beauty campaigns, moodboards, and luxury editorials. Focuses on atmosphere, cinematography, fashion, environment, mood, and movement."
-                    },
-                    {
-                      title: "Music Video Mode",
-                      body: "Supports lyric-inspired visuals, performance-driven scenes, artist shots, visual rhythm, performance energy, and music-video progression when explicitly requested."
-                    },
-                    {
-                      title: "Short Film Mode",
-                      body: "Designed for narrative scenes with dialogue, narration, character interaction, continuity, scene structure, and cinematic storytelling."
-                    }
-                  ].map((mode) => (
-                    <div key={mode.title} className="bg-neutral-900/30 border border-neutral-850 p-5 rounded-2xl space-y-2">
-                      <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">{mode.title}</h4>
-                      <p className="text-xs text-neutral-400 leading-relaxed">{mode.body}</p>
-                    </div>
-                  ))}
                 </div>
 
                 <div className="bg-neutral-900/30 border border-neutral-850 p-7 rounded-2xl space-y-4">
