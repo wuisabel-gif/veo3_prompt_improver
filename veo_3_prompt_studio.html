@@ -44,12 +44,37 @@ const STYLE_CATEGORIES = [
   }
 ];
 
+const INITIAL_PROMPTS = [
+  {
+    id: 1,
+    title: "Runway Elevator",
+    category: "Runway Couture",
+    prompt:
+      "A mysterious fashion model inside a glowing elevator, wearing a black couture dress under cold fluorescent lighting."
+  },
+  {
+    id: 2,
+    title: "Beauty Close-Up",
+    category: "Beauty Editorial",
+    prompt:
+      "A close-up beauty editorial with glossy skin, jewelry reflections, soft shadows, and luxury magazine lighting."
+  },
+  {
+    id: 3,
+    title: "Penthouse Noir",
+    category: "Cinematic Storytelling",
+    prompt:
+      "A lonely subject in a dark penthouse overlooking city lights, framed like a quiet cinematic short film."
+  }
+];
+
 function App() {
   const [roughInput, setRoughInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(
     STYLE_CATEGORIES[0].name
   );
   const [enhancedOutput, setEnhancedOutput] = useState("");
+  const [prompts] = useState(INITIAL_PROMPTS);
 
   const handleGeneratePrompt = () => {
     if (!roughInput.trim()) {
@@ -68,6 +93,12 @@ ${roughInput}
 Visual style:
 Cinematic lighting, slow camera movement, atmospheric detail, and polished fashion editorial framing.`
     );
+  };
+
+  const loadTemplate = (template) => {
+    setSelectedCategory(template.category);
+    setRoughInput(template.prompt);
+    setEnhancedOutput("");
   };
 
   return (
@@ -121,6 +152,40 @@ Cinematic lighting, slow camera movement, atmospheric detail, and polished fashi
                     {category.desc}
                   </div>
                 </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold mb-4">
+              Starter Templates
+            </h2>
+
+            <div className="space-y-3">
+              {prompts.map((prompt) => (
+                <div
+                  key={prompt.id}
+                  className="bg-neutral-900 border border-neutral-800 rounded-lg p-4"
+                >
+                  <div className="flex justify-between gap-4">
+                    <div>
+                      <h3 className="font-semibold">
+                        {prompt.title}
+                      </h3>
+
+                      <p className="text-xs text-neutral-400 mt-1">
+                        {prompt.prompt}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => loadTemplate(prompt)}
+                      className="shrink-0 bg-neutral-800 hover:bg-neutral-700 px-3 py-1 rounded text-sm"
+                    >
+                      Load
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
