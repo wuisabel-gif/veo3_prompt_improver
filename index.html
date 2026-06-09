@@ -698,11 +698,41 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
       }
     ];
 
+    const DIALOGUE_OPTIONS = [
+      "🔇 No Dialogue",
+      "🎙 Ambient Speech",
+      "🗣 Character Dialogue",
+      "📖 Narration",
+      "🎧 Voiceover"
+    ];
+
+    const MUSIC_OPTIONS = [
+      "🎵 No Music Reference",
+      "🖤 Dark Synthwave",
+      "⚡ Phonk",
+      "🎡 Festival EDM",
+      "💃 Latin Pop",
+      "🎤 K-Pop",
+      "🎹 Dream Pop",
+      "🌴 Tropical House",
+      "🎬 Cinematic Score"
+    ];
+
+    const OUTPUT_TYPE_OPTIONS = [
+      "✨ Visualizer",
+      "🎤 Music Video",
+      "🎬 Short Film",
+      "📸 Fashion Film"
+    ];
+
     // Main workspace shell.
     function App() {
       const [activeTab, setActiveTab] = useState('improver'); // 'improver', 'library', 'about'
       const [roughInput, setRoughInput] = useState(() => getRandomVibeStarters(1)[0]);
       const [selectedCategory, setSelectedCategory] = useState(STYLE_CATEGORIES[0].name);
+      const [selectedDialogueMode, setSelectedDialogueMode] = useState(DIALOGUE_OPTIONS[0]);
+      const [selectedMusicMode, setSelectedMusicMode] = useState(MUSIC_OPTIONS[0]);
+      const [selectedOutputType, setSelectedOutputType] = useState(OUTPUT_TYPE_OPTIONS[0]);
       const [enhancedOutput, setEnhancedOutput] = useState('');
       const [isGenerating, setIsGenerating] = useState(false);
       const [randomVibeStarters] = useState(() => getRandomVibeStarters());
@@ -1004,7 +1034,7 @@ Begin rewriting directly. No pre-text or greetings:`;
               <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setActiveTab('improver')}>
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-pink-500 p-[1.5px] shadow-[0_0_20px_rgba(6,182,212,0.15)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all duration-500">
                   <div className="w-full h-full bg-neutral-950 rounded-[10px] flex items-center justify-center">
-                    <Icon name="sparkles" className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-cyan-300 text-lg leading-none translate-x-[1px] group-hover:scale-110 transition-transform">▶</span>
                   </div>
                 </div>
                 <div>
