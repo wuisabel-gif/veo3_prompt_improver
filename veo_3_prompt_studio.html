@@ -24,31 +24,333 @@
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState } = React;
+const { useState, useEffect } = React;
+
+const STORAGE_KEY = "veo3_prompt_templates";
+
+const STYLE_CATEGORIES = [
+  {
+    name: "Runway Couture",
+    icon: "👠",
+    desc: "High fashion and luxury campaigns"
+  },
+  {
+    name: "Beauty Editorial",
+    icon: "📸",
+    desc: "Beauty photography and makeup campaigns"
+  },
+  {
+    name: "Cinematic Storytelling",
+    icon: "🎬",
+    desc: "Narrative visual worlds"
+  }
+];
+
+const INITIAL_PROMPTS = [
+  {
+    id: 1,
+    title: "Runway Elevator",
+    category: "Runway Couture",
+    prompt:
+      "A mysterious fashion model inside a glowing elevator, wearing a black couture dress under cold fluorescent lighting."
+  },
+  {
+    id: 2,
+    title: "Beauty Close-Up",
+    category: "Beauty Editorial",
+    prompt:
+      "A close-up beauty editorial with glossy skin, jewelry reflections, soft shadows, and luxury magazine lighting."
+  },
+  {
+    id: 3,
+    title: "Penthouse Noir",
+    category: "Cinematic Storytelling",
+    prompt:
+      "A lonely subject in a dark penthouse overlooking city lights, framed like a quiet cinematic short film."
+  }
+];
 
 function App() {
   const [roughInput, setRoughInput] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(
+    STYLE_CATEGORIES[0].name
+  );
+  const [enhancedOutput, setEnhancedOutput] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [copyMessage, setCopyMessage] = useState("");
+  const [prompts, setPrompts] = useState(INITIAL_PROMPTS);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const savedPrompts = localStorage.getItem(STORAGE_KEY);
+
+    if (savedPrompts) {
+      try {
+        setPrompts(JSON.parse(savedPrompts));
+      } catch (error) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROMPTS));
+      }
+    } else {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROMPTS));
+    }
+  }, []);
+
+  const savePrompts = (updatedPrompts) => {
+    setPrompts(updatedPrompts);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPrompts));
+  };
+
+  const buildFallbackPrompt = () => {
+    return `Category: ${selectedCategory}
+
+Ultra-cinematic ${selectedCategory} visualizer.
+
+Scene idea:
+${roughInput}
+
+Visual style:
+Cinematic lighting, slow camera movement, atmospheric detail, and polished fashion editorial framing.`;
+  };
+
+  const handleGeneratePrompt = async () => {
+    if (!roughInput.trim()) {
+      setEnhancedOutput("Write a scene idea first.");
+      return;
+    }
+
+    setIsGenerating(true);
+    setCopyMessage("");
+
+    try {
+      const response = await fetch("/api/improve-prompt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prompt: roughInput,
+          category: selectedCategory
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (!data.text) {
+        throw new Error("No prompt text returned");
+      }
+
+      setEnhancedOutput(data.text);
+    } catch (error) {
+      console.error(error);
+      setEnhancedOutput(buildFallbackPrompt());
+      setCopyMessage("Using local fallback prompt.");
+    }
+
+    setIsGenerating(false);
+  };
+
+  const handleCopyPrompt = async () => {
+    if (!enhancedOutput) {
+      setCopyMessage("Generate a prompt first.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(enhancedOutput);
+      setCopyMessage("Prompt copied to clipboard.");
+    } catch (error) {
+      setCopyMessage("Copy failed. Select the text manually.");
+    }
+
+    setTimeout(() => {
+      setCopyMessage("");
+    }, 2500);
+  };
+
+  const handleSaveOutput = () => {
+    if (!enhancedOutput || enhancedOutput === "Write a scene idea first.") {
+      setCopyMessage("Generate a prompt before saving.");
+      return;
+    }
+
+    const newPrompt = {
+      id: Date.now(),
+      title: roughInput.split(" ").slice(0, 3).join(" ") || "Untitled Prompt",
+      category: selectedCategory,
+      prompt: enhancedOutput
+    };
+
+    savePrompts([newPrompt, ...prompts]);
+    setCopyMessage("Prompt saved to library.");
+
+    setTimeout(() => {
+      setCopyMessage("");
+    }, 2500);
+  };
+
+  const loadTemplate = (template) => {
+    setSelectedCategory(template.category);
+    setRoughInput(template.prompt);
+    setEnhancedOutput("");
+    setCopyMessage("");
+  };
+
+  const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+
+  const filteredPrompts = prompts.filter((prompt) =>
+    prompt.title.toLowerCase().includes(normalizedSearchTerm) ||
+    prompt.category.toLowerCase().includes(normalizedSearchTerm) ||
+    prompt.prompt.toLowerCase().includes(normalizedSearchTerm)
+  );
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-2xl">
-        <h1 className="text-5xl font-bold text-center">
-          Veo 3 Prompt Studio
-        </h1>
+    <div className="min-h-screen px-6 py-12 max-w-5xl mx-auto">
+      <h1 className="text-5xl font-bold text-center">
+        Veo 3 Prompt Studio
+      </h1>
 
-        <p className="mt-4 text-neutral-400 text-center">
-          AI-powered cinematic prompt generation.
-        </p>
+      <p className="mt-4 text-center text-neutral-400">
+        AI-powered cinematic prompt generation.
+      </p>
 
-        <textarea
-          value={roughInput}
-          onChange={(e) => setRoughInput(e.target.value)}
-          placeholder="Describe a mood or scene..."
-          className="w-full mt-8 h-32 p-4 rounded-lg bg-neutral-900 border border-neutral-700"
-        />
+      <div className="grid md:grid-cols-2 gap-8 mt-10">
+        <div>
+          <textarea
+            value={roughInput}
+            onChange={(e) => setRoughInput(e.target.value)}
+            placeholder="Describe a mood or scene..."
+            className="w-full h-32 p-4 rounded-lg bg-neutral-900 border border-neutral-700"
+          />
 
-        <div className="mt-2 text-sm text-neutral-500">
-          {roughInput.length} characters
+          <div className="mt-2 text-sm text-neutral-500">
+            {roughInput.length} characters
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold mb-4">
+              Choose an aesthetic
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {STYLE_CATEGORIES.map((category) => (
+                <button
+                  key={category.name}
+                  onClick={() => setSelectedCategory(category.name)}
+                  className={`p-4 rounded-lg border text-left ${
+                    selectedCategory === category.name
+                      ? "border-cyan-400 bg-neutral-800"
+                      : "border-neutral-700 bg-neutral-900"
+                  }`}
+                >
+                  <div className="text-2xl">
+                    {category.icon}
+                  </div>
+
+                  <div className="font-semibold mt-2">
+                    {category.name}
+                  </div>
+
+                  <div className="text-xs text-neutral-400 mt-1">
+                    {category.desc}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold mb-4">
+              Starter Templates
+            </h2>
+
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search templates"
+              className="w-full mb-4 p-2 rounded bg-neutral-800 border border-neutral-700"
+            />
+
+            <div className="space-y-3">
+              {filteredPrompts.map((prompt) => (
+                <div
+                  key={prompt.id}
+                  className="bg-neutral-900 border border-neutral-800 rounded-lg p-4"
+                >
+                  <div className="flex justify-between gap-4">
+                    <div>
+                      <h3 className="font-semibold">
+                        {prompt.title}
+                      </h3>
+
+                      <p className="text-xs text-neutral-400 mt-1">
+                        {prompt.prompt}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => loadTemplate(prompt)}
+                      className="shrink-0 bg-neutral-800 hover:bg-neutral-700 px-3 py-1 rounded text-sm"
+                    >
+                      Load
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={handleGeneratePrompt}
+            disabled={isGenerating}
+            className="w-full mt-8 bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-lg disabled:opacity-50"
+          >
+            {isGenerating ? "Generating..." : "Generate Prompt"}
+          </button>
+        </div>
+
+        <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-5 min-h-[400px]">
+          <div className="flex justify-between items-center gap-4 mb-4">
+            <h2 className="font-bold">
+              Prompt Output
+            </h2>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleCopyPrompt}
+                className="bg-neutral-800 hover:bg-neutral-700 px-3 py-1 rounded text-sm"
+              >
+                Copy
+              </button>
+
+              <button
+                onClick={handleSaveOutput}
+                className="bg-cyan-500 hover:bg-cyan-400 text-black px-3 py-1 rounded text-sm font-semibold"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+
+          {isGenerating ? (
+            <div className="text-neutral-400 text-sm">
+              Generating cinematic prompt...
+            </div>
+          ) : (
+            <pre className="whitespace-pre-wrap text-sm text-neutral-300 leading-relaxed">
+              {enhancedOutput || "Generated prompt will appear here..."}
+            </pre>
+          )}
+
+          {copyMessage && (
+            <p className="mt-4 text-xs text-cyan-400">
+              {copyMessage}
+            </p>
+          )}
         </div>
       </div>
     </div>
