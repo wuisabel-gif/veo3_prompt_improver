@@ -199,8 +199,12 @@ Cinematic lighting, slow camera movement, atmospheric detail, and polished fashi
     setCopyMessage("");
   };
 
+  const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+
   const filteredPrompts = prompts.filter((prompt) =>
-    prompt.title.toLowerCase().includes(searchTerm)
+    prompt.title.toLowerCase().includes(normalizedSearchTerm) ||
+    prompt.category.toLowerCase().includes(normalizedSearchTerm) ||
+    prompt.prompt.toLowerCase().includes(normalizedSearchTerm)
   );
 
   return (
