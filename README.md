@@ -1,6 +1,8 @@
-# Be Your Own Director — AI-Powered Veo 3 Prompt Studio
+# Be Your Own Director — Veo 3 Prompt Studio
 
-Veo 3 Video Prompt Improver is a cinematic prompt studio for turning rough ideas, moods, lyrics, aesthetics, and visual concepts into polished Veo 3-ready creative briefs.
+AI-powered Veo 3 prompt creation platform that transforms rough concepts into structured cinematic video-generation prompts. The system combines prompt retrieval, aesthetic models, generation controls, and visual prompt engineering to improve controllability and consistency in AI-generated video workflows.
+
+Currently available as a public prototype with potential future commercialization.
 
 Over the past year, I have spent a significant amount of time experimenting with Veo 3 and other AI video-generation models while creating music visualizers, fashion films, fantasy scenes, and cinematic concepts for my Bella Pi YouTube channel.
 
