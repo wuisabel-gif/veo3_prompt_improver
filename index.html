@@ -1567,18 +1567,30 @@ Begin rewriting directly. No pre-text or greetings:`;
                     <div className="w-9 h-9 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
                       <Icon name="sliders" className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">Structural Negations</h4>
-                    <p className="text-xs text-neutral-400 leading-relaxed">
-                      Rules like "No dialogue. No dancing. No storytelling." prevent drift and keep generation focused on atmosphere, styling, camera work, and visual motion.
-                    </p>
+                    <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono">Visual Model Architecture</h4>
+                    <div className="text-xs text-neutral-400 leading-relaxed font-mono space-y-1 text-center">
+                      {[
+                        "Prompt Input",
+                        "Prompt Retrieval",
+                        "Visual Metadata Assembly",
+                        "Prompt Constraints",
+                        "Structured Brief Generation",
+                        "Veo 3 Prompt Output"
+                      ].map((step, index, flow) => (
+                        <React.Fragment key={step}>
+                          <p>{step}</p>
+                          {index < flow.length - 1 && <p className="text-pink-400">↓</p>}
+                        </React.Fragment>
+                      ))}
+                    </div>
                   </div>
 
                 </div>
 
                 <div className="bg-neutral-900/30 border border-neutral-850 p-7 rounded-2xl space-y-4">
-                  <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">Aesthetic Model Retrieval</h3>
+                  <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">MULTI-STYLE MODEL SELECTION</h3>
                   <p className="text-xs text-neutral-400 leading-relaxed">
-                    The platform retrieves patterns from a curated visual library instead of relying on blank-slate generation. Each aesthetic model carries reusable visual DNA: fashion cues, camera language, lighting styles, environmental motifs, color palettes, and mood descriptors.
+                    Different visual concepts require different prompt architectures. Users can select from specialized visual models trained around recurring aesthetic patterns such as runway fashion, beauty editorials, luxury noir, festival culture, fantasy worlds, and cinematic storytelling.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {STYLE_CATEGORIES.map(cat => (
