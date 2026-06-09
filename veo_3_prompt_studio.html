@@ -76,6 +76,7 @@ function App() {
     STYLE_CATEGORIES[0].name
   );
   const [enhancedOutput, setEnhancedOutput] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
   const [copyMessage, setCopyMessage] = useState("");
   const [prompts, setPrompts] = useState(INITIAL_PROMPTS);
 
@@ -98,11 +99,16 @@ function App() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPrompts));
   };
 
-  const handleGeneratePrompt = () => {
+  const handleGeneratePrompt = async () => {
     if (!roughInput.trim()) {
       setEnhancedOutput("Write a scene idea first.");
       return;
     }
+
+    setIsGenerating(true);
+    setCopyMessage("");
+
+    await new Promise(resolve => setTimeout(resolve, 1200));
 
     setEnhancedOutput(
 `Category: ${selectedCategory}
@@ -115,6 +121,8 @@ ${roughInput}
 Visual style:
 Cinematic lighting, slow camera movement, atmospheric detail, and polished fashion editorial framing.`
     );
+
+    setIsGenerating(false);
   };
 
   const handleCopyPrompt = async () => {
@@ -254,9 +262,10 @@ Cinematic lighting, slow camera movement, atmospheric detail, and polished fashi
 
           <button
             onClick={handleGeneratePrompt}
-            className="w-full mt-8 bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-lg"
+            disabled={isGenerating}
+            className="w-full mt-8 bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-lg disabled:opacity-50"
           >
-            Generate Prompt
+            {isGenerating ? "Generating..." : "Generate Prompt"}
           </button>
         </div>
 
@@ -283,9 +292,15 @@ Cinematic lighting, slow camera movement, atmospheric detail, and polished fashi
             </div>
           </div>
 
-          <pre className="whitespace-pre-wrap text-sm text-neutral-300 leading-relaxed">
-            {enhancedOutput || "Generated prompt will appear here..."}
-          </pre>
+          {isGenerating ? (
+            <div className="text-neutral-400 text-sm">
+              Generating cinematic prompt...
+            </div>
+          ) : (
+            <pre className="whitespace-pre-wrap text-sm text-neutral-300 leading-relaxed">
+              {enhancedOutput || "Generated prompt will appear here..."}
+            </pre>
+          )}
 
           {copyMessage && (
             <p className="mt-4 text-xs text-cyan-400">
