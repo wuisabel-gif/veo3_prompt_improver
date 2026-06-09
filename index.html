@@ -1188,22 +1188,23 @@ Begin rewriting directly. No pre-text or greetings:`;
                         </div>
                       )}
                     </button>
-                    <p className="text-[10px] text-neutral-500 leading-relaxed px-1">
-                      ⚠️ This demo runs on a free API tier, so responses may occasionally be delayed due to rate limits. If you have your own API key, you can run the project locally by configuring a .env file for improved performance.
-                    </p>
-
                   </div>
 
                   {/* Output and demo monitor. */}
                   <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
                     <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-5 flex flex-col justify-between min-h-[460px] backdrop-blur-md relative overflow-hidden">
                       
-                      <div className="flex items-center justify-between border-b border-neutral-800/80 pb-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
-                          <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase font-mono">
-                            VEO3 Prompt Output Panel
-                          </span>
+                      <div className="flex items-start justify-between gap-4 border-b border-neutral-800/80 pb-4">
+                        <div className="flex items-start gap-2">
+                          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.5)] mt-1.5" />
+                          <div className="space-y-1">
+                            <span className="block text-[10px] font-bold tracking-widest text-neutral-400 uppercase font-mono">
+                              VEO3 Prompt Output Panel
+                            </span>
+                            <p className="text-[10px] text-white leading-relaxed max-w-md font-sans tracking-normal normal-case">
+                              ⚠️ This demo runs on a free API tier, so responses may occasionally be delayed due to rate limits. If you have your own API key, you can run the project locally by configuring a .env file for improved performance.
+                            </p>
+                          </div>
                         </div>
                         {enhancedOutput && (
                           <span className="text-[9px] font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-2.5 py-0.5 rounded-full">
@@ -1725,13 +1726,6 @@ Begin rewriting directly. No pre-text or greetings:`;
           {/* Footer links and credit. */}
           <footer className="bg-neutral-950 border-t border-neutral-900/60 py-8 px-6 mt-16 text-center text-[11px] text-neutral-500 space-y-2 z-10 relative">
             <p>© 2026 Veo 3 Video Prompt Improver. All rights by wuisabel-gif on GitHub.</p>
-            <div className="flex justify-center gap-4 text-neutral-600 font-mono">
-              <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('about'); }} className="hover:text-neutral-400 transition">Brief Specification</a>
-              <span>•</span>
-              <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('library'); }} className="hover:text-neutral-400 transition">Aesthetics Index</a>
-              <span>•</span>
-              <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('improver'); }} className="hover:text-neutral-400 transition">Launch Studio</a>
-            </div>
           </footer>
 
         </div>
