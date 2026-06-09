@@ -99,6 +99,18 @@ function App() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPrompts));
   };
 
+  const buildFallbackPrompt = () => {
+    return `Category: ${selectedCategory}
+
+Ultra-cinematic ${selectedCategory} visualizer.
+
+Scene idea:
+${roughInput}
+
+Visual style:
+Cinematic lighting, slow camera movement, atmospheric detail, and polished fashion editorial framing.`;
+  };
+
   const handleGeneratePrompt = async () => {
     if (!roughInput.trim()) {
       setEnhancedOutput("Write a scene idea first.");
@@ -108,19 +120,34 @@ function App() {
     setIsGenerating(true);
     setCopyMessage("");
 
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    try {
+      const response = await fetch("/api/improve-prompt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prompt: roughInput,
+          category: selectedCategory
+        })
+      });
 
-    setEnhancedOutput(
-`Category: ${selectedCategory}
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
 
-Ultra-cinematic ${selectedCategory} visualizer.
+      const data = await response.json();
 
-Scene idea:
-${roughInput}
+      if (!data.text) {
+        throw new Error("No prompt text returned");
+      }
 
-Visual style:
-Cinematic lighting, slow camera movement, atmospheric detail, and polished fashion editorial framing.`
-    );
+      setEnhancedOutput(data.text);
+    } catch (error) {
+      console.error(error);
+      setEnhancedOutput(buildFallbackPrompt());
+      setCopyMessage("Using local fallback prompt.");
+    }
 
     setIsGenerating(false);
   };
