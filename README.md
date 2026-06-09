@@ -2,39 +2,203 @@
 
 Veo 3 Video Prompt Improver is a cinematic prompt studio for turning rough ideas, moods, lyrics, aesthetics, and visual concepts into polished Veo 3-ready creative briefs.
 
-This app is built based on my successful trained examples for different types of videos, including fashion editorials, luxury campaigns, music visualizers, fantasy worlds, cinematic storytelling, beauty campaigns, runway direction, and curated visual aesthetics. It gives users a visual director-style workspace instead of a plain prompt box.
+This app is built from my successful trained examples for different types of videos, including fashion editorials, luxury campaigns, music visualizers, fantasy worlds, cinematic storytelling, beauty campaigns, runway direction, and curated visual aesthetics.
 
 For more examples of my Veo 3 videos, visit my website: [Bella PI](https://wuisabel-gif.github.io/Bella_PI/index.html).
 
 ## What It Does
 
 - Rewrites rough visual ideas into structured Veo 3 prompts.
-- Uses aesthetic categories such as Runway Couture, Beauty Editorial, Minimalist Atmosphere, Cinematic Storytelling, Architectural Muse, and more.
-- Includes a saved prompt library with ready-made cinematic prompt references.
-- Lets users copy generated prompt text or refine it with micro-aesthetic adjustments.
+- Uses visual models such as Runway Couture, Beauty Editorial, Minimalist Atmosphere, Cinematic Storytelling, Architectural Muse, and more.
+- Adds Studio Space generation controls for dialogue mode, music context, and output type.
+- Retrieves curated prompt examples from the internal prompt library.
+- Assembles prompts into a repeatable visual-director brief format.
 - Plays rotating demo videos from hosted Cloudinary assets.
-- Can run as a local project with your own API key for better reliability.
+- Supports local development with a private `.env` API key.
+- Supports deployment with a Render backend so the Gemini key stays private.
+
+## Tech Stack
+
+- **Frontend:** HTML, CSS, JavaScript, React, Babel, Tailwind CDN, Lucide-style icon usage, inline SVG brand icons.
+- **Backend:** Node.js with the built-in `http` module.
+- **AI Provider:** Google Gemini API through a backend proxy.
+- **Deployment:** GitHub repository connected to Render Web Service for the backend.
+- **Media Hosting:** Cloudinary for hosted demo videos.
+- **Local Configuration:** `.env` and `.env.example`.
+
+The project is intentionally lightweight. The main app lives in `index.html`, and the backend API proxy lives in `server.mjs`.
 
 ## Project Files
 
-- `index.html` - Main single-page app.
-- `server.mjs` - Local backend that protects the API key and sends prompt rewrite requests.
-- `.env.example` - Safe template for configuring a local Gemini API key and optional Cloudinary upload settings.
+- `index.html` - Main single-page Studio Space app.
+- `server.mjs` - Node backend that protects the API key and calls Gemini.
+- `.env.example` - Safe template for Gemini, local backend, and Cloudinary settings.
 - `asset/` - Local demo video files.
-- `cloudinary-videos.json` - Uploaded Cloudinary video metadata.
-- `scripts/upload-cloudinary.mjs` - Optional helper for uploading demo videos to Cloudinary.
+- `cloudinary-videos.json` - Cloudinary upload metadata.
+- `scripts/upload-cloudinary.mjs` - Helper script for uploading demo videos to Cloudinary.
+- `package.json` - Project scripts for starting the backend and uploading videos.
+
+## Prompt Algorithm
+
+The app uses a structured prompt architecture rather than a simple one-shot prompt.
+
+Pipeline:
+
+```text
+User Idea
+↓
+Visual Model Selection
+↓
+Dialogue Selection
+↓
+Music Selection
+↓
+Output Type
+↓
+Prompt Architecture Engine
+↓
+Veo 3 Prompt Output
+```
+
+The main algorithm happens in `index.html` inside the prompt generation flow.
+
+When the user clicks `UNLOCK YOUR CREATIVE POTENTIAL`, the app:
+
+1. Reads the rough user idea.
+2. Reads the selected visual model.
+3. Reads generation controls:
+   - `dialogueMode`
+   - `musicMode`
+   - `outputType`
+4. Retrieves related examples from the prompt library.
+5. Extracts visual keywords from the selected aesthetic model.
+6. Builds a `generationControls` object:
+
+```js
+{
+  visualModel: "...",
+  dialogueMode: "...",
+  musicMode: "...",
+  outputType: "..."
+}
+```
+
+7. Creates a `systemPrompt` that defines the creative-director rules.
+8. Creates `userContent` that includes the idea, selected model, keywords, examples, and controls.
+9. Sends both values to the backend endpoint:
+
+```text
+POST /api/improve-prompt
+```
+
+10. Displays the generated Veo 3 prompt in the output panel.
+
+## Current Control Logic
+
+The dialogue, music, and output type controls are currently **prompt-guided**.
+
+That means:
+
+- The selected values are passed into prompt assembly.
+- The system prompt explains how Gemini should interpret them.
+- The model uses those controls to shape the final prompt.
+
+There is not yet a deeper rule-based validation layer that automatically checks and regenerates outputs when the model disobeys the selected controls.
+
+Future improvement:
+
+```text
+User Selections
+↓
+Control Policy Layer
+↓
+Prompt Assembly
+↓
+Model Generation
+↓
+Output Validation
+↓
+Optional Regeneration
+```
+
+This would make the controls behave more like a strict production pipeline.
+
+## Backend API Flow
+
+`server.mjs` protects the API key and handles the Gemini request.
+
+Backend flow:
+
+1. Loads `.env` values.
+2. Exposes `GET /api/health`.
+3. Exposes `POST /api/improve-prompt`.
+4. Receives `systemPrompt` and `userContent`.
+5. Calls Gemini with the private API key.
+6. Retries temporary failures such as rate limits or service overload.
+7. Returns `{ text }` to the frontend.
+
+The browser never sees the Gemini API key.
+
+## Render Deployment Pipeline
+
+This project is designed so the frontend can live publicly while the Gemini key stays private on Render.
+
+Recommended production structure:
+
+```text
+GitHub repo
+↓
+Render Web Service
+↓
+server.mjs backend
+↓
+Gemini API
+```
+
+If the frontend is hosted separately on GitHub Pages, the frontend should call the Render backend URL for prompt generation.
+
+Example:
+
+```text
+https://your-render-service.onrender.com/api/improve-prompt
+```
+
+Render setup:
+
+- **Service Type:** Web Service
+- **Runtime:** Node
+- **Branch:** `main`
+- **Root Directory:** leave empty
+- **Build Command:** `npm install`
+- **Start Command:** `npm start`
+
+Render environment variables:
+
+```env
+CREATIVE_API_KEY=your_gemini_api_key_here
+CREATIVE_MODEL=gemini-2.5-flash
+HOST=0.0.0.0
+```
+
+Render provides `PORT` automatically, so you usually do not need to set `AVR_BACKEND_PORT` on Render.
+
+Important: do not set the build command to `npn install`. It must be:
+
+```bash
+npm install
+```
 
 ## Run Locally
 
-You can open `index.html` directly in a browser for the interface, but prompt generation needs the local backend running.
+You can open `index.html` directly for the interface, but prompt generation needs the backend running.
 
 ### 1. Install Node.js
 
-Use Node.js 18 or newer. The backend uses built-in `fetch`, so older Node versions may not work.
+Use Node.js 18 or newer.
 
-### 2. Create a `.env` File
+### 2. Create `.env`
 
-Copy [.env.example](/.env.example) to a new `.env` file in the project root:
+Copy [.env.example](./.env.example) to `.env`:
 
 ```env
 CREATIVE_API_KEY=your_gemini_api_key_here
@@ -43,9 +207,7 @@ AVR_BACKEND_PORT=8787
 HOST=127.0.0.1
 ```
 
-`CREATIVE_API_KEY` is your direct Gemini API key. The example file uses placeholders only, so replace `your_gemini_api_key_here` with your real key in `.env`.
-
-Keep `.env` private. It should stay on your computer and should not be committed to GitHub.
+`CREATIVE_API_KEY` is your direct Gemini API key. Replace the placeholder with your real key only in `.env`.
 
 ### 3. Start the Backend
 
@@ -65,35 +227,19 @@ Then open:
 http://localhost:8787
 ```
 
-The app will use the local backend automatically.
-
 ## Using Your Own API Key
 
-My current public online demo is using a free API tier of Google Gemini Flash 2.5, which can sometimes be delayed by rate limits. Running the project locally with your own key gives you more control and usually better performance. You can also plug it into your own Gemini setup and use a more advanced model through `.env`.
+My current public online demo uses a free API tier of Google Gemini Flash 2.5, which can sometimes be delayed by rate limits.
 
-The API key is stored only in `.env` and read by `server.mjs`. The browser never needs to know the secret key directly. This is important because putting an API key inside frontend code would expose it to anyone who opens the page.
+Running locally with your own key gives you more control and usually better performance. You can also plug the project into your own Gemini setup and use a more advanced model by changing `CREATIVE_MODEL` in `.env`.
 
-Local flow:
-
-1. The user writes a rough idea in the app.
-2. `index.html` sends the request to `server.mjs`.
-3. `server.mjs` reads `CREATIVE_API_KEY` from `.env`.
-4. The backend calls the creative text API.
-5. The generated Veo 3 prompt is sent back to the browser.
-
-If prompt generation fails, check:
-
-- `.env` exists in the project root.
-- `CREATIVE_API_KEY` is filled in correctly.
-- The backend is running with `npm start`.
-- The browser is opened through `http://localhost:8787`, not only as a `file://` page.
-- Your API provider account has available quota.
+The API key is stored only in `.env` locally or in Render environment variables in production. It should never be pasted into `index.html`.
 
 ## Demo Videos
 
 Demo videos are referenced from Cloudinary inside `index.html`. The local `asset/` folder keeps the original video files.
 
-To upload videos again, configure Cloudinary environment variables in `.env`:
+To upload videos again, configure Cloudinary variables in `.env`:
 
 ```env
 CLOUDINARY_CLOUD_NAME=your_cloud_name
@@ -113,9 +259,9 @@ This updates `cloudinary-videos.json` with hosted video information.
 ## Security Notes
 
 - Do not commit `.env`.
-- Do not paste API secrets into `index.html`.
-- Keep private keys inside the backend environment only.
-- If a secret is accidentally committed, rotate it immediately in the provider dashboard.
+- Do not expose the Gemini API key in frontend code.
+- Store production secrets in Render environment variables.
+- Rotate any key immediately if it is accidentally committed or exposed.
 
 ## Credits
 
