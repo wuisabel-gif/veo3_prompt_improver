@@ -178,8 +178,8 @@ function createAppServer() {
       return;
     }
 
-    if (req.method === 'GET' && (url.pathname === '/' || url.pathname === '/veo_3_prompt_studio.html')) {
-      const html = await readFile(path.join(__dirname, 'veo_3_prompt_studio.html'), 'utf8');
+    if (req.method === 'GET' && (url.pathname === '/' || url.pathname === '/index.html')) {
+      const html = await readFile(path.join(__dirname, 'index.html'), 'utf8');
       sendText(res, 200, html, 'text/html; charset=utf-8');
       return;
     }
