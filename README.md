@@ -14,7 +14,7 @@ The platform combines prompt retrieval, visual metadata modeling, aesthetic clas
 
 **Project Status:** Active Prototype (Potential Future Product)
 
-**Try the prototype:** [YOUR_LINK_HERE]
+[**Try the prototype**](https://veo3-prompt-improver.onrender.com)]
 
 ## Why AI Video Generation?
 
