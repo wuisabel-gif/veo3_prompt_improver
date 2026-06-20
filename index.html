@@ -725,6 +725,10 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
       "📸 Fashion Film"
     ];
 
+    // Veo 3-native generation controls.
+    const ASPECT_RATIO_OPTIONS = ["16:9", "9:16", "1:1", "21:9"];
+    const DURATION_OPTIONS = ["4s", "6s", "8s"];
+
     // Main workspace shell.
     function App() {
       const [activeTab, setActiveTab] = useState('improver'); // 'improver', 'library', 'about'
@@ -733,6 +737,9 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
       const [selectedDialogueMode, setSelectedDialogueMode] = useState(DIALOGUE_OPTIONS[0]);
       const [selectedMusicMode, setSelectedMusicMode] = useState(MUSIC_OPTIONS[0]);
       const [selectedOutputType, setSelectedOutputType] = useState(OUTPUT_TYPE_OPTIONS[0]);
+      const [selectedAspectRatio, setSelectedAspectRatio] = useState(ASPECT_RATIO_OPTIONS[0]);
+      const [selectedDuration, setSelectedDuration] = useState(DURATION_OPTIONS[2]);
+      const [negativePrompt, setNegativePrompt] = useState('');
       const [enhancedOutput, setEnhancedOutput] = useState('');
       const [isGenerating, setIsGenerating] = useState(false);
       const [randomVibeStarters] = useState(() => getRandomVibeStarters());
@@ -892,136 +899,99 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
         }
 
         setIsGenerating(true);
+        setEnhancedOutput('');
 
-        // Pull a couple of nearby examples from the selected aesthetic.
-        const related = prompts.filter(p => p.category === selectedCategory);
-        const contextualExamples = related.slice(0, 2);
-
-        const examplesText = contextualExamples.map((ex, i) => `
-### EXAMPLE ${i + 1}:
-Category: ${ex.category}
-Tags: ${ex.tags.join(', ')}
-Output Brief:
-${ex.prompt}
-`).join("\n");
-
-        const selectedStyle = STYLE_CATEGORIES.find(c => c.name === selectedCategory);
-        const styleKeywords = selectedStyle ? selectedStyle.keywords.join(', ') : '';
-        const generationControls = {
+        // The prompt is now assembled server-side from this constrained payload,
+        // so the backend can never be used as an open relay for arbitrary prompts.
+        const payload = {
+          idea: roughInput,
           visualModel: selectedCategory,
           dialogueMode: selectedDialogueMode,
           musicMode: selectedMusicMode,
-          outputType: selectedOutputType
+          outputType: selectedOutputType,
+          aspectRatio: selectedAspectRatio,
+          duration: selectedDuration,
+          negativePrompt: negativePrompt,
+          modifier: presetModifier
         };
-
-        const systemPrompt = `You are an elite, award-winning fashion film Creative Director behind the visual styling of premium AI visualizers. 
-Transform the user's rough description into a highly structured, ultra-cinematic visual director's brief suitable for premium generators like Veo 3.
-
-You MUST follow this exact format below. Do not output conversational introductions, pleasantries, or preamble. Start directly with the prompt:
-
-Ultra-cinematic [Style Family] visualizer inspired by [Atmospheric Director / High-End Brand / Cinema].
-A [Subject Details] in [Precise Setting]...
-Dialogue handling: [Follow the selected dialogue mode exactly]
-Music context: [Follow the selected music mode as pacing, atmosphere, rhythm, and scene-design metadata only]
-Output type: [Follow the selected output type and adapt structure accordingly]
-Scene visuals:
-• [Visual focal point bullet 1]
-• [Visual focal point bullet 2]
-• [Visual focal point bullet 3]
-Visual style: [Detailed camera lenses (e.g., 35mm, anamorphic), lighting setups, and visual texture]
-Color palette: [Highly specific color coordination, desaturation levels]
-Mood: [Deep artistic, sensory or emotional feelings]
-Camera: [Clean cinematic motion cues, dolly, or horizontal crane tracks]
-Music style: [Vibe-matching sounds, BPM, or specific tone]
-Reference mood:
-"[A single artistic philosophical quote mapping to the scene's core essence]"
-
-IMPORTANT RULES:
-- Follow safety guidelines. Refuse or redirect requests involving graphic violence, self-harm, sexual exploitation, hate, harassment, illegal instructions, or other harmful content.
-- If the user request is unsafe or sensitive, do not generate the cinematic prompt. Return a brief safety notice asking the user to revise the idea into a safe, non-graphic concept.
-- Never use generic words like "beautiful", "high-quality", or "photorealistic". Use technical cinematic framing.
-- Integrate the aesthetic language matching the selected visual category.
-- Focus strictly on photographic atmosphere, textures, reflection refractions, and micro-motion.
-- Dialogue is only allowed when the selected dialogue mode explicitly requests it.
-- Music metadata should influence atmosphere, pacing, visual rhythm, editing style, and scene design. Do not generate lyrics or audio.
-- If output type is Visualizer, keep it atmospheric with no storytelling unless the user explicitly asks.
-- If output type is Music Video, allow performance scenes and rhythm-driven editing.
-- If output type is Short Film, allow narrative structure and dialogue only when the dialogue mode permits it.
-- If output type is Fashion Film, prioritize editorial styling, cinematography, wardrobe, pose language, and luxury campaign pacing.`;
-
-        const userContent = `Convert this rough concept:
-"${roughInput}"
-
-Category chosen: ${selectedCategory}
-Target keywords to naturally weave in: ${styleKeywords}
-
-Generation controls:
-${JSON.stringify(generationControls, null, 2)}
-
-${presetModifier ? `MODIFIER DEMAND: Change the style of the prompt to match this request: "${presetModifier}"` : ""}
-
-Use these high-quality visual briefs as your absolute style, structural, and pacing guides. Match their exact level of detail and formatting:
-${examplesText}
-
-Begin rewriting directly. No pre-text or greetings:`;
 
         const backendBaseUrl = window.location.protocol === 'file:'
           ? 'http://localhost:8787'
           : window.location.origin;
-        const url = `${backendBaseUrl}/api/improve-prompt`;
+        const url = `${backendBaseUrl}/api/improve-prompt?stream=1`;
 
-        let backoffDelay = 1000;
-        const maxRetries = 5;
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+            body: JSON.stringify(payload)
+          });
 
-        for (let attempt = 1; attempt <= maxRetries; attempt++) {
-          try {
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                systemPrompt,
-                userContent
-              })
-            });
-
-            if (response.ok) {
-              const resData = await response.json();
-              const generatedText = resData.text;
-              if (generatedText) {
-                setEnhancedOutput(generatedText);
-                showNotification("Prompt enhanced successfully!", "success");
-                setIsGenerating(false);
-                return;
-              }
-              throw new Error("Empty text returned");
-            }
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || `API response error ${response.status}`);
-          } catch (err) {
-            if (isProviderSafetyError(err.message)) {
-              console.error(err);
-              const notice = "Safety notice: Gemini could not generate this request because it may include sensitive or unsafe content. Please revise the idea into a non-graphic, non-harmful cinematic concept and try again.";
-              setEnhancedOutput(notice);
-              showNotification("Generation blocked for safety.", "error");
-              setIsGenerating(false);
-              return;
-            }
-
-            if (attempt === maxRetries) {
-              console.error(err);
-
-              showNotification("Using local fallback template.", "error");
-              
-              // If the API is unavailable, still give the user a usable draft.
-              const matchedTemplate = prompts.find(p => p.category === selectedCategory) || prompts[0];
-              const fallbackText = matchedTemplate.prompt.replace(/A (.*?) in (.*?)\./g, `A ${roughInput} in a stylized high-end environment.`);
-              setEnhancedOutput(fallbackText);
-              setIsGenerating(false);
-              return;
-            }
-            await new Promise(res => setTimeout(res, backoffDelay));
-            backoffDelay *= 2;
+          if (!response.ok || !response.body) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error || `API response error ${response.status}`);
           }
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          let accumulated = '';
+          let safetyHit = false;
+          let streamError = '';
+
+          const handleEvent = (eventName, dataStr) => {
+            let data;
+            try { data = JSON.parse(dataStr); } catch { return; }
+            if (eventName === 'delta' && data.text) {
+              accumulated += data.text;
+              setEnhancedOutput(accumulated);
+            } else if (eventName === 'error') {
+              if (data.status === 422 || isProviderSafetyError(data.error)) safetyHit = true;
+              else streamError = data.error || 'Generation failed';
+            }
+          };
+
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const parts = buffer.split('\n\n');
+            buffer = parts.pop() || '';
+            for (const part of parts) {
+              let eventName = 'message';
+              const dataLines = [];
+              for (const line of part.split('\n')) {
+                if (line.startsWith('event:')) eventName = line.slice(6).trim();
+                else if (line.startsWith('data:')) dataLines.push(line.slice(5).trim());
+              }
+              if (dataLines.length) handleEvent(eventName, dataLines.join('\n'));
+            }
+          }
+
+          if (safetyHit) {
+            const notice = "Safety notice: Gemini could not generate this request because it may include sensitive or unsafe content. Please revise the idea into a non-graphic, non-harmful cinematic concept and try again.";
+            setEnhancedOutput(notice);
+            showNotification("Generation blocked for safety.", "error");
+          } else if (streamError) {
+            throw new Error(streamError);
+          } else if (accumulated) {
+            showNotification("Prompt enhanced successfully!", "success");
+          } else {
+            throw new Error("Empty text returned");
+          }
+          setIsGenerating(false);
+          return;
+        } catch (err) {
+          console.error(err);
+          showNotification("Using local fallback template.", "error");
+          // If the API is unavailable, still give the user a usable draft.
+          const matchedTemplate = prompts.find(p => p.category === selectedCategory) || prompts[0];
+          const fallbackText = matchedTemplate
+            ? matchedTemplate.prompt.replace(/A (.*?) in (.*?)\./g, `A ${roughInput} in a stylized high-end environment.`)
+            : roughInput;
+          setEnhancedOutput(fallbackText);
+          setIsGenerating(false);
+          return;
         }
       };
 
@@ -1393,6 +1363,63 @@ Begin rewriting directly. No pre-text or greetings:`;
                               );
                             })}
                           </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <p className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Aspect Ratio</p>
+                            <div className="flex flex-wrap gap-2">
+                              {ASPECT_RATIO_OPTIONS.map(option => {
+                                const isSelected = selectedAspectRatio === option;
+                                return (
+                                  <button
+                                    key={option}
+                                    onClick={() => setSelectedAspectRatio(option)}
+                                    className={`text-[10px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                      isSelected
+                                        ? 'bg-cyan-500/15 border-cyan-400/60 text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.12)]'
+                                        : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
+                                    }`}
+                                  >
+                                    {option}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <p className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Duration</p>
+                            <div className="flex flex-wrap gap-2">
+                              {DURATION_OPTIONS.map(option => {
+                                const isSelected = selectedDuration === option;
+                                return (
+                                  <button
+                                    key={option}
+                                    onClick={() => setSelectedDuration(option)}
+                                    className={`text-[10px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                      isSelected
+                                        ? 'bg-indigo-500/15 border-indigo-400/60 text-indigo-200 shadow-[0_0_18px_rgba(129,140,248,0.12)]'
+                                        : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
+                                    }`}
+                                  >
+                                    {option}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Negative Prompt <span className="text-neutral-600 normal-case tracking-normal">(optional)</span></p>
+                          <input
+                            type="text"
+                            value={negativePrompt}
+                            onChange={(e) => setNegativePrompt(e.target.value)}
+                            placeholder="e.g. text, watermark, distorted hands, extra fingers"
+                            className="w-full bg-neutral-950 border border-neutral-850 rounded-lg px-3 py-2 text-xs text-neutral-200 placeholder-neutral-600 font-mono focus:border-neutral-600 focus:outline-none transition-all"
+                          />
                         </div>
                       </div>
                     </div>
