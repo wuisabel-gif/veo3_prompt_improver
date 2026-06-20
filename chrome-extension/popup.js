@@ -1,0 +1,108 @@
+// Popup logic: build the form, assemble the prompt, ask the service worker to call Gemini.
+
+const els = {
+  idea: document.getElementById("idea"),
+  model: document.getElementById("model"),
+  dialogue: document.getElementById("dialogue"),
+  music: document.getElementById("music"),
+  output: document.getElementById("output"),
+  modifier: document.getElementById("modifier"),
+  generate: document.getElementById("generateBtn"),
+  status: document.getElementById("status"),
+  resultWrap: document.getElementById("resultWrap"),
+  result: document.getElementById("result"),
+  copy: document.getElementById("copyBtn"),
+  settings: document.getElementById("settingsBtn")
+};
+
+function fillSelect(select, items, valueFn = x => x, labelFn = x => x) {
+  select.innerHTML = "";
+  for (const item of items) {
+    const opt = document.createElement("option");
+    opt.value = valueFn(item);
+    opt.textContent = labelFn(item);
+    select.appendChild(opt);
+  }
+}
+
+fillSelect(els.model, STYLE_CATEGORIES, c => c.name, c => `${c.icon} ${c.name}`);
+fillSelect(els.dialogue, DIALOGUE_OPTIONS);
+fillSelect(els.music, MUSIC_OPTIONS);
+fillSelect(els.output, OUTPUT_TYPE_OPTIONS);
+
+// Restore last-used form state.
+chrome.storage.local.get(["lastForm"]).then(({ lastForm }) => {
+  if (!lastForm) return;
+  if (lastForm.idea) els.idea.value = lastForm.idea;
+  if (lastForm.model) els.model.value = lastForm.model;
+  if (lastForm.dialogue) els.dialogue.value = lastForm.dialogue;
+  if (lastForm.music) els.music.value = lastForm.music;
+  if (lastForm.output) els.output.value = lastForm.output;
+  if (lastForm.modifier) els.modifier.value = lastForm.modifier;
+});
+
+function setStatus(message, kind) {
+  if (!message) { els.status.hidden = true; return; }
+  els.status.hidden = false;
+  els.status.textContent = message;
+  els.status.className = "status" + (kind ? ` ${kind}` : "");
+}
+
+els.settings.addEventListener("click", () => chrome.runtime.openOptionsPage());
+
+els.copy.addEventListener("click", async () => {
+  await navigator.clipboard.writeText(els.result.textContent);
+  els.copy.textContent = "Copied!";
+  setTimeout(() => { els.copy.textContent = "Copy"; }, 1400);
+});
+
+els.generate.addEventListener("click", async () => {
+  const roughInput = els.idea.value.trim();
+  if (!roughInput) {
+    setStatus("Describe your idea first.", "error");
+    return;
+  }
+
+  const form = {
+    idea: roughInput,
+    model: els.model.value,
+    dialogue: els.dialogue.value,
+    music: els.music.value,
+    output: els.output.value,
+    modifier: els.modifier.value.trim()
+  };
+  chrome.storage.local.set({ lastForm: form });
+
+  const payload = buildPromptPayload({
+    roughInput,
+    visualModel: form.model,
+    dialogueMode: form.dialogue,
+    musicMode: form.music,
+    outputType: form.output,
+    presetModifier: form.modifier
+  });
+
+  els.generate.disabled = true;
+  els.resultWrap.hidden = true;
+  setStatus("Directing your scene…");
+
+  try {
+    const res = await chrome.runtime.sendMessage({ type: "improve", payload });
+    if (!res) throw new Error("No response from background worker.");
+    if (!res.ok) {
+      if (/^SAFETY:/.test(res.error)) {
+        setStatus(res.error.replace(/^SAFETY:\s*/, "Safety notice: "), "safety");
+      } else {
+        setStatus(res.error, "error");
+      }
+      return;
+    }
+    setStatus(null);
+    els.result.textContent = res.text;
+    els.resultWrap.hidden = false;
+  } catch (err) {
+    setStatus(err.message || "Generation failed.", "error");
+  } finally {
+    els.generate.disabled = false;
+  }
+});

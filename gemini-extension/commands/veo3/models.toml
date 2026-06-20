@@ -1,0 +1,8 @@
+description = "List the available Veo 3 visual models and generation controls."
+
+prompt = """
+List, in a compact and skimmable format, every visual model defined in your extension context
+(GEMINI.md) with a one-line aesthetic summary for each, followed by the available dialogue
+modes, music modes, and output types. End with a one-line example of how to call
+`/veo3:improve` with control hints. Do not invent models that are not in the context.
+"""

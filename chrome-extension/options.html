@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="popup.css" />
+  <title>Veo 3 Prompt Studio — Settings</title>
+  <style>
+    html, body { width: auto; }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 28px 24px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    p.lead { color: var(--muted); margin: 0 0 22px; font-size: 13px; }
+    .note { color: var(--muted); font-size: 11px; margin: 4px 0 0; }
+    .saved { color: #9be8b0; font-size: 12px; margin-left: 10px; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Veo 3 Prompt Studio — Settings</h1>
+    <p class="lead">Choose how the extension reaches Gemini. Backend proxy takes priority if set.</p>
+
+    <label class="field-label" for="apiKey">Gemini API key <span class="muted">(direct mode)</span></label>
+    <input id="apiKey" class="input" type="password" placeholder="AIza..." autocomplete="off" />
+    <p class="note">Stored locally in your browser (chrome.storage.local). Get a key at aistudio.google.com/apikey.</p>
+
+    <label class="field-label" for="creativeModel">Model</label>
+    <input id="creativeModel" class="input" type="text" placeholder="gemini-2.5-flash" />
+
+    <hr />
+
+    <label class="field-label" for="backendUrl">Backend proxy URL <span class="muted">(optional)</span></label>
+    <input id="backendUrl" class="input" type="text" placeholder="https://your-app.onrender.com" />
+    <p class="note">Point at your server.mjs deployment to keep the key off the client. The extension appends /api/improve-prompt. Leave blank to use the API key above.</p>
+
+    <button id="saveBtn" class="primary-btn" style="margin-top:20px;">Save settings<span id="saved" class="saved" hidden>Saved ✓</span></button>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

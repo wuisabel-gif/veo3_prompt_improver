@@ -1,0 +1,6 @@
+{
+  "name": "veo3-prompt-studio",
+  "version": "1.0.0",
+  "description": "Be Your Own Director — transforms rough ideas into structured, ultra-cinematic Veo 3 prompts using curated visual models, generation controls, and a creative-director prompt architecture.",
+  "contextFileName": "GEMINI.md"
+}
