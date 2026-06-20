@@ -14,7 +14,7 @@ The platform combines prompt retrieval, visual metadata modeling, aesthetic clas
 
 **Project Status:** Active Prototype (Potential Future Product)
 
-[**Try the prototype**](https://veo3-prompt-improver.onrender.com)]
+[**Try the prototype**](https://veo3-prompt-improver.onrender.com)
 
 ## Why AI Video Generation?
 
@@ -174,14 +174,14 @@ This would make the controls behave more like a strict production pipeline.
 Backend flow:
 
 1. Loads `.env` values.
-2. Exposes `GET /api/health`.
+2. Exposes `GET /api/health` and `GET /api/options`.
 3. Exposes `POST /api/improve-prompt`.
-4. Receives `systemPrompt` and `userContent`.
-5. Calls Gemini with the private API key.
-6. Retries temporary failures such as rate limits or service overload.
-7. Returns `{ text }` to the frontend.
+4. Receives a constrained `{ idea, visualModel, dialogueMode, musicMode, outputType, aspectRatio, duration, negativePrompt, modifier }` payload, validates it against the known option sets, and assembles the prompt server-side via `core/`.
+5. Enforces a CORS allowlist (`ALLOWED_ORIGINS`, plus same-origin and localhost) and per-IP rate limiting.
+6. Calls Gemini with the private API key, retrying temporary failures such as rate limits or service overload.
+7. Streams the result over Server-Sent Events (or returns `{ text }` for non-streaming requests).
 
-The browser never sees the Gemini API key.
+The browser never sees the Gemini API key, and the endpoint cannot be used to relay arbitrary prompts.
 
 ## Render Deployment Pipeline
 
