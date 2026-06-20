@@ -6,6 +6,9 @@ const els = {
   dialogue: document.getElementById("dialogue"),
   music: document.getElementById("music"),
   output: document.getElementById("output"),
+  aspect: document.getElementById("aspect"),
+  duration: document.getElementById("duration"),
+  negative: document.getElementById("negative"),
   modifier: document.getElementById("modifier"),
   generate: document.getElementById("generateBtn"),
   status: document.getElementById("status"),
@@ -29,6 +32,9 @@ fillSelect(els.model, STYLE_CATEGORIES, c => c.name, c => `${c.icon} ${c.name}`)
 fillSelect(els.dialogue, DIALOGUE_OPTIONS);
 fillSelect(els.music, MUSIC_OPTIONS);
 fillSelect(els.output, OUTPUT_TYPE_OPTIONS);
+fillSelect(els.aspect, ASPECT_RATIO_OPTIONS);
+fillSelect(els.duration, DURATION_OPTIONS);
+els.duration.value = DURATION_OPTIONS[2]; // default 8s
 
 // Restore last-used form state.
 chrome.storage.local.get(["lastForm"]).then(({ lastForm }) => {
@@ -38,6 +44,9 @@ chrome.storage.local.get(["lastForm"]).then(({ lastForm }) => {
   if (lastForm.dialogue) els.dialogue.value = lastForm.dialogue;
   if (lastForm.music) els.music.value = lastForm.music;
   if (lastForm.output) els.output.value = lastForm.output;
+  if (lastForm.aspect) els.aspect.value = lastForm.aspect;
+  if (lastForm.duration) els.duration.value = lastForm.duration;
+  if (lastForm.negative) els.negative.value = lastForm.negative;
   if (lastForm.modifier) els.modifier.value = lastForm.modifier;
 });
 
@@ -69,6 +78,9 @@ els.generate.addEventListener("click", async () => {
     dialogue: els.dialogue.value,
     music: els.music.value,
     output: els.output.value,
+    aspect: els.aspect.value,
+    duration: els.duration.value,
+    negative: els.negative.value.trim(),
     modifier: els.modifier.value.trim()
   };
   chrome.storage.local.set({ lastForm: form });
@@ -79,6 +91,9 @@ els.generate.addEventListener("click", async () => {
     dialogueMode: form.dialogue,
     musicMode: form.music,
     outputType: form.output,
+    aspectRatio: form.aspect,
+    duration: form.duration,
+    negativePrompt: form.negative,
     presetModifier: form.modifier
   });
 

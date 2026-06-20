@@ -1,132 +1,248 @@
-// Shared data + prompt architecture, ported faithfully from index.html.
-// Loaded by popup.html (<script>) and background.js (importScripts), so it
-// defines globals on the shared scope.
+// AUTO-GENERATED from core/ by scripts/build-clients.mjs. Do not edit by hand.
+// Shared data + prompt architecture for the Chrome extension (popup + worker).
 
-const STYLE_CATEGORIES = [
-  { name: "Runway Couture", icon: "👠", desc: "High fashion, luxury campaigns, Paris Fashion Week.", keywords: ["high fashion", "luxury campaign", "Paris Fashion Week", "runway couture", "editorial styling"] },
-  { name: "Beauty Editorial", icon: "📸", desc: "Close-ups, jewelry, makeup, Vogue-style beauty campaigns.", keywords: ["beauty close-up", "jewelry", "makeup", "Vogue-style campaign", "editorial portrait"] },
-  { name: "Y2K Glamour", icon: "✦", desc: "Luxury Y2K fashion, warm flash photography, tropical nightlife.", keywords: ["Y2K glam editorial", "gold jewelry", "warm flash photography", "bohemian fabrics", "non-AI-looking cinematography"] },
-  { name: "Poolside Muse", icon: "🕶️", desc: "Sun-soaked old-Hollywood glamour, silver sequins, golden pools.", keywords: ["silver sequin bikini", "oversized sunglasses", "infinity pool", "golden sunset reflections"] },
-  { name: "Ice Queen Muse", icon: "❄️", desc: "Cool dominance, baby-blue fur, diamonds, winter wealth.", keywords: ["baby-blue fur coat", "platinum-blonde waves", "diamond earrings", "porcelain skin"] },
-  { name: "Angel Haze", icon: "🐚", desc: "Angel-wing neon haze, wet platinum hair, violet dreamscape.", keywords: ["glowing white angel wings", "wet platinum hair", "purple-blue neon haze", "glitter makeup", "35mm dream blur"] },
-  { name: "Architectural Muse", icon: "🏛️", desc: "Modern couture in minimalist architecture, museum aesthetics.", keywords: ["modern couture", "minimalist architecture", "clean lines", "museum aesthetics", "soft natural light", "understated luxury"] },
-  { name: "Campus K-Style", icon: "🌸", desc: "K-pop idol off-duty, pastel cardigans, schoolyard chic.", keywords: ["pastel cardigan", "pleated skirt", "chunky loafers", "jacaranda blossoms"] },
-  { name: "Seoul Morning", icon: "🌅", desc: "Minimal Seoul apartments, cozy duvets, coffee haze.", keywords: ["minimalist korean apartment", "tousled hair", "linen duvet", "steam rays"] },
-  { name: "K-Street", icon: "🎤", desc: "Euphoria-inspired Y2K party glamour, neon nightclub haze.", keywords: ["Y2K glam", "purple tinsel curtains", "silver chainmail", "rhinestone makeup", "35mm flash photography"] },
-  { name: "Cinematic Storytelling", icon: "🎬", desc: "Short films, narrative scenes, emotional visual worlds.", keywords: ["short film", "narrative scene", "emotional visual world", "cinematic storytelling", "character atmosphere"] },
-  { name: "Minimalist Atmosphere", icon: "☁️", desc: "White-space dream, art-house minimalism, dreamcore.", keywords: ["White Space Dream", "art-house minimalism", "solitude", "dreamcore", "architectural emptiness"] }
+const VISUAL_MODELS = [
+  {
+    "name": "Runway Couture",
+    "icon": "👠",
+    "desc": "High fashion, luxury campaigns, Paris Fashion Week.",
+    "keywords": [
+      "high fashion",
+      "luxury campaign",
+      "Paris Fashion Week",
+      "runway couture",
+      "editorial styling"
+    ]
+  },
+  {
+    "name": "Beauty Editorial",
+    "icon": "📸",
+    "desc": "Close-ups, jewelry, makeup, Vogue-style beauty campaigns.",
+    "keywords": [
+      "beauty close-up",
+      "jewelry",
+      "makeup",
+      "Vogue-style campaign",
+      "editorial portrait"
+    ]
+  },
+  {
+    "name": "Y2K Glamour",
+    "icon": "✦",
+    "desc": "Luxury Y2K fashion visuals, warm flash photography, jeweled details, tropical nightlife.",
+    "keywords": [
+      "Y2K glam editorial",
+      "gold jewelry",
+      "warm flash photography",
+      "bohemian fabrics",
+      "non-AI-looking cinematography"
+    ]
+  },
+  {
+    "name": "Poolside Muse",
+    "icon": "🕶️",
+    "desc": "Sun-soaked old-Hollywood glamour, silver sequin bikinis, golden infinity pools.",
+    "keywords": [
+      "silver sequin bikini",
+      "oversized sunglasses",
+      "infinity pool",
+      "golden sunset reflections"
+    ]
+  },
+  {
+    "name": "Ice Queen Muse",
+    "icon": "❄️",
+    "desc": "Cool dominance, luxury baby-blue fur coats, diamond drop earrings, cool winter wealth.",
+    "keywords": [
+      "baby-blue fur coat",
+      "platinum-blonde waves",
+      "diamond earrings",
+      "porcelain skin"
+    ]
+  },
+  {
+    "name": "Angel Haze",
+    "icon": "🐚",
+    "desc": "Angel-wing neon haze, wet platinum hair, glitter makeup, violet house-party dreamscape.",
+    "keywords": [
+      "glowing white angel wings",
+      "wet platinum hair",
+      "purple-blue neon haze",
+      "glitter makeup",
+      "35mm dream blur"
+    ]
+  },
+  {
+    "name": "Architectural Muse",
+    "icon": "🏛️",
+    "desc": "Modern couture in minimalist architectural environments, clean lines, museum aesthetics, soft natural light, and understated luxury.",
+    "keywords": [
+      "modern couture",
+      "minimalist architecture",
+      "clean lines",
+      "museum aesthetics",
+      "soft natural light",
+      "understated luxury"
+    ]
+  },
+  {
+    "name": "Campus K-Style",
+    "icon": "🌸",
+    "desc": "K-pop idol off-duty style. Pastel cardigans, pleated skirts, effortless schoolyard chic.",
+    "keywords": [
+      "pastel cardigan",
+      "pleated skirt",
+      "chunky loafers",
+      "jacaranda blossoms"
+    ]
+  },
+  {
+    "name": "Seoul Morning",
+    "icon": "🌅",
+    "desc": "Seoul minimal apartments, warm cozy duvet sheets, lazy volumetric rays, coffee haze.",
+    "keywords": [
+      "minimalist korean apartment",
+      "tousled hair",
+      "linen duvet",
+      "steam rays"
+    ]
+  },
+  {
+    "name": "K-Street",
+    "icon": "🎤",
+    "desc": "Euphoria-inspired Y2K party glamour, neon nightclub haze, chainmail, rhinestones, handheld flash.",
+    "keywords": [
+      "Y2K glam",
+      "purple tinsel curtains",
+      "silver chainmail",
+      "rhinestone makeup",
+      "35mm flash photography"
+    ]
+  },
+  {
+    "name": "Cinematic Storytelling",
+    "icon": "🎬",
+    "desc": "Short films, narrative scenes, emotional visual worlds.",
+    "keywords": [
+      "short film",
+      "narrative scene",
+      "emotional visual world",
+      "cinematic storytelling",
+      "character atmosphere"
+    ]
+  },
+  {
+    "name": "Minimalist Atmosphere",
+    "icon": "☁️",
+    "desc": "White Space Dream, art-house minimalism, solitude, dreamcore, architectural emptiness.",
+    "keywords": [
+      "White Space Dream",
+      "art-house minimalism",
+      "solitude",
+      "dreamcore",
+      "architectural emptiness"
+    ]
+  }
 ];
-
-const DIALOGUE_OPTIONS = ["🔇 No Dialogue", "🎙 Ambient Speech", "🗣 Character Dialogue", "📖 Narration", "🎧 Voiceover"];
-const MUSIC_OPTIONS = ["🎵 No Music Reference", "🖤 Dark Synthwave", "⚡ Phonk", "🎡 Festival EDM", "💃 Latin Pop", "🎤 K-Pop", "🎹 Dream Pop", "🌴 Tropical House", "🎬 Cinematic Score"];
-const OUTPUT_TYPE_OPTIONS = ["✨ Visualizer", "🎤 Music Video", "🎬 Short Film", "📸 Fashion Film"];
-
-// A few golden style references used as few-shot guides (subset of the web app library).
-const STYLE_REFERENCES = [
-`Ultra-cinematic Poolside Muse visualizer inspired by retro Hollywood leisure campaigns and warm summer dreams.
-A blonde subject lounging elegantly on a custom white leather daybed beside a pristine cliffside infinity pool at sunset.
-Scene visuals:
-• She wears a silver sequin bikini that throws glittering, dazzling reflections of sunlight onto her sun-kissed skin.
-• A close-up of her wearing oversized black acetate sunglasses, the golden ocean horizon reflecting perfectly in her lenses.
-• She slowly lifts an icy crystal glass of champagne, condensation droplets glistening in the warm direct sunlight.
-Visual style: Vintage 35mm warm film saturation, intense anamorphic lens bloom, soft summer haze overlays.
-Color palette: Warm liquid gold, reflective silver-chrome, deep ocean turquoise, and sand-white.
-Mood: Carefree luxury, untouchable glamour, absolute peace.
-Camera: Super slow-motion push-in, floating gently as if hovering above the pool.
-Music style: Ambient lounge disco, vintage analog warm synthesizer pads, slow organic percussion.
-Reference mood:
-"A golden hour paradise where time stands completely still."`,
-`Ultra-cinematic Ice Queen Muse visualizer inspired by vintage high-society campaigns and Winter Aspen luxury.
-A platinum-blonde subject with structured vintage waves sitting in the back of a luxury limousine, staring directly through the tinted window.
-Scene visuals:
-• She is draped in a plush, luxurious baby-blue faux fur coat that catches soft ambient winter light.
-• Large diamond cluster earrings shimmering under passing streetlights, cast against her flawless porcelain skin.
-• Her manicured hand holding a crystal tumbler, ice cubes shifting slowly as she gazes with cool detachment.
-Visual style: Ultra-sharp high-contrast detail, micro-mist atmosphere, cool diffused ring lighting.
-Color palette: Pastel baby blue, platinum silver, diamond white, and deep cold graphite.
-Mood: Aloof, detached, high-fashion winter wealth.
-Camera: Slowly rotating horizontal dolly tracking her profile, soft zoom-in on the eyes.`
-];
-
+const STYLE_CATEGORIES = VISUAL_MODELS; // alias used by the popup UI
+const DIALOGUE_OPTIONS = ["🔇 No Dialogue","🎙 Ambient Speech","🗣 Character Dialogue","📖 Narration","🎧 Voiceover"];
+const MUSIC_OPTIONS = ["🎵 No Music Reference","🖤 Dark Synthwave","⚡ Phonk","🎡 Festival EDM","💃 Latin Pop","🎤 K-Pop","🎹 Dream Pop","🌴 Tropical House","🎬 Cinematic Score"];
+const OUTPUT_TYPE_OPTIONS = ["✨ Visualizer","🎤 Music Video","🎬 Short Film","📸 Fashion Film"];
+const ASPECT_RATIO_OPTIONS = ["16:9", "9:16", "1:1", "21:9"];
+const DURATION_OPTIONS = ["4s", "6s", "8s"];
+const LIBRARY = [{"id":"starter-1","title":"Runway Couture Elevator","category":"Runway Couture","tags":["runway","couture","elevator","black-dress","opera-gloves"],"mood":"Mysterious, elegant, emotionally distant futuristic nightlife","prompt":"Dark futuristic Y2K visualizer inside a glowing blue-green elevator, mysterious girl with sleek black hair styled into sharp cyberpunk spikes and long face-framing strands. She wears a fitted black dress with thin straps, long opera gloves, dark red lipstick, and a black velvet choker. Her skin glows softly under cold fluorescent lighting while she moves slowly inside the confined metallic space.\n\nThe atmosphere feels hypnotic and detached: blurry neon reflections, distorted glass, green lens flares, grainy digital camera texture, and dreamy low-resolution early-2000s aesthetics. She leans against the elevator walls, turning her head slowly while the camera captures dramatic side profiles and close-up beauty shots.\n\nVisual style inspired by underground cyber-Y2K fashion editorials, early internet aesthetics, experimental club photography, and melancholic futuristic femininity.\n\nCamera style:\n• Slow-motion turning movements.\n• Handheld camcorder feel.\n• Mirrored elevator reflections.\n• Soft focus close-ups.\n• Dramatic overhead fluorescent lighting.\n• Subtle glitch and VHS texture.\n• Cinematic zoom-ins through haze.\nMood: Mysterious, elegant, emotionally distant, futuristic nightlife energy, cool-toned dreamscape.\nColor palette: Icy blue, neon green, black chrome, silver reflections, soft fluorescent white."},{"id":"starter-2","title":"Sparkling Siren Poolside","category":"Poolside Muse","tags":["silver-sequin","sunglasses","infinity-pool","sunset","glamour"],"mood":"Sun-soaked luxury, carefree, opulent","prompt":"Ultra-cinematic Poolside Muse visualizer inspired by retro Hollywood leisure campaigns and warm summer dreams.\nA blonde subject lounging elegantly on a custom white leather daybed beside a pristine cliffside infinity pool at sunset.\nScene visuals:\n• She wears a silver sequin bikini that throws glittering, dazzling reflections of sunlight onto her sun-kissed skin.\n• A close-up of her wearing oversized black acetate sunglasses, the golden ocean horizon reflecting perfectly in her lenses.\n• She slowly lifts an icy crystal glass of champagne, condensation droplets glistening in the warm direct sunlight.\nVisual style: Vintage 35mm warm film saturation, intense anamorphic lens bloom, soft summer haze overlays.\nColor palette: Warm liquid gold, reflective silver-chrome, deep ocean turquoise, and sand-white.\nMood: Carefree luxury, untouchable glamour, absolute peace.\nCamera: Super slow-motion push-in, floating gently as if hovering above the pool.\nMusic style: Ambient lounge disco, vintage analog warm synthesizer pads, slow organic percussion.\nReference mood:\n\"A golden hour paradise where time stands completely still.\""},{"id":"starter-3","title":"Ice Queen in Baby Blue Fur","category":"Ice Queen Muse","tags":["fur-coat","platinum-waves","old-hollywood","cold-wealth"],"mood":"Chic dominance, untouchable, cool","prompt":"Ultra-cinematic Ice Queen Muse visualizer inspired by vintage high-society campaigns and Winter Aspen luxury.\nA platinum-blonde subject with structured vintage waves sitting in the back of a luxury limousine, staring directly through the tinted window.\nScene visuals:\n• She is draped in a plush, luxurious baby-blue faux fur coat that catches soft ambient winter light.\n• Large diamond cluster earrings shimmering under passing streetlights, cast against her flawless porcelain skin.\n• Her manicured hand holding a crystal tumbler, ice cubes shifting slowly as she gazes with cool detachment.\nVisual style: Ultra-sharp high-contrast detail, micro-mist atmosphere, cool diffused ring lighting.\nColor palette: Pastel baby blue, platinum silver, diamond white, and deep cold graphite.\nMood: Aloof, detached, high-fashion winter wealth.\nCamera: Slowly rotating horizontal dolly tracking her profile, soft zoom-in on the eyes.\nMusic style: Cold ambient lo-fi, minimalist piano, crisp vinyl static.\nReference mood:\n\"Elegance frozen in place, demanding silent observation.\""},{"id":"starter-4","title":"Angel Wings Neon Haze","category":"Angel Haze","tags":["angel-wings","euphoria","neon","glitter","y2k"],"mood":"Melancholic, nostalgic, hyperfeminine late-night dreamscape","prompt":"Dreamy cinematic music visualizer, ultra-realistic HBO Euphoria-inspired atmosphere. A blonde girl with wet platinum hair and soft glitter makeup stands in a purple-blue neon haze at a crowded late-night house party. Large white angel wings glow softly behind her, creating an ethereal silhouette under shifting violet and warm golden lighting.\n\nHer makeup is smudged and sparkly in an artistic way, with subtle rhinestones around her eyes and glossy lips reflecting the light. She wears a flowing white satin dress with delicate straps, glowing softly under the neon lights. Her expression feels distant and thoughtful as she slowly moves through the room in slow motion.\n\nThe environment is dreamy and surreal: blurry silhouettes dancing in the background, shimmering haze, floating glitter particles, soft fog, reflective surfaces, warm lamp light mixing with cool neon purple tones. Camera movement is handheld and cinematic, alternating between slow close-ups, side profiles, soft-focus beauty shots, and wide atmospheric party scenes.\n\nVisual texture: Grainy 35mm film, lens bloom, subtle chromatic aberration, disposable-camera flash aesthetic, soft motion blur, realistic skin texture, non-AI-looking cinematography.\nMood: Melancholic, nostalgic, emotionally cinematic, hyperfeminine Y2K dreamscape, poetic late-night energy.\nLoopable visualizer motions:\n• Slow blinking and breathing.\n• Glitter drifting through the air.\n• Wings softly moving in haze.\n• Hair sticking to glowing skin.\n• Blurred dancers moving behind her.\n• Slow neon light flickers synchronized to music.\n• Gentle camera sway like a memory or dream."},{"id":"starter-5","title":"Architectural Muse","category":"Architectural Muse","tags":["architecture","couture","museum","minimalist","soft-light"],"mood":"Powerful stillness, quiet armor, cinematic","prompt":"Ultra-cinematic Architectural Muse visualizer inspired by modern couture in minimalist architectural environments.\nA striking dark-haired subject standing completely solitary on an empty concrete rooftop parking structure under an overcast, pale sky.\nNo dialogue.\nNo dancing.\nNo storytelling.\nScene visuals:\n• She wears a structured matte black silk gown with sharp architectural shoulders, cinched with a sculptural leather corset.\n• Close-up of glossy, heavy knee-high leather boots standing firm against the raw gray concrete slab.\n• She slowly tilts her face toward a cold wind, eyes half-lidded, completely unfazed by the vast open void around her.\nVisual style: Arthouse slow cinema grain, diffuse overhead overcast lighting, ultra-minimalist wide frames.\nColor palette: Industrial gray concrete, deep matte black, pale slate sky, and desaturated natural skin tones.\nMood: Powerful isolation, architectural fashion, effortless dominance.\nCamera: Very slow mechanical push-in along the center axis, cutting to a stark profile frame.\nMusic style: Dark minimal wave, slow-pacing kick drums, echoing industrial hums.\nReference mood:\n\"A monuments of silent control standing alone in the gray wind.\""},{"id":"starter-6","title":"Campus K-Pop Off-Duty","category":"Campus K-Style","tags":["cardigan","jennie","school","pastel","sunlight"],"mood":"Effortless, fresh, idol aesthetic","prompt":"Ultra-cinematic Campus K-Style visualizer inspired by Jennie-style off-duty fashion and golden university afternoons.\nAn effortlessly cool student with soft dark hair walking between classes under sun-dappled jacaranda trees.\nNo dialogue.\nNo dancing.\nNo storytelling.\nScene visuals:\n• She wears a fitted pastel lilac cardigan styled slightly off one shoulder, paired with a neat pleated skirt and chunky leather loafers.\n• Her dewy, glossed lips catch the golden morning sunbeams filtering down through the swaying purple leaves.\n• As she passes massive glass library panels, her crisp reflection glides smoothly alongside her.\nVisual style: Rich dewy skin highlights, golden lens flares, soft-focus dreamy edges, vintage camcorder tone.\nColor palette: Soft lilac, ivory white, jacaranda violet, warm red brick, and golden hour sunshine.\nMood: Approachable yet iconic, polished, nostalgic.\nCamera: Smooth tracking shot, keeping pace with her walk, slowly focusing on fabric details and her calm gaze.\nMusic style: Upbeat bedroom pop, bubbly acoustic guitars, light percussive snaps.\nReference mood:\n\"Effortlessly grabbing the spotlight without even trying.\""},{"id":"starter-7","title":"Lazy Morning Light","category":"Seoul Morning","tags":["seoul-apartment","morning","sunlight","duvet","warm"],"mood":"Nostalgic, intimate, quiet","prompt":"Ultra-cinematic Seoul Morning visualizer inspired by modern Korean arthouse films and cozy intimate portraits.\nA quiet scene in a minimalist high-rise Seoul apartment, where warm morning light filters through gauzy cream curtains.\nNo dialogue.\nNo dancing.\nNo storytelling.\nScene visuals:\n• A girl with messy, tousled dark hair wrapped loosely in a soft soft linen duvet, smiling softly as light stripes across the bed.\n• A young man standing near the sunlit window in an oversized gray tee, stretching his arms with comfortable relaxation.\n• Visible dust motes drifting lazily through hot shafts of golden volumetric sunlight near a boiling silver kettle.\nVisual style: Shallow depth of field, natural warm diffuse lighting, beautiful slow-motion micro-movements.\nColor palette: Cream white, natural linen gray, warm golden-hour honey, and soft peach tones.\nMood: Serene comfort, intimate peace, slow living.\nCamera: Slow hand-held organic drift, starting from details of the bed linens to the window frame.\nMusic style: Lo-fi acoustic guitar pluck, soft vinyl clicks, distant morning ambient city hums.\nReference mood:\n\"A lazy sanctuary of light, holding onto the morning forever.\""},{"id":"starter-8","title":"Euphoria Neon Party","category":"K-Street","tags":["euphoria","y2k","nightclub","chainmail","party"],"mood":"Dreamy, reckless, hyperfeminine neon melancholy","prompt":"Cinematic Euphoria-inspired party scene, hyperfeminine Y2K glam aesthetic, dreamy neon nightclub with shimmering purple tinsel curtains and hanging metallic stars, chaotic teenage house party atmosphere, sweaty dance floor glow, handheld camera movement, grainy 35mm film texture, soft flash photography look.\n\nA mysterious girl stands in the center wearing a sparkling silver chainmail halter top and matching low-rise skirt, rhinestone face jewels covering her eyes and cheeks, glossy skin reflecting pink and violet lights, dark hair in a messy updo with loose strands framing her face. She slowly adjusts her outfit while staring into the distance with an emotionally detached expression.\n\nBackground filled with blurred partygoers, slow-motion dancing, glitter makeup, red and blue LED lighting, reflective sequins, dreamy haze, nostalgic 2010s teen drama mood, emotional and reckless energy. Camera alternates between close-up beauty shots, shaky candid movements, flash-frame transitions, mirror reflections, and slow cinematic zooms.\n\nNo dialogue.\nNo storytelling.\nVisual style: Ultra realistic, not AI-looking, cinematic depth of field, sensual but artistic atmosphere, high-detail skin texture, subtle film burn overlays, emotional melancholy mixed with glamour.\nColor palette: Neon magenta, deep purple, silver chrome, electric blue.\nStyle references: Euphoria HBO, Petra Collins photography, early 2000s club fashion editorials, music video cinematography.\nOptional motion details:\n• Glitter falling through the air.\n• Cigarette smoke drifting in neon light.\n• Mascara tears catching sparkles.\n• Slow head turns toward camera.\n• Flickering strobe lights synced to bass.\n• Friends laughing in blurred background.\n• Reflective makeup sparkling under flash photography."},{"id":"starter-9","title":"Cinematic Storytelling Penthouse","category":"Cinematic Storytelling","tags":["short-film","penthouse","city-lights","emotional-world","cold"],"mood":"Cold, empty, symmetrical, obsessive","prompt":"Ultra-cinematic Luxury Noir visualizer inspired by American Psycho and cold high-rise minimalism.\nA sharp-featured subject in a bespoke charcoal wool suit sitting perfectly centered in an empty penthouse apartment overlooking a rain-slicked metropolis at midnight.\nNo dialogue.\nNo dancing.\nNo storytelling.\nScene visuals:\n• Floor-to-ceiling glass windows casting deep reflections of amber and ice-blue city lights.\n• The subject slowly raises an empty lead-crystal glass, staring completely detached into the lens.\n• Perfect symmetrical framing with minimalist Italian leather furniture lit by a harsh single spotlight.\nVisual style: High-end luxury campaign film, 35mm anamorphic lens, razor-sharp focus with misty halation.\nColor palette: Monochromatic deep charcoals, desaturated midnight blue, ice-blue backlight.\nMood: Obsessive, clinical, detached, cold wealth.\nCamera: Extremely slow, mechanical push-in along the center axis. Zero hand-shake.\nMusic style: Ambient coldwave, slowed synthwave, hypnotic kick drum.\nReference mood:\n\"The perfect illusion of control, masking absolute emptiness.\""},{"id":"starter-10","title":"White Space Dream","category":"Minimalist Atmosphere","tags":["dreamcore","sci-fi","white-space","fog","glowing-path"],"mood":"Ethereal, transcendent, mysterious futuristic solitude","prompt":"Surreal futuristic visualizer inside an endless fog-filled white space, glowing circular lights embedded into the floor forming a pathway through darkness. A mysterious girl in an elegant flowing white dress runs and dances across the glowing circles as if floating between dreams. Her short dark hair moves softly while bright white light illuminates her silhouette against the pale blue haze.\n\nThe atmosphere feels ethereal, lonely, and cinematic: minimalist sci-fi environment, soft glowing reflections, floating fog, dreamlike emptiness, and slow graceful movement. The camera follows her from far away before slowly pushing into close-up shots as she spins and runs across the illuminated path.\n\nVisual style inspired by futuristic art films, experimental fashion editorials, dreamcore aesthetics, and emotional sci-fi cinema.\n\nNo dialogue.\nNo storytelling.\nCamera style:\n• Wide symmetrical shots.\n• Floating tracking camera.\n• Slow-motion running and spinning.\n• Glowing reflections on the floor.\n• Soft focus close-ups.\n• Dreamy haze and bloom.\n• Cinematic aerial perspectives.\nVisual texture: Ultra-realistic soft lighting, subtle film grain, soft lens bloom, atmospheric fog, clean futuristic minimalism, non-AI-looking cinematography.\nMood: Ethereal, transcendent, mysterious, dreamlike, emotional futuristic solitude."},{"id":"starter-11","title":"Rain Memory City","category":"Runway Couture","tags":["rain","flashback","runway","heartbreak","neon-city"],"mood":"Nostalgic heartbreak, quiet acceptance, futuristic melancholy","prompt":"Melancholic cinematic flashback scene in the rain, the transformed futuristic girl walks alone through a neon-lit city at night while memories of her past relationship begin appearing around her like fragments of a dream. Heavy rain falls across empty streets, reflecting green and blue lights on wet pavement.\n\nAs she walks silently with wet black hair sticking to her face, brief flashback moments appear in soft faded overlays:\n• Laughing together under one umbrella.\n• Holding hands while running through the rain.\n• Sitting together inside a car with fogged-up windows.\n• Smiling at each other under glowing streetlights.\n• Dancing together on an empty crosswalk at night.\n\nThe memories feel warm and nostalgic compared to the cold futuristic present. Every flashback disappears quickly like fading reflections in puddles. Her expression remains calm but emotionally distant, as if she is learning to let go while still carrying those memories with her.\n\nNo dialogue.\nNo storytelling.\nCamera style:\n• Extreme close-ups with rain dripping down her face.\n• Slow-motion walking shots.\n• Blurry flashback overlays mixed with present scenes.\n• Reflections in puddles and windows.\n• Handheld cinematic movement.\n• Soft focus memory transitions.\n• Neon lights streaking across the lens.\nVisual style: Ultra-realistic cyber-Y2K cinematography, rainy futuristic city, subtle 35mm film grain, soft lens bloom, realistic skin texture, dreamy emotional atmosphere, non-AI-looking visuals.\nMood: Nostalgic heartbreak, quiet acceptance, emotional solitude, futuristic melancholy, cinematic memory dreamscape."},{"id":"agent-01","title":"Desert Rave Jewels","category":"Y2K Glamour","tags":["desert-rave","body-chain","bohemian","gold","nightlife"],"mood":"Mysterious, glamorous, hypnotic, surreal nightlife elegance","prompt":"Ultra-cinematic desert rave visualizer inspired by futuristic bohemian Y2K fashion. A mysterious girl with long jet-black hair and soft bangs walks slowly through a warm golden-lit underground party, wearing an intricate jeweled body chain top covered in crystals, beads, and metallic details. Flowing pink and gold fabrics trail behind her as she moves through the haze like a dream. A tropical flower tucked into her hair glows softly under amber lighting.\n\nThe atmosphere feels hypnotic and luxurious: warm desert tones, candlelight reflections, floating fabric curtains, smoky air, and blurry silhouettes dancing in the background. She moves confidently through the space with an emotionally detached but magnetic expression, like the center of an otherworldly nightlife fantasy.\n\nScene visuals:\n• Slow-motion walking through flowing curtains.\n• Close-up shots of jeweled body chains sparkling.\n• Fabric moving dramatically in warm wind.\n• Dancing beneath hanging lanterns and fairy lights.\n• Side-profile beauty shots with glowing skin.\n• Reflections on gold jewelry and glossy lips.\n• Handheld camera circling around her while she dances.\n• Slow spins causing fabrics and chains to shimmer.\nVisual style: Ultra-realistic fashion-editorial cinematography, dreamy desert rave atmosphere, warm golden lighting, subtle 35mm film grain, soft lens bloom, realistic skin texture, luxury Y2K fantasy aesthetic, non-AI-looking visuals.\nColor palette: Gold, amber, dusty pink, bronze, black silk, warm candlelight tones.\nMood: Mysterious, glamorous, hypnotic, feminine, surreal nightlife elegance."},{"id":"agent-02","title":"Downtown Sequin Night","category":"Y2K Glamour","tags":["city","sequins","taxi","rain","nightlife"],"mood":"Lonely city glamour, mysterious nightlife energy","prompt":"Cinematic nighttime city visualizer featuring a glamorous girl with short layered black hair standing alone on a busy downtown street at dusk. She leans against a metal street pole while traffic lights, taxis, and glowing storefronts blur behind her in warm orange and green city light.\n\nShe wears a sparkling black sequin top with dramatic cutouts, layered gold necklaces, and metallic arm jewelry that reflects the headlights around her. Her expression is calm, mysterious, and emotionally distant as cars pass by in slow motion through the rainy city atmosphere.\n\nThe visualizer follows her wandering through the city alone at night:\n• Standing beneath traffic lights while wind moves her hair.\n• Slow-motion walking across empty crosswalks.\n• Reflections of neon signs on wet pavement.\n• Close-up beauty shots illuminated by passing headlights.\n• Sitting in the backseat of a taxi staring out the window.\n• Blurry nightlife crowds moving around her.\n• Cigarette smoke and steam rising from subway vents.\n• Holding eye contact with the camera under glowing streetlights.\nVisual style: Ultra-realistic cinematic nightlife aesthetic, luxury cyber-Y2K fashion, handheld camera movement, subtle 35mm film grain, realistic skin texture, warm city glow mixed with cool neon reflections, non-AI-looking cinematography.\nColor palette: Black sequins, gold jewelry, neon green, amber streetlights, rainy silver reflections.\nMood: Lonely city glamour, mysterious nightlife energy, emotional independence, cinematic late-night confidence."},{"id":"agent-03","title":"Canal Fan Daydream","category":"Y2K Glamour","tags":["riverboat","canal","fan","bohemian","summer"],"mood":"Romantic freedom, dreamy summer nostalgia","prompt":"Dreamy daytime riverboat visualizer with the same glamorous bob-haired girl drifting through a sunny European-style canal city. Warm golden sunlight reflects across the water while soft wind moves her black hair and flowing fabrics. She leans against the railing of a ferry boat holding a delicate pink folding fan, wearing layered silver coin jewelry, low-rise bohemian fabrics, and translucent pink bracelets that glow in the sunlight. A soft pink flower tucked into her hair gives the scene a romantic Y2K fantasy feeling.\n\nThe atmosphere feels nostalgic, feminine, and cinematic: sparkling water reflections, slow-moving boats, tree shadows dancing across her skin, and warm spring air filling the frame. Her expression is calm and dreamy as she slowly opens and closes the fan while staring into the distance.\n\nScene visuals:\n• Sunlight flickering through moving trees.\n• Slow-motion hair movement in the wind.\n• Close-up shots of jewelry sparkling.\n• Reflections dancing across the river water.\n• Handheld shots from the moving boat.\n• Soft eye contact with the camera.\n• Fabric and fan moving gently in the breeze.\n• Dreamy golden-hour lighting across her face.\nVisual style: Ultra-realistic Y2K bohemian fashion editorial, dreamy European summer aesthetic, soft film grain, warm natural sunlight, realistic skin texture, nostalgic handheld cinematography, non-AI-looking visuals.\nColor palette: Golden sunlight, soft pink, black silk, silver jewelry, emerald river reflections.\nMood: Romantic freedom, dreamy summer nostalgia, feminine elegance, peaceful cinematic beauty."},{"id":"agent-04","title":"Birthday Beach Melancholy","category":"Y2K Glamour","tags":["beach","birthday","cake","pink","flash"],"mood":"Lonely birthday nostalgia, dreamy summer night","prompt":"Dreamy tropical-night visualizer on an empty beach at sunset, glamorous girl with a soft brown bob haircut kneeling in the sand beside a pastel birthday cake and a large bouquet of pink lilies. She wears a glowing hot-pink bikini with layered silver necklaces and a flower tucked behind her ear, illuminated by warm golden flash photography against the dark blue ocean behind her.\n\nThe atmosphere feels nostalgic, feminine, and bittersweet, like celebrating a birthday while emotionally lost in thought. Wind moves through her hair and flowing pink fabric while waves crash softly nearby. The cake candles flicker in the night air as city lights shimmer faintly across the water in the distance.\n\nScene visuals:\n• Close-up shots of glossy skin under flash lighting.\n• Flower petals moving in ocean wind.\n• Birthday cake glowing in the dark.\n• Slow-motion beach walking at night.\n• Holding the bouquet while staring at the horizon.\n• Warm disposable-camera flash aesthetic.\n• Reflections on wet sand and jewelry.\n• Dreamy handheld shots around the shoreline.\nVisual style: Ultra-realistic Y2K beach glamour, cinematic nighttime photography, soft 35mm film grain, realistic skin texture, dreamy flash-lit cinematography, nostalgic feminine energy, non-AI-looking visuals.\nColor palette: Hot pink, warm gold, ocean blue, silver jewelry reflections, sunset purple tones.\nMood: Lonely birthday nostalgia, dreamy summer night, feminine softness, emotional elegance, cinematic beach melancholy."},{"id":"agent-05","title":"Red Car Suburban Dream","category":"Y2K Glamour","tags":["red-car","suburban","street-racing","gold","sunset"],"mood":"Rebellious elegance, nostalgic freedom","prompt":"Cinematic suburban street visualizer at golden-hour sunset, glamorous girl with soft black layered hair standing confidently in front of a bright red modified sports car parked in the middle of a quiet neighborhood street. She wears a flowing red-and-gold embroidered dress with matching draped fabrics moving dramatically in the cold evening wind.\n\nThe atmosphere feels nostalgic and rebellious: warm sunset light reflecting across the car paint, empty suburban streets, distant school buses, winter air, and cinematic silence before nightfall. Her expression is calm, powerful, and emotionally untouchable while she leans against the car like the main character of a late-2000s street-racing dream.\n\nScene visuals:\n• Slow-motion fabric flowing behind her.\n• Close-up shots of gold embroidery sparkling.\n• Headlights turning on at dusk.\n• Cinematic shots sitting on the hood of the car.\n• Wind moving her hair softly.\n• Reflections of sunset light on the car body.\n• Slow walking through the empty street.\n• Handheld camera circling around her and the vehicle.\nVisual style: Ultra-realistic Y2K street-racing aesthetic, cinematic suburban sunset lighting, soft 35mm film grain, realistic skin texture, dreamy handheld cinematography, non-AI-looking visuals, luxury nostalgic fashion-editorial mood.\nColor palette: Deep red, gold embroidery, sunset orange, cold winter gray, glossy car reflections.\nMood: Rebellious elegance, nostalgic freedom, feminine confidence, cinematic suburban dreamscape."},{"id":"agent-06","title":"Platinum Flash Beauty","category":"Y2K Glamour","tags":["beauty","platinum","flash","glitter","close-up"],"mood":"Dreamy glamour, feminine elegance, hypnotic beauty","prompt":"Ultra-cinematic beauty visualizer focused on a glamorous blonde girl with glowing porcelain skin and long platinum hair illuminated by warm flash photography. Her makeup is dreamy and hyperfeminine: shimmering pink-lavender eyeshadow, glossy lips, sparkling highlighter, and soft glitter reflecting light across her face like glass.\n\nThe camera stays extremely close to her face while she moves slowly through a luxurious late-night atmosphere filled with warm golden lighting and soft shadows. Her expression feels calm, hypnotic, and emotionally distant as she stares into the lens like a fashion editorial come to life.\n\nScene visuals:\n• Extreme close-up beauty shots.\n• Glossy skin reflecting flash lighting.\n• Slow blinking and subtle head turns.\n• Platinum hair moving softly in warm air.\n• Reflections in mirrors and glass.\n• Glitter makeup sparkling during movement.\n• Blurred luxury interiors in the background.\n• Soft-focus handheld camera movement.\nVisual style: Ultra-realistic luxury beauty cinematography, soft 35mm film grain, dreamy lens bloom, realistic skin texture, warm flash-photo aesthetic, Y2K glam editorial visuals, non-AI-looking cinematography.\nColor palette: Champagne gold, pearl white, soft pink shimmer, silver reflections, warm amber shadows.\nMood: Dreamy glamour, feminine elegance, hypnotic beauty, luxurious nighttime softness."},{"id":"agent-07","title":"Golden Veil Muse","category":"Y2K Glamour","tags":["veil","gold","desert-night","jewelry","flash"],"mood":"Mysterious femininity, hypnotic glamour","prompt":"Luxury desert-night visualizer with the same mysterious black-haired girl under warm flash photography, holding up a translucent gold veil covered in tiny reflective sequins. Her piercing icy-blue eyes stare directly into the camera while golden jewelry and crystal body chains shimmer intensely under harsh late-night lighting. A soft orange flower tucked into her hair adds a dreamy tropical contrast to the dark glamour.\n\nThe atmosphere feels hypnotic and cinematic: warm golden haze, sheer fabrics floating through the air, blurry silhouettes moving in the background, and intense disposable-camera flash creating dramatic shadows and glowing skin. She moves slowly behind the veil like a mysterious fashion muse inside a surreal midnight party.\n\nScene visuals:\n• Close-up shots through transparent gold fabric.\n• Jewelry sparkling during slow movements.\n• Direct eye contact with the camera.\n• Warm flash lighting over glowing skin.\n• Soft wind moving long black hair.\n• Fabric drifting across the lens.\n• Slow-motion turns and veil reveals.\n• Handheld editorial-style camera movement.\nVisual style: Ultra-realistic Y2K luxury fashion cinematography, warm flash-photo aesthetic, subtle 35mm film grain, realistic skin texture, dreamy nightlife glamour, non-AI-looking visuals.\nColor palette: Gold, amber, crystal silver, black silk, warm champagne lighting.\nMood: Mysterious femininity, hypnotic glamour, surreal beauty, luxurious nightlife fantasy."},{"id":"agent-08","title":"Tropical Villa Dance","category":"Y2K Glamour","tags":["villa","dance","red-skirt","gold-jewelry","tropical"],"mood":"Confident feminine energy, hypnotic elegance","prompt":"Cinematic tropical-night dance visualizer featuring the same glamorous girl with long black hair, layered gold jewelry, and a sparkling red skirt dancing confidently inside a luxurious open-air villa at night. Warm candlelight and pink-orange sunset tones reflect across marble floors while soft tropical wind moves the flowing red fabric around her waist.\n\nScene visuals:\n• Slow-motion belly dancing and graceful arm movements.\n• Close-up shots of gold jewelry sparkling.\n• Sheer red fabrics flowing dramatically.\n• Flower details moving during spins.\n• Warm lanterns and candles glowing in the background.\n• Handheld cinematic camera movement.\n• Soft wind moving her hair and skirt.\n• Dreamy rooftop overlooking ocean lights.\nVisual style: Ultra-realistic tropical Y2K glamour, dreamy luxury nightlife aesthetic, subtle 35mm film grain, realistic skin texture, warm cinematic lighting, fashion-editorial cinematography, non-AI-looking visuals.\nMood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour."}];
 const SAFETY_BLOCK_REASONS = new Set(["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST", "RECITATION"]);
+const EXAMPLES_PER_CATEGORY = 2;
 
-// Builds the system + user prompt pair exactly like index.html does.
-function buildPromptPayload({ roughInput, visualModel, dialogueMode, musicMode, outputType, presetModifier }) {
-  const selectedStyle = STYLE_CATEGORIES.find(c => c.name === visualModel) || STYLE_CATEGORIES[0];
-  const styleKeywords = selectedStyle.keywords.join(", ");
-  const generationControls = {
-    visualModel: selectedStyle.name,
-    dialogueMode,
-    musicMode,
-    outputType
-  };
-
-  const systemPrompt = `You are an elite, award-winning fashion film Creative Director behind the visual styling of premium AI visualizers.
-Transform the user's rough description into a highly structured, ultra-cinematic visual director's brief suitable for premium generators like Veo 3.
-
-You MUST follow this exact format below. Do not output conversational introductions, pleasantries, or preamble. Start directly with the prompt:
-
-Ultra-cinematic [Style Family] visualizer inspired by [Atmospheric Director / High-End Brand / Cinema].
-A [Subject Details] in [Precise Setting]...
-Dialogue handling: [Follow the selected dialogue mode exactly]
-Music context: [Follow the selected music mode as pacing, atmosphere, rhythm, and scene-design metadata only]
-Output type: [Follow the selected output type and adapt structure accordingly]
-Scene visuals:
-• [Visual focal point bullet 1]
-• [Visual focal point bullet 2]
-• [Visual focal point bullet 3]
-Visual style: [Detailed camera lenses (e.g., 35mm, anamorphic), lighting setups, and visual texture]
-Color palette: [Highly specific color coordination, desaturation levels]
-Mood: [Deep artistic, sensory or emotional feelings]
-Camera: [Clean cinematic motion cues, dolly, or horizontal crane tracks]
-Music style: [Vibe-matching sounds, BPM, or specific tone]
-Reference mood:
-"[A single artistic philosophical quote mapping to the scene's core essence]"
-
-IMPORTANT RULES:
-- Follow safety guidelines. Refuse or redirect requests involving graphic violence, self-harm, sexual exploitation, hate, harassment, illegal instructions, or other harmful content.
-- If the user request is unsafe or sensitive, do not generate the cinematic prompt. Return a brief safety notice asking the user to revise the idea into a safe, non-graphic concept.
-- Never use generic words like "beautiful", "high-quality", or "photorealistic". Use technical cinematic framing.
-- Integrate the aesthetic language matching the selected visual category.
-- Focus strictly on photographic atmosphere, textures, reflection refractions, and micro-motion.
-- Dialogue is only allowed when the selected dialogue mode explicitly requests it.
-- Music metadata should influence atmosphere, pacing, visual rhythm, editing style, and scene design. Do not generate lyrics or audio.
-- If output type is Visualizer, keep it atmospheric with no storytelling unless the user explicitly asks.
-- If output type is Music Video, allow performance scenes and rhythm-driven editing.
-- If output type is Short Film, allow narrative structure and dialogue only when the dialogue mode permits it.
-- If output type is Fashion Film, prioritize editorial styling, cinematography, wardrobe, pose language, and luxury campaign pacing.`;
-
-  const examplesText = STYLE_REFERENCES.map((ref, i) => `
-### EXAMPLE ${i + 1}:
-Output Brief:
-${ref}
-`).join("\n");
-
-  const userContent = `Convert this rough concept:
-"${roughInput}"
-
-Category chosen: ${selectedStyle.name}
-Target keywords to naturally weave in: ${styleKeywords}
-
-Generation controls:
-${JSON.stringify(generationControls, null, 2)}
-
-${presetModifier ? `MODIFIER DEMAND: Change the style of the prompt to match this request: "${presetModifier}"` : ""}
-
-Use these high-quality visual briefs as your absolute style, structural, and pacing guides. Match their exact level of detail and formatting:
-${examplesText}
-
-Begin rewriting directly. No pre-text or greetings:`;
-
-  return { systemPrompt, userContent };
+function selectExamples(category, n) {
+  n = n || EXAMPLES_PER_CATEGORY;
+  const matches = LIBRARY.filter(ex => ex.category === category);
+  const others = LIBRARY.filter(ex => ex.category !== category);
+  return matches.concat(others).slice(0, n);
 }
 
-// Export for module contexts (none currently), harmless otherwise.
+function buildSystemPrompt() {
+  return [
+    'You are an elite, award-winning fashion film Creative Director behind the visual styling of premium AI visualizers.',
+    "Transform the user's rough description into a highly structured, ultra-cinematic visual director's brief suitable for premium generators like Veo 3.",
+    '',
+    'You MUST follow this exact format below. Do not output conversational introductions, pleasantries, or preamble. Start directly with the prompt:',
+    '',
+    'Ultra-cinematic [Style Family] visualizer inspired by [Atmospheric Director / High-End Brand / Cinema].',
+    'A [Subject Details] in [Precise Setting]...',
+    'Dialogue handling: [Follow the selected dialogue mode exactly]',
+    'Music context: [Follow the selected music mode as pacing, atmosphere, rhythm, and scene-design metadata only]',
+    'Output type: [Follow the selected output type and adapt structure accordingly]',
+    'Scene visuals:',
+    '• [Visual focal point bullet 1]',
+    '• [Visual focal point bullet 2]',
+    '• [Visual focal point bullet 3]',
+    'Visual style: [Detailed camera lenses (e.g., 35mm, anamorphic), lighting setups, and visual texture]',
+    'Color palette: [Highly specific color coordination, desaturation levels]',
+    'Mood: [Deep artistic, sensory or emotional feelings]',
+    'Camera: [Clean cinematic motion cues, dolly, or horizontal crane tracks]',
+    'Music style: [Vibe-matching sounds, BPM, or specific tone]',
+    'Technical specs: [Aspect ratio and clip duration exactly as provided]',
+    'Avoid: [Negative-prompt elements to keep out of frame, only if provided]',
+    'Reference mood:',
+    '"[A single artistic philosophical quote mapping to the scene\'s core essence]"',
+    '',
+    'IMPORTANT RULES:',
+    '- Follow safety guidelines. Refuse or redirect requests involving graphic violence, self-harm, sexual exploitation, hate, harassment, illegal instructions, or other harmful content.',
+    '- If the user request is unsafe or sensitive, do not generate the cinematic prompt. Return a brief safety notice asking the user to revise the idea into a safe, non-graphic concept.',
+    '- Never use generic words like "beautiful", "high-quality", or "photorealistic". Use technical cinematic framing.',
+    '- Integrate the aesthetic language matching the selected visual category.',
+    '- Focus strictly on photographic atmosphere, textures, reflection refractions, and micro-motion.',
+    '- Dialogue is only allowed when the selected dialogue mode explicitly requests it.',
+    '- Music metadata should influence atmosphere, pacing, visual rhythm, editing style, and scene design. Do not generate lyrics or audio.',
+    '- If output type is Visualizer, keep it atmospheric with no storytelling unless the user explicitly asks.',
+    '- If output type is Music Video, allow performance scenes and rhythm-driven editing.',
+    '- If output type is Short Film, allow narrative structure and dialogue only when the dialogue mode permits it.',
+    '- If output type is Fashion Film, prioritize editorial styling, cinematography, wardrobe, pose language, and luxury campaign pacing.',
+    '- Honor the requested aspect ratio and duration. Compose framing and pacing appropriate to them (e.g. 9:16 vertical, 8s clip).',
+    '- If an "Avoid" list is provided, never include those elements; omit the Avoid line entirely when none is provided.'
+  ].join('\n');
+}
+
+function buildPromptPayload(opts) {
+  const style = VISUAL_MODELS.find(c => c.name === opts.visualModel) || VISUAL_MODELS[0];
+  const generationControls = {
+    visualModel: style.name,
+    dialogueMode: opts.dialogueMode || DIALOGUE_OPTIONS[0],
+    musicMode: opts.musicMode || MUSIC_OPTIONS[0],
+    outputType: opts.outputType || OUTPUT_TYPE_OPTIONS[0],
+    aspectRatio: opts.aspectRatio || ASPECT_RATIO_OPTIONS[0],
+    duration: opts.duration || DURATION_OPTIONS[2]
+  };
+  const negativePrompt = (opts.negativePrompt || '').trim();
+  const modifier = (opts.presetModifier || opts.modifier || '').trim();
+
+  const examplesText = selectExamples(style.name).map((ex, i) =>
+    '\n### EXAMPLE ' + (i + 1) + ':\nCategory: ' + ex.category +
+    '\nTags: ' + ((ex.tags || []).join(', ')) + '\nOutput Brief:\n' + ex.prompt + '\n'
+  ).join('\n');
+
+  const userContent = 'Convert this rough concept:\n"' + opts.roughInput + '"\n\n' +
+    'Category chosen: ' + style.name + '\n' +
+    'Target keywords to naturally weave in: ' + style.keywords.join(', ') + '\n\n' +
+    'Generation controls:\n' + JSON.stringify(generationControls, null, 2) + '\n' +
+    (negativePrompt ? '\nNegative prompt (elements to AVOID in frame): "' + negativePrompt + '"' : '') +
+    (modifier ? '\nMODIFIER DEMAND: Change the style of the prompt to match this request: "' + modifier + '"' : '') +
+    '\n\nUse these high-quality visual briefs as your absolute style, structural, and pacing guides. Match their exact level of detail and formatting:\n' +
+    examplesText +
+    '\n\nBegin rewriting directly. No pre-text or greetings:';
+
+  return { systemPrompt: buildSystemPrompt(), userContent: userContent };
+}
+
 if (typeof self !== "undefined") {
   self.STYLE_CATEGORIES = STYLE_CATEGORIES;
+  self.VISUAL_MODELS = VISUAL_MODELS;
   self.DIALOGUE_OPTIONS = DIALOGUE_OPTIONS;
   self.MUSIC_OPTIONS = MUSIC_OPTIONS;
   self.OUTPUT_TYPE_OPTIONS = OUTPUT_TYPE_OPTIONS;
+  self.ASPECT_RATIO_OPTIONS = ASPECT_RATIO_OPTIONS;
+  self.DURATION_OPTIONS = DURATION_OPTIONS;
   self.SAFETY_BLOCK_REASONS = SAFETY_BLOCK_REASONS;
   self.buildPromptPayload = buildPromptPayload;
 }

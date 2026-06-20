@@ -69,6 +69,7 @@ html, body {
 .select { appearance: none; cursor: pointer; }
 
 .controls-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.controls-grid.two { grid-template-columns: 1fr 1fr; margin-top: 4px; }
 
 .primary-btn {
   margin-top: 16px; width: 100%; border: none; cursor: pointer;

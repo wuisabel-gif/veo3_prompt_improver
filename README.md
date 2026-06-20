@@ -44,17 +44,43 @@ This project explores how structured prompt engineering, visual metadata, and re
 - **Media Hosting:** Cloudinary for hosted demo videos.
 - **Local Configuration:** `.env` and `.env.example`.
 
-The project is intentionally lightweight. The main app lives in `index.html`, and the backend API proxy lives in `server.mjs`.
+The web app lives in `index.html`; the backend proxy lives in `server.mjs`. The prompt-engineering
+logic is centralized in `core/` and reused by every surface (web app, MCP server, browser
+extension), so there is one source of truth.
+
+## Surfaces
+
+The same Veo 3 director engine ships in several forms:
+
+- **Web app** — `index.html` + `server.mjs` (streaming output, Veo 3 controls).
+- **MCP server** — `mcp-server/`, usable in Claude Desktop, Claude Code, Cursor, etc.
+- **Gemini CLI extension** — `gemini-extension/` (`/veo3:improve`, `/veo3:models`).
+- **Chrome extension** — `chrome-extension/` (toolbar popup; generated from `core/`).
+- **Claude skill** — `claude-skill/veo3-director/`.
+
+## Architecture & security notes
+
+- The backend builds the Gemini prompt **server-side** from a constrained `{idea, model, controls}`
+  payload (`core/`), so the proxy can't be abused as an open relay for arbitrary prompts.
+- CORS is locked to `ALLOWED_ORIGINS` (localhost always allowed) and the prompt endpoint is
+  per-IP rate limited (`RATE_LIMIT_MAX` / `RATE_LIMIT_WINDOW_MS`).
+- Output streams over Server-Sent Events for progressive rendering.
+- Veo 3-native controls: aspect ratio, clip duration, and a negative prompt.
 
 ## Project Files
 
 - `index.html` - Main single-page Studio Space app.
-- `server.mjs` - Node backend that protects the API key and calls Gemini.
-- `.env.example` - Safe template for Gemini, local backend, and Cloudinary settings.
+- `server.mjs` - Node backend: validates input, builds prompts via `core/`, streams Gemini output.
+- `core/` - Canonical director engine (`director.mjs`, `models.json`, `library.json`).
+- `mcp-server/` - MCP server exposing the engine as tools.
+- `gemini-extension/`, `chrome-extension/`, `claude-skill/` - Extension/skill packagings.
+- `scripts/build-clients.mjs` - Regenerates `chrome-extension/data.js` from `core/`.
+- `scripts/test-core.mjs` - Core engine tests (`npm test`).
+- `.env.example` - Template for Gemini, backend, security, and Cloudinary settings.
 - `asset/` - Local demo video files.
 - `cloudinary-videos.json` - Cloudinary upload metadata.
 - `scripts/upload-cloudinary.mjs` - Helper script for uploading demo videos to Cloudinary.
-- `package.json` - Project scripts for starting the backend and uploading videos.
+- `package.json` - Scripts: `start`, `build:clients`, `mcp`, `test`, `upload:cloudinary`.
 
 ## Prompt Algorithm
 

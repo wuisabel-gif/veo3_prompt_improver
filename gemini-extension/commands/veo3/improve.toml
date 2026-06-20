@@ -11,6 +11,9 @@ control hints in `key:value` form anywhere in the text:
   - `dialogue:"..."` one of the dialogue modes
   - `music:"..."`    one of the music modes
   - `output:"..."`   one of the output types (Visualizer | Music Video | Short Film | Fashion Film)
+  - `aspect:"..."`   aspect ratio (16:9 | 9:16 | 1:1 | 21:9)
+  - `duration:"..."` clip duration (4s | 6s | 8s)
+  - `negative:"..."` elements to keep OUT of frame
   - `modifier:"..."` an extra styling demand to bend the prompt toward
 
 Parse and strip those hints, then treat the remaining text as the rough concept.
@@ -18,8 +21,9 @@ Parse and strip those hints, then treat the remaining text as the rough concept.
 Resolution rules:
 - If `model:` is omitted, choose the single best-fitting visual model for the idea and note
   your choice on one short line (e.g. `Visual model: Poolside Muse`) before the prompt.
-- If `dialogue:`, `music:`, or `output:` are omitted, use the defaults
-  (No Dialogue · No Music Reference · Visualizer).
+- If `dialogue:`, `music:`, `output:`, `aspect:`, or `duration:` are omitted, use the defaults
+  (No Dialogue · No Music Reference · Visualizer · 16:9 · 8s).
+- Honor the aspect ratio and duration in framing and pacing. Omit the `Avoid` line if no `negative:` is given.
 - Weave the chosen model's keywords in naturally. Honor any `modifier:` demand.
 - If the concept is unsafe or sensitive, return only a brief safety notice — do not generate a prompt.
 

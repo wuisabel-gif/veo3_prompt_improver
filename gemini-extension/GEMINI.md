@@ -29,6 +29,8 @@ Color palette: [Highly specific color coordination, desaturation levels]
 Mood: [Deep artistic, sensory or emotional feelings]
 Camera: [Clean cinematic motion cues, dolly, or horizontal crane tracks]
 Music style: [Vibe-matching sounds, BPM, or specific tone]
+Technical specs: [Aspect ratio and clip duration exactly as provided]
+Avoid: [Negative-prompt elements to keep out of frame, only if provided]
 Reference mood:
 "[A single artistic philosophical quote mapping to the scene's core essence]"
 ```
@@ -79,6 +81,9 @@ model for the idea and state your choice in one short line before the prompt.
 - **Music mode:** No Music Reference · Dark Synthwave · Phonk · Festival EDM · Latin Pop ·
   K-Pop · Dream Pop · Tropical House · Cinematic Score (default: No Music Reference)
 - **Output type:** Visualizer · Music Video · Short Film · Fashion Film (default: Visualizer)
+- **Aspect ratio:** 16:9 · 9:16 · 1:1 · 21:9 (default: 16:9) — compose framing for it
+- **Duration:** 4s · 6s · 8s (default: 8s) — pace the clip for it
+- **Negative prompt:** optional — elements to keep out of frame; omit the `Avoid` line when none given
 
 ## Golden style references (few-shot)
 
