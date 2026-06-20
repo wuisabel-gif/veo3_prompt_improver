@@ -59,12 +59,14 @@ async function callGeminiDirect({ systemPrompt, userContent, apiKey, model }) {
   throw new Error("Gemini API did not return a response");
 }
 
-async function callBackendProxy({ systemPrompt, userContent, backendUrl }) {
+// Proxy mode sends the raw constrained input; the backend builds the prompt
+// server-side (matching server.mjs /api/improve-prompt).
+async function callBackendProxy({ input, backendUrl }) {
   const base = backendUrl.replace(/\/+$/, "");
   const response = await fetch(`${base}/api/improve-prompt`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ systemPrompt, userContent })
+    body: JSON.stringify(input)
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
@@ -84,12 +86,24 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       const { apiKey, creativeModel, backendUrl } = await chrome.storage.local.get([
         "apiKey", "creativeModel", "backendUrl"
       ]);
-      const { systemPrompt, userContent } = msg.payload;
+      const input = msg.input || {};
 
       let text;
       if (backendUrl && backendUrl.trim()) {
-        text = await callBackendProxy({ systemPrompt, userContent, backendUrl: backendUrl.trim() });
+        text = await callBackendProxy({ input, backendUrl: backendUrl.trim() });
       } else if (apiKey && apiKey.trim()) {
+        // Direct mode: build the prompt locally from the same core data.
+        const { systemPrompt, userContent } = buildPromptPayload({
+          roughInput: input.idea,
+          visualModel: input.visualModel,
+          dialogueMode: input.dialogueMode,
+          musicMode: input.musicMode,
+          outputType: input.outputType,
+          aspectRatio: input.aspectRatio,
+          duration: input.duration,
+          negativePrompt: input.negativePrompt,
+          presetModifier: input.modifier
+        });
         text = await callGeminiDirect({
           systemPrompt,
           userContent,

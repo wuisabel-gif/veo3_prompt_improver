@@ -66,15 +66,29 @@ const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 30);
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 60_000);
 const rateBuckets = new Map();
 
-function isOriginAllowed(origin) {
+// Evict expired buckets so the map doesn't grow unbounded over long uptime.
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, bucket] of rateBuckets) {
+    if (now - bucket.windowStart >= RATE_LIMIT_WINDOW_MS) rateBuckets.delete(ip);
+  }
+}, RATE_LIMIT_WINDOW_MS).unref();
+
+function originHost(origin) {
+  try { return new URL(origin).host; } catch { return null; }
+}
+
+function isOriginAllowed(origin, host) {
   if (!origin || origin === 'null') return true; // file:// / same-origin server render
+  if (host && originHost(origin) === host) return true; // same-origin (e.g. the deployed site)
+  if (origin.startsWith('chrome-extension://')) return true; // browser-extension clients
   if (CONFIGURED_ORIGINS.includes(origin)) return true;
   return ALWAYS_ALLOWED.some(re => re.test(origin));
 }
 
 function corsHeaders(req) {
   const origin = req.headers.origin;
-  const allowOrigin = isOriginAllowed(origin) && origin ? origin : (CONFIGURED_ORIGINS[0] || '*');
+  const allowOrigin = isOriginAllowed(origin, req.headers.host) && origin ? origin : (CONFIGURED_ORIGINS[0] || '*');
   return {
     'Access-Control-Allow-Origin': allowOrigin,
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
@@ -298,7 +312,7 @@ function createAppServer() {
       }
 
       if (req.method === 'POST' && url.pathname === '/api/improve-prompt') {
-        if (!isOriginAllowed(req.headers.origin)) {
+        if (!isOriginAllowed(req.headers.origin, req.headers.host)) {
           sendJson(res, 403, { error: 'Origin not allowed.' }, headers);
           return;
         }

@@ -85,8 +85,10 @@ els.generate.addEventListener("click", async () => {
   };
   chrome.storage.local.set({ lastForm: form });
 
-  const payload = buildPromptPayload({
-    roughInput,
+  // Send the raw constrained input; the background worker either builds the
+  // prompt locally (direct mode) or forwards it to the backend (proxy mode).
+  const input = {
+    idea: roughInput,
     visualModel: form.model,
     dialogueMode: form.dialogue,
     musicMode: form.music,
@@ -94,15 +96,15 @@ els.generate.addEventListener("click", async () => {
     aspectRatio: form.aspect,
     duration: form.duration,
     negativePrompt: form.negative,
-    presetModifier: form.modifier
-  });
+    modifier: form.modifier
+  };
 
   els.generate.disabled = true;
   els.resultWrap.hidden = true;
   setStatus("Directing your scene…");
 
   try {
-    const res = await chrome.runtime.sendMessage({ type: "improve", payload });
+    const res = await chrome.runtime.sendMessage({ type: "improve", input });
     if (!res) throw new Error("No response from background worker.");
     if (!res.ok) {
       if (/^SAFETY:/.test(res.error)) {
