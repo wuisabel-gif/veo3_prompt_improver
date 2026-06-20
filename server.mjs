@@ -4,6 +4,16 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  buildPromptPayload,
+  VISUAL_MODELS,
+  DIALOGUE_OPTIONS,
+  MUSIC_OPTIONS,
+  OUTPUT_TYPE_OPTIONS,
+  ASPECT_RATIOS,
+  DURATIONS,
+  SAFETY_BLOCK_REASONS,
+} from './core/director.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const envPath = path.join(__dirname, '.env');
@@ -42,28 +52,67 @@ const MODEL = process.env.CREATIVE_MODEL || DEFAULT_MODEL;
 const API_KEY = process.env.CREATIVE_API_KEY;
 const MAX_BODY_BYTES = 1_000_000;
 const PROVIDER_MAX_RETRIES = 3;
-const SAFETY_BLOCK_REASONS = new Set(['SAFETY', 'PROHIBITED_CONTENT', 'BLOCKLIST', 'RECITATION']);
+
+// CORS allowlist: comma-separated origins in ALLOWED_ORIGINS. Localhost and the
+// file:// "null" origin are always permitted so local dev keeps working.
+const CONFIGURED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+const ALWAYS_ALLOWED = [/^https?:\/\/localhost(:\d+)?$/, /^https?:\/\/127\.0\.0\.1(:\d+)?$/];
+
+// Simple in-memory rate limiter (per IP) so an exposed proxy can't be drained.
+const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 30);
+const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 60_000);
+const rateBuckets = new Map();
+
+function isOriginAllowed(origin) {
+  if (!origin || origin === 'null') return true; // file:// / same-origin server render
+  if (CONFIGURED_ORIGINS.includes(origin)) return true;
+  return ALWAYS_ALLOWED.some(re => re.test(origin));
+}
+
+function corsHeaders(req) {
+  const origin = req.headers.origin;
+  const allowOrigin = isOriginAllowed(origin) && origin ? origin : (CONFIGURED_ORIGINS[0] || '*');
+  return {
+    'Access-Control-Allow-Origin': allowOrigin,
+    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    Vary: 'Origin',
+  };
+}
+
+function clientIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  if (typeof fwd === 'string' && fwd.length) return fwd.split(',')[0].trim();
+  return req.socket.remoteAddress || 'unknown';
+}
+
+function checkRateLimit(req) {
+  const ip = clientIp(req);
+  const now = Date.now();
+  const bucket = rateBuckets.get(ip);
+  if (!bucket || now - bucket.windowStart >= RATE_LIMIT_WINDOW_MS) {
+    rateBuckets.set(ip, { count: 1, windowStart: now });
+    return true;
+  }
+  bucket.count += 1;
+  return bucket.count <= RATE_LIMIT_MAX;
+}
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function sendJson(res, status, data) {
+function sendJson(res, status, data, extraHeaders = {}) {
   const body = JSON.stringify(data);
-  res.writeHead(status, {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  });
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', ...extraHeaders });
   res.end(body);
 }
 
-function sendText(res, status, body, contentType = 'text/plain; charset=utf-8') {
-  res.writeHead(status, {
-    'Content-Type': contentType,
-    'Access-Control-Allow-Origin': '*',
-  });
+function sendText(res, status, body, contentType = 'text/plain; charset=utf-8', extraHeaders = {}) {
+  res.writeHead(status, { 'Content-Type': contentType, ...extraHeaders });
   res.end(body);
 }
 
@@ -87,26 +136,38 @@ async function readJsonBody(req) {
   }
 }
 
-async function callCreativeProvider({ systemPrompt, userContent }) {
-  if (!API_KEY) {
-    throw Object.assign(new Error('CREATIVE_API_KEY is missing from .env'), { status: 500 });
-  }
-  if (!MODEL) {
-    throw Object.assign(new Error('CREATIVE_MODEL is missing from .env'), { status: 500 });
-  }
-  if (!systemPrompt || !userContent) {
-    throw Object.assign(new Error('systemPrompt and userContent are required'), { status: 400 });
-  }
+function ensureConfigured() {
+  if (!API_KEY) throw Object.assign(new Error('CREATIVE_API_KEY is missing from .env'), { status: 500 });
+  if (!MODEL) throw Object.assign(new Error('CREATIVE_MODEL is missing from .env'), { status: 500 });
+}
 
+function geminiUrl(method) {
   const url = new URL(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(MODEL)}:generateContent`
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(MODEL)}:${method}`
   );
   url.searchParams.set('key', API_KEY);
+  return url;
+}
 
-  const requestBody = JSON.stringify({
+function geminiRequestBody({ systemPrompt, userContent }) {
+  return JSON.stringify({
     contents: [{ parts: [{ text: userContent }] }],
     systemInstruction: { parts: [{ text: systemPrompt }] },
   });
+}
+
+function safetyError() {
+  return Object.assign(
+    new Error('Safety notice: the creative provider blocked this request because it may include sensitive or unsafe content. Please revise the idea and try again.'),
+    { status: 422 }
+  );
+}
+
+// Non-streaming generation (with retry on transient errors).
+async function generateOnce({ systemPrompt, userContent }) {
+  ensureConfigured();
+  const url = geminiUrl('generateContent');
+  const requestBody = geminiRequestBody({ systemPrompt, userContent });
 
   for (let attempt = 1; attempt <= PROVIDER_MAX_RETRIES; attempt++) {
     const response = await fetch(url, {
@@ -117,11 +178,7 @@ async function callCreativeProvider({ systemPrompt, userContent }) {
 
     const text = await response.text();
     let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { raw: text };
-    }
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
 
     if (!response.ok) {
       const isTransient = response.status === 429 || response.status === 503;
@@ -129,87 +186,159 @@ async function callCreativeProvider({ systemPrompt, userContent }) {
         await delay(750 * attempt);
         continue;
       }
-
       const message = data?.error?.message || `Creative API returned ${response.status}`;
-      throw Object.assign(new Error(message), {
-        status: response.status,
-        details: data?.error,
-      });
+      throw Object.assign(new Error(message), { status: response.status, details: data?.error });
     }
 
     const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
     const finishReason = data.candidates?.[0]?.finishReason;
     const promptBlockReason = data.promptFeedback?.blockReason;
 
-    if (promptBlockReason || SAFETY_BLOCK_REASONS.has(finishReason)) {
-      throw Object.assign(
-        new Error('Safety notice: the creative provider blocked this request because it may include sensitive or unsafe content. Please revise the idea and try again.'),
-        {
-          status: 422,
-          details: {
-            promptBlockReason,
-            finishReason,
-            safetyRatings: data.promptFeedback?.safetyRatings || data.candidates?.[0]?.safetyRatings,
-          },
-        }
-      );
-    }
-
-    if (!generatedText) {
-      throw Object.assign(new Error('Creative API returned an empty response'), { status: 502 });
-    }
-
+    if (promptBlockReason || SAFETY_BLOCK_REASONS.has(finishReason)) throw safetyError();
+    if (!generatedText) throw Object.assign(new Error('Creative API returned an empty response'), { status: 502 });
     return generatedText;
   }
 
   throw Object.assign(new Error('Creative API did not return a response'), { status: 502 });
 }
 
+// Streaming generation: pipes Gemini SSE deltas to the client as SSE.
+async function streamGeneration(res, headers, { systemPrompt, userContent }) {
+  ensureConfigured();
+  const url = geminiUrl('streamGenerateContent');
+  url.searchParams.set('alt', 'sse');
+
+  const upstream = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: geminiRequestBody({ systemPrompt, userContent }),
+  });
+
+  if (!upstream.ok || !upstream.body) {
+    const errText = await upstream.text().catch(() => '');
+    let detail;
+    try { detail = JSON.parse(errText)?.error?.message; } catch { /* ignore */ }
+    sendJson(res, upstream.status || 502, { error: detail || `Creative API returned ${upstream.status}` }, headers);
+    return;
+  }
+
+  res.writeHead(200, {
+    ...headers,
+    'Content-Type': 'text/event-stream; charset=utf-8',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+  });
+
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let emittedAny = false;
+
+  const emit = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+
+  for await (const chunk of upstream.body) {
+    buffer += decoder.decode(chunk, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith('data:')) continue;
+      const json = trimmed.slice(5).trim();
+      if (!json || json === '[DONE]') continue;
+      let payload;
+      try { payload = JSON.parse(json); } catch { continue; }
+
+      const finishReason = payload.candidates?.[0]?.finishReason;
+      const blockReason = payload.promptFeedback?.blockReason;
+      if (blockReason || SAFETY_BLOCK_REASONS.has(finishReason)) {
+        emit('error', { error: safetyError().message, status: 422 });
+        res.end();
+        return;
+      }
+      const delta = payload.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || '';
+      if (delta) {
+        emittedAny = true;
+        emit('delta', { text: delta });
+      }
+    }
+  }
+
+  if (!emittedAny) emit('error', { error: 'Creative API returned an empty response', status: 502 });
+  else emit('done', { ok: true });
+  res.end();
+}
+
 function createAppServer() {
   return http.createServer(async (req, res) => {
-  try {
-    if (req.method === 'OPTIONS') {
-      res.writeHead(204, {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      });
-      res.end();
-      return;
+    const headers = corsHeaders(req);
+    try {
+      if (req.method === 'OPTIONS') {
+        res.writeHead(204, headers);
+        res.end();
+        return;
+      }
+
+      const url = new URL(req.url, `http://${req.headers.host}`);
+
+      if (req.method === 'GET' && url.pathname === '/api/health') {
+        sendJson(res, 200, { ok: true, model: MODEL, hasCreativeApiKey: Boolean(API_KEY) }, headers);
+        return;
+      }
+
+      // Exposes the option sets so clients build forms from the same source of truth.
+      if (req.method === 'GET' && url.pathname === '/api/options') {
+        sendJson(res, 200, {
+          visualModels: VISUAL_MODELS,
+          dialogueOptions: DIALOGUE_OPTIONS,
+          musicOptions: MUSIC_OPTIONS,
+          outputTypeOptions: OUTPUT_TYPE_OPTIONS,
+          aspectRatios: ASPECT_RATIOS,
+          durations: DURATIONS,
+        }, headers);
+        return;
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/improve-prompt') {
+        if (!isOriginAllowed(req.headers.origin)) {
+          sendJson(res, 403, { error: 'Origin not allowed.' }, headers);
+          return;
+        }
+        if (!checkRateLimit(req)) {
+          sendJson(res, 429, { error: 'Rate limit exceeded. Please slow down and try again shortly.' }, headers);
+          return;
+        }
+
+        const body = await readJsonBody(req);
+        // Prompt is assembled server-side from a constrained payload; the client
+        // can no longer inject an arbitrary prompt onto our API key.
+        const { systemPrompt, userContent } = buildPromptPayload(body);
+
+        const wantsStream = url.searchParams.get('stream') === '1'
+          || (req.headers.accept || '').includes('text/event-stream');
+
+        if (wantsStream) {
+          await streamGeneration(res, headers, { systemPrompt, userContent });
+        } else {
+          const text = await generateOnce({ systemPrompt, userContent });
+          sendJson(res, 200, { text }, headers);
+        }
+        return;
+      }
+
+      if (req.method === 'GET' && (url.pathname === '/' || url.pathname === '/index.html')) {
+        const html = await readFile(path.join(__dirname, 'index.html'), 'utf8');
+        sendText(res, 200, html, 'text/html; charset=utf-8', headers);
+        return;
+      }
+
+      sendJson(res, 404, { error: 'Not found' }, headers);
+    } catch (error) {
+      const status = Number(error.status) || 500;
+      if (res.headersSent) {
+        res.end();
+        return;
+      }
+      sendJson(res, status, { error: error.message || 'Server error', details: error.details }, headers);
     }
-
-    const url = new URL(req.url, `http://${req.headers.host}`);
-
-    if (req.method === 'GET' && url.pathname === '/api/health') {
-      sendJson(res, 200, {
-        ok: true,
-        model: MODEL,
-        hasCreativeApiKey: Boolean(API_KEY),
-      });
-      return;
-    }
-
-    if (req.method === 'POST' && url.pathname === '/api/improve-prompt') {
-      const body = await readJsonBody(req);
-      const text = await callCreativeProvider(body);
-      sendJson(res, 200, { text });
-      return;
-    }
-
-    if (req.method === 'GET' && (url.pathname === '/' || url.pathname === '/index.html')) {
-      const html = await readFile(path.join(__dirname, 'index.html'), 'utf8');
-      sendText(res, 200, html, 'text/html; charset=utf-8');
-      return;
-    }
-
-    sendJson(res, 404, { error: 'Not found' });
-  } catch (error) {
-    const status = Number(error.status) || 500;
-    sendJson(res, status, {
-      error: error.message || 'Server error',
-      details: error.details,
-    });
-  }
   });
 }
 
@@ -232,6 +361,7 @@ function listen(port, remainingAttempts = 10) {
     const shownHost = HOST === '127.0.0.1' ? 'localhost' : HOST;
     console.log(`Veo 3 Prompt Studio backend running at http://${shownHost}:${port}`);
     console.log(`Creative model: ${MODEL}`);
+    if (CONFIGURED_ORIGINS.length) console.log(`Allowed origins: ${CONFIGURED_ORIGINS.join(', ')}`);
   });
 }
 

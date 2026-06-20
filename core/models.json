@@ -1,0 +1,169 @@
+{
+  "visualModels": [
+    {
+      "name": "Runway Couture",
+      "icon": "👠",
+      "desc": "High fashion, luxury campaigns, Paris Fashion Week.",
+      "keywords": [
+        "high fashion",
+        "luxury campaign",
+        "Paris Fashion Week",
+        "runway couture",
+        "editorial styling"
+      ]
+    },
+    {
+      "name": "Beauty Editorial",
+      "icon": "📸",
+      "desc": "Close-ups, jewelry, makeup, Vogue-style beauty campaigns.",
+      "keywords": [
+        "beauty close-up",
+        "jewelry",
+        "makeup",
+        "Vogue-style campaign",
+        "editorial portrait"
+      ]
+    },
+    {
+      "name": "Y2K Glamour",
+      "icon": "✦",
+      "desc": "Luxury Y2K fashion visuals, warm flash photography, jeweled details, tropical nightlife.",
+      "keywords": [
+        "Y2K glam editorial",
+        "gold jewelry",
+        "warm flash photography",
+        "bohemian fabrics",
+        "non-AI-looking cinematography"
+      ]
+    },
+    {
+      "name": "Poolside Muse",
+      "icon": "🕶️",
+      "desc": "Sun-soaked old-Hollywood glamour, silver sequin bikinis, golden infinity pools.",
+      "keywords": [
+        "silver sequin bikini",
+        "oversized sunglasses",
+        "infinity pool",
+        "golden sunset reflections"
+      ]
+    },
+    {
+      "name": "Ice Queen Muse",
+      "icon": "❄️",
+      "desc": "Cool dominance, luxury baby-blue fur coats, diamond drop earrings, cool winter wealth.",
+      "keywords": [
+        "baby-blue fur coat",
+        "platinum-blonde waves",
+        "diamond earrings",
+        "porcelain skin"
+      ]
+    },
+    {
+      "name": "Angel Haze",
+      "icon": "🐚",
+      "desc": "Angel-wing neon haze, wet platinum hair, glitter makeup, violet house-party dreamscape.",
+      "keywords": [
+        "glowing white angel wings",
+        "wet platinum hair",
+        "purple-blue neon haze",
+        "glitter makeup",
+        "35mm dream blur"
+      ]
+    },
+    {
+      "name": "Architectural Muse",
+      "icon": "🏛️",
+      "desc": "Modern couture in minimalist architectural environments, clean lines, museum aesthetics, soft natural light, and understated luxury.",
+      "keywords": [
+        "modern couture",
+        "minimalist architecture",
+        "clean lines",
+        "museum aesthetics",
+        "soft natural light",
+        "understated luxury"
+      ]
+    },
+    {
+      "name": "Campus K-Style",
+      "icon": "🌸",
+      "desc": "K-pop idol off-duty style. Pastel cardigans, pleated skirts, effortless schoolyard chic.",
+      "keywords": [
+        "pastel cardigan",
+        "pleated skirt",
+        "chunky loafers",
+        "jacaranda blossoms"
+      ]
+    },
+    {
+      "name": "Seoul Morning",
+      "icon": "🌅",
+      "desc": "Seoul minimal apartments, warm cozy duvet sheets, lazy volumetric rays, coffee haze.",
+      "keywords": [
+        "minimalist korean apartment",
+        "tousled hair",
+        "linen duvet",
+        "steam rays"
+      ]
+    },
+    {
+      "name": "K-Street",
+      "icon": "🎤",
+      "desc": "Euphoria-inspired Y2K party glamour, neon nightclub haze, chainmail, rhinestones, handheld flash.",
+      "keywords": [
+        "Y2K glam",
+        "purple tinsel curtains",
+        "silver chainmail",
+        "rhinestone makeup",
+        "35mm flash photography"
+      ]
+    },
+    {
+      "name": "Cinematic Storytelling",
+      "icon": "🎬",
+      "desc": "Short films, narrative scenes, emotional visual worlds.",
+      "keywords": [
+        "short film",
+        "narrative scene",
+        "emotional visual world",
+        "cinematic storytelling",
+        "character atmosphere"
+      ]
+    },
+    {
+      "name": "Minimalist Atmosphere",
+      "icon": "☁️",
+      "desc": "White Space Dream, art-house minimalism, solitude, dreamcore, architectural emptiness.",
+      "keywords": [
+        "White Space Dream",
+        "art-house minimalism",
+        "solitude",
+        "dreamcore",
+        "architectural emptiness"
+      ]
+    }
+  ],
+  "dialogueOptions": [
+    "🔇 No Dialogue",
+    "🎙 Ambient Speech",
+    "🗣 Character Dialogue",
+    "📖 Narration",
+    "🎧 Voiceover"
+  ],
+  "musicOptions": [
+    "🎵 No Music Reference",
+    "🖤 Dark Synthwave",
+    "⚡ Phonk",
+    "🎡 Festival EDM",
+    "💃 Latin Pop",
+    "🎤 K-Pop",
+    "🎹 Dream Pop",
+    "🌴 Tropical House",
+    "🎬 Cinematic Score"
+  ],
+  "outputTypeOptions": [
+    "✨ Visualizer",
+    "🎤 Music Video",
+    "🎬 Short Film",
+    "📸 Fashion Film"
+  ]
+}
