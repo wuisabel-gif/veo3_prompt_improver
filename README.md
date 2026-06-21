@@ -1,5 +1,19 @@
 # Be Your Own Director — Veo 3 Prompt Studio
 
+[![CI](https://github.com/wuisabel-gif/veo3_prompt_improver/actions/workflows/ci.yml/badge.svg)](https://github.com/wuisabel-gif/veo3_prompt_improver/actions/workflows/ci.yml)
+![license MIT](https://img.shields.io/badge/license-MIT-blue)
+![dependencies 0](https://img.shields.io/badge/dependencies-0-brightgreen)
+![Veo 3](https://img.shields.io/badge/Veo%203-prompt%20studio-d4a0ff)
+![powered by Gemini](https://img.shields.io/badge/powered%20by-Gemini-4285F4?logo=google&logoColor=white)
+
+**Ready to use in:**
+
+[![Web App](https://img.shields.io/badge/Web_App-live-06b6d4)](https://veo3-prompt-improver.onrender.com)
+[![Gemini CLI](https://img.shields.io/badge/Gemini_CLI-extension-4285F4?logo=google&logoColor=white)](gemini-extension)
+[![Chrome](https://img.shields.io/badge/Chrome-extension-4285F4?logo=googlechrome&logoColor=white)](chrome-extension)
+[![MCP](https://img.shields.io/badge/MCP-server-8A63D2)](mcp-server)
+[![Claude](https://img.shields.io/badge/Claude-skill-D97757?logo=anthropic&logoColor=white)](claude-skill)
+
 AI-powered Veo 3 prompt creation platform that transforms rough concepts into structured cinematic video-generation prompts. The system combines prompt retrieval, aesthetic models, generation controls, and visual prompt engineering to improve controllability and consistency in AI-generated video workflows.
 
 Currently available as a public prototype with potential future commercialization.
