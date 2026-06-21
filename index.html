@@ -41,7 +41,15 @@
   <!-- React runs directly in the browser for this lightweight prototype. -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+  <script>
+    // Force the CLASSIC JSX runtime. Newer Babel defaults to the automatic
+    // runtime, which injects `import { jsx } from "react/jsx-runtime"` — and an
+    // import in this non-module inline script throws, leaving a blank page.
+    Babel.registerPreset('react-classic', {
+      presets: [[Babel.availablePresets.react, { runtime: 'classic' }]],
+    });
+  </script>
 
   <!-- Icons come from Lucide when the CDN is available. -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -86,7 +94,7 @@
   <div id="root" class="min-h-full flex flex-col justify-between"></div>
 
   <!-- Main React app. -->
-  <script type="text/babel">
+  <script type="text/babel" data-presets="react-classic">
     const { useState, useEffect, useRef } = React;
 
     const Icon = ({ name, className = "" }) => {
