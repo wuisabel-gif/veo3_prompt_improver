@@ -34,6 +34,7 @@
     "mcp": "node mcp-server/index.mjs",
     "test": "node scripts/test-core.mjs",
     "check:output": "node scripts/lint-generation.mjs",
+    "clean:icloud": "find . -path ./.git -prune -o -type f -name '* [0-9].*' -print -delete",
     "upload:cloudinary": "node scripts/upload-cloudinary.mjs"
   }
 }
