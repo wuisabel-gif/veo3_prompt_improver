@@ -1,4 +1,4 @@
-# Veo 3 Prompt Studio — Chrome Extension
+# Real — Chrome Extension
 
 A Manifest V3 browser extension that turns rough ideas into structured, ultra-cinematic
 **Veo 3** prompts from a toolbar popup. It reuses the exact Creative Director system prompt,

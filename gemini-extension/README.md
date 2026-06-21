@@ -1,7 +1,7 @@
-# Veo 3 Prompt Studio — Gemini CLI Extension
+# Real — Gemini CLI Extension
 
-Turn rough ideas into structured, ultra-cinematic **Veo 3** prompts directly inside the
-[Gemini CLI](https://github.com/google-gemini/gemini-cli). This is the "Be Your Own Director"
+Turn rough ideas into structured, ultra-cinematic **Veo 3** fashion film prompts directly inside the
+[Gemini CLI](https://github.com/google-gemini/gemini-cli). This is **Real** (make it real), the
 prompt engine packaged as a Gemini CLI extension: the same Creative Director system prompt,
 12 visual models, generation controls, and golden style references — no separate backend or
 API key required (the Gemini CLI uses your existing Gemini auth).

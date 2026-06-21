@@ -1,4 +1,4 @@
-# Veo 3 Prompt Studio — MCP Server
+# Real — MCP Server
 
 Exposes the shared `core/` director engine as [Model Context Protocol](https://modelcontextprotocol.io)
 tools, so the same Veo 3 prompt architecture works across Claude Desktop, Claude Code, Cursor,

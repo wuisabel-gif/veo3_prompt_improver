@@ -1,4 +1,6 @@
-# Be Your Own Director — Veo 3 Fashion Film Prompt Studio
+# Real — Veo 3 Fashion Film Prompt Studio
+
+> **Make it real.**
 
 [![CI](https://github.com/wuisabel-gif/veo3_prompt_improver/actions/workflows/ci.yml/badge.svg)](https://github.com/wuisabel-gif/veo3_prompt_improver/actions/workflows/ci.yml)
 ![license MIT](https://img.shields.io/badge/license-MIT-blue)
@@ -325,4 +327,4 @@ This updates `cloudinary-videos.json` with hosted video information.
 
 ## Credits
 
-© 2026 Veo 3 Video Prompt Improver. All rights by wuisabel-gif on GitHub.
+© 2026 Real — Make it real. All rights by wuisabel-gif on GitHub.

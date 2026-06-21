@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in the Veo 3 Prompt Studio. This guide covers how the project
+Thanks for your interest in Real (a Veo 3 fashion film prompt studio). This guide covers how the project
 is wired and the few rules that keep its five surfaces in sync.
 
 ## Project layout

@@ -1,7 +1,7 @@
 {
   "name": "veo3-prompt-studio",
   "version": "1.0.0",
-  "description": "Be Your Own Director — transforms rough ideas into structured, ultra-cinematic Veo 3 prompts using curated visual models, generation controls, and a creative-director prompt architecture.",
+  "description": "Real — make it real. Transforms rough ideas into structured, ultra-cinematic Veo 3 fashion film prompts using curated visual models, generation controls, and a creative-director prompt architecture.",
   "keywords": ["veo3", "veo3-prompt-generator", "ai-video-prompt", "cinematic-prompt-engineering", "prompt-improver", "google-veo", "gemini", "text-to-video", "generative-video"],
   "contextFileName": "GEMINI.md"
 }

@@ -1,7 +1,7 @@
 {
   "name": "veo3-prompt-studio-mcp",
   "version": "1.0.0",
-  "description": "MCP server exposing the Veo 3 Prompt Studio director engine as tools.",
+  "description": "Real — MCP server exposing the Veo 3 fashion film director engine as tools.",
   "keywords": ["mcp", "model-context-protocol", "veo3", "veo3-prompt-generator", "ai-video-prompt", "cinematic-prompt-engineering", "prompt-improver", "google-veo", "gemini", "text-to-video"],
   "author": "Isabel Wu",
   "license": "MIT",

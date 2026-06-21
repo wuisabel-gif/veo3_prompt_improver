@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Veo 3 Prompt Studio — Be Your Own Director",
+  "name": "Real — Veo 3 Fashion Film Director",
   "version": "1.0.0",
   "description": "Veo 3 prompt generator — turn rough ideas into cinematic AI video prompts with curated visual models and generation controls.",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Veo 3 Prompt Studio"
+    "default_title": "Real — make it real"
   },
   "options_page": "options.html",
   "background": {

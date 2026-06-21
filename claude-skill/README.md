@@ -1,4 +1,4 @@
-# Veo 3 Prompt Studio — Claude Skill
+# Real — Claude Skill
 
 A [Claude skill](https://docs.claude.com/en/docs/claude-code/skills) that turns rough ideas into
 structured, ultra-cinematic Veo 3 prompts. Same Creative Director system, 12 visual models, and
