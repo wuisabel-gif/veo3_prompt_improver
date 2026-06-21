@@ -14,7 +14,7 @@
 [![MCP](https://img.shields.io/badge/MCP-server-8A63D2)](mcp-server)
 [![Claude](https://img.shields.io/badge/Claude-skill-D97757?logo=anthropic&logoColor=white)](claude-skill)
 
-A Veo 3 prompt studio for **fashion film** — turn rough ideas into structured, ultra-cinematic director's briefs for editorials, runway films, beauty, and luxury campaigns. The system combines prompt retrieval, curated fashion aesthetic models, generation controls, and visual prompt engineering to improve controllability and consistency in AI-generated fashion video.
+A Veo 3 prompt studio built for **fashion film** first — editorials, runway, beauty, and luxury campaigns — and ready for short films, music videos, and visualizers too. The system combines prompt retrieval, curated aesthetic models, generation controls, and visual prompt engineering to improve controllability and consistency in AI-generated video.
 
 Currently available as a public prototype with potential future commercialization.
 
@@ -24,7 +24,7 @@ For more examples of my Veo 3 videos, visit my website: [Bella PI](https://wuisa
 
 Through hundreds of prompt iterations, I began documenting recurring patterns that consistently produced stronger visual results. This project is an attempt to organize those observations into a reusable prompt-engineering framework that helps transform rough ideas into structured cinematic briefs.
 
-The platform combines prompt retrieval, visual metadata modeling, aesthetic classification, and structured prompt assembly to generate more coherent Veo 3 prompts across fashion editorials, luxury campaigns, runway films, beauty close-ups, and lookbooks.
+The platform combines prompt retrieval, visual metadata modeling, aesthetic classification, and structured prompt assembly to generate more coherent Veo 3 prompts — fashion editorials, luxury campaigns, runway films, and beauty close-ups first, with the same engine supporting short films, music videos, and visualizers.
 
 **Project Status:** Active Prototype (Potential Future Product)
 
