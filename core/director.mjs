@@ -24,6 +24,20 @@ export const DURATIONS = ["4s", "6s", "8s"];
 
 export const SAFETY_BLOCK_REASONS = new Set(["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST", "RECITATION"]);
 
+// Vague quality words the brief must never contain (see the banned-words rule).
+export const BANNED_OUTPUT_WORDS = ["beautiful", "stunning", "gorgeous", "breathtaking", "high-quality", "photorealistic"];
+const BANNED_OUTPUT_RE = new RegExp(
+  "\\b(" + BANNED_OUTPUT_WORDS.map(w => w.replace(/-/g, "[-\\s]?")).join("|") + ")\\b",
+  "gi"
+);
+
+// Scans a generated brief for banned vague words. Returns the matches found
+// (lowercased), so callers can flag or reject output that violates the rule.
+export function lintBrief(text) {
+  if (!text) return [];
+  return (String(text).match(BANNED_OUTPUT_RE) || []).map(m => m.toLowerCase());
+}
+
 const MAX_IDEA_LEN = 2000;
 const MAX_MODIFIER_LEN = 500;
 const MAX_NEGATIVE_LEN = 500;
@@ -151,7 +165,7 @@ ${JSON.stringify(generationControls, null, 2)}
 ${negativePrompt ? `\nNegative prompt (elements to AVOID in frame): "${negativePrompt}"` : ""}
 ${modifier ? `\nMODIFIER DEMAND: Change the style of the prompt to match this request: "${modifier}"` : ""}
 
-Use these high-quality visual briefs as your absolute style, structural, and pacing guides. Match their exact level of detail and formatting:
+Use these reference visual briefs as your absolute style, structural, and pacing guides. Match their exact level of detail and formatting:
 ${examplesText}
 
 Begin rewriting directly. No pre-text or greetings:`;

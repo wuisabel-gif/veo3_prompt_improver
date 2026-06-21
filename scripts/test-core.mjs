@@ -1,13 +1,21 @@
 // Minimal assertion suite for the core director engine. Run: npm test
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 import {
   buildPromptPayload,
   validateInput,
+  lintBrief,
   VISUAL_MODELS,
   DIALOGUE_OPTIONS,
   ASPECT_RATIOS,
   DURATIONS,
 } from "../core/director.mjs";
+
+const LIBRARY = JSON.parse(
+  readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "../core/library.json"), "utf8")
+);
 
 let passed = 0;
 const test = (name, fn) => { fn(); passed++; console.log(`  ✓ ${name}`); };
@@ -49,6 +57,28 @@ test("builds prompt with selected controls woven in", () => {
 test("omits negative-prompt line when none given", () => {
   const { userContent } = buildPromptPayload({ idea: "a calm beach" });
   assert.ok(!userContent.includes("AVOID in frame"));
+});
+
+test("lintBrief flags banned vague words", () => {
+  const hits = lintBrief("A beautiful, stunning frame with gorgeous, breathtaking, high-quality, photorealistic detail.");
+  for (const w of ["beautiful", "stunning", "gorgeous", "breathtaking", "high-quality", "photorealistic"]) {
+    assert.ok(hits.includes(w), `should flag "${w}"`);
+  }
+});
+
+test("lintBrief catches hyphen and space variants", () => {
+  assert.deepEqual(lintBrief("high-quality and high quality"), ["high-quality", "high quality"]);
+});
+
+test("lintBrief passes clean cinematic text", () => {
+  assert.deepEqual(lintBrief("Crisp 35mm anamorphic frame, sodium-amber haze, fluid micro-motion."), []);
+});
+
+test("shipped few-shot library is free of banned words", () => {
+  for (const ex of LIBRARY) {
+    const hits = lintBrief(ex.prompt);
+    assert.equal(hits.length, 0, `library "${ex.id}" contains banned word(s): ${hits.join(", ")}`);
+  }
 });
 
 console.log(`\n${passed} core tests passed.`);

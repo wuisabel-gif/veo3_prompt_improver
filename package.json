@@ -33,6 +33,7 @@
     "build:clients": "node scripts/build-clients.mjs",
     "mcp": "node mcp-server/index.mjs",
     "test": "node scripts/test-core.mjs",
+    "check:output": "node scripts/lint-generation.mjs",
     "upload:cloudinary": "node scripts/upload-cloudinary.mjs"
   }
 }

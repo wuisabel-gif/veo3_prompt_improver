@@ -68,7 +68,7 @@ function buildPromptPayload(opts) {
     'Generation controls:\n' + JSON.stringify(generationControls, null, 2) + '\n' +
     (negativePrompt ? '\nNegative prompt (elements to AVOID in frame): "' + negativePrompt + '"' : '') +
     (modifier ? '\nMODIFIER DEMAND: Change the style of the prompt to match this request: "' + modifier + '"' : '') +
-    '\n\nUse these high-quality visual briefs as your absolute style, structural, and pacing guides. Match their exact level of detail and formatting:\n' +
+    '\n\nUse these reference visual briefs as your absolute style, structural, and pacing guides. Match their exact level of detail and formatting:\n' +
     examplesText +
     '\n\nBegin rewriting directly. No pre-text or greetings:';
 
