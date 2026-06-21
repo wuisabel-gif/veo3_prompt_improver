@@ -1,4 +1,4 @@
-# Be Your Own Director — Veo 3 Prompt Studio
+# Be Your Own Director — Veo 3 Fashion Film Prompt Studio
 
 [![CI](https://github.com/wuisabel-gif/veo3_prompt_improver/actions/workflows/ci.yml/badge.svg)](https://github.com/wuisabel-gif/veo3_prompt_improver/actions/workflows/ci.yml)
 ![license MIT](https://img.shields.io/badge/license-MIT-blue)
@@ -14,23 +14,23 @@
 [![MCP](https://img.shields.io/badge/MCP-server-8A63D2)](mcp-server)
 [![Claude](https://img.shields.io/badge/Claude-skill-D97757?logo=anthropic&logoColor=white)](claude-skill)
 
-AI-powered Veo 3 prompt creation platform that transforms rough concepts into structured cinematic video-generation prompts. The system combines prompt retrieval, aesthetic models, generation controls, and visual prompt engineering to improve controllability and consistency in AI-generated video workflows.
+A Veo 3 prompt studio for **fashion film** — turn rough ideas into structured, ultra-cinematic director's briefs for editorials, runway films, beauty, and luxury campaigns. The system combines prompt retrieval, curated fashion aesthetic models, generation controls, and visual prompt engineering to improve controllability and consistency in AI-generated fashion video.
 
 Currently available as a public prototype with potential future commercialization.
 
-Over the past year, I have spent a significant amount of time experimenting with Veo 3 and other AI video-generation models while creating music visualizers, fashion films, fantasy scenes, and cinematic concepts for my Bella Pi YouTube channel.
+Over the past year, I have spent a significant amount of time experimenting with Veo 3 and other AI video-generation models while creating fashion films, editorials, and runway concepts for my Bella Pi YouTube channel.
 
 For more examples of my Veo 3 videos, visit my website: [Bella PI](https://wuisabel-gif.github.io/Bella_PI/index.html).
 
 Through hundreds of prompt iterations, I began documenting recurring patterns that consistently produced stronger visual results. This project is an attempt to organize those observations into a reusable prompt-engineering framework that helps transform rough ideas into structured cinematic briefs.
 
-The platform combines prompt retrieval, visual metadata modeling, aesthetic classification, and structured prompt assembly to generate more coherent Veo 3 prompts across fashion editorials, luxury campaigns, fantasy worlds, runway films, and music-video concepts.
+The platform combines prompt retrieval, visual metadata modeling, aesthetic classification, and structured prompt assembly to generate more coherent Veo 3 prompts across fashion editorials, luxury campaigns, runway films, beauty close-ups, and lookbooks.
 
 **Project Status:** Active Prototype (Potential Future Product)
 
 [**Try the prototype**](https://veo3-prompt-improver.onrender.com)
 
-**Topics:** `veo3` · `veo3-prompt-generator` · `ai-video-prompt` · `cinematic-prompt-engineering` · `prompt-improver` · `google-veo` · `gemini` · `text-to-video` · `generative-video` · `fashion-film` · `music-visualizer`
+**Topics:** `veo3` · `fashion-film` · `fashion-video` · `ai-fashion` · `fashion-editorial` · `runway` · `veo3-prompt-generator` · `cinematic-prompt-engineering` · `google-veo` · `gemini` · `text-to-video`
 
 ## Why AI Video Generation?
 
