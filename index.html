@@ -862,6 +862,18 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
         document.body.removeChild(textArea);
       };
 
+      // Copies the brief, then opens Google's Veo 3 generator (Flow) in a new tab
+      // so the user can paste it straight in.
+      const handleOpenInVeo3 = () => {
+        if (!enhancedOutput) {
+          showNotification("Generate a prompt first.", "error");
+          return;
+        }
+        handleCopyText(enhancedOutput);
+        showNotification("Prompt copied — opening Veo 3. Paste it in!", "success");
+        window.open("https://labs.google/fx/tools/flow", "_blank", "noopener,noreferrer");
+      };
+
       const safetyChecks = [
         {
           label: "graphic violence",
@@ -1568,6 +1580,15 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                               </button>
                             </div>
 
+                            {/* One-click handoff to Google's Veo 3 generator. */}
+                            <button
+                              onClick={handleOpenInVeo3}
+                              className="mt-3 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-xs font-bold py-2.5 rounded-xl flex justify-center items-center gap-2 hover:brightness-110 active:scale-[0.99] transition"
+                            >
+                              <Icon name="sparkles" className="w-4 h-4" />
+                              Open in Veo 3 (copies brief)
+                            </button>
+
                           </div>
                         ) : (
                           <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
@@ -2032,7 +2053,18 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
           )}
 
           {/* Footer links and credit. */}
-          <footer className="bg-neutral-950 border-t border-neutral-900/60 py-8 px-6 mt-16 text-center text-[11px] text-neutral-500 space-y-2 z-10 relative">
+          <footer className="bg-neutral-950 border-t border-neutral-900/60 py-8 px-6 mt-16 text-center text-[11px] text-neutral-500 space-y-3 z-10 relative">
+            <div className="flex flex-wrap justify-center gap-1.5 max-w-3xl mx-auto">
+              {[
+                "Veo 3 prompt generator", "AI video prompt", "cinematic prompt engineering",
+                "text to video", "Google Veo", "Gemini", "fashion film prompt",
+                "music video prompt", "music visualizer", "prompt improver", "generative video"
+              ].map(kw => (
+                <span key={kw} className="text-[9px] bg-neutral-900/60 border border-neutral-850 text-neutral-600 px-2 py-0.5 rounded-full font-mono">
+                  {kw}
+                </span>
+              ))}
+            </div>
             <p>© 2026 Veo 3 Video Prompt Improver. All rights by wuisabel-gif on GitHub.</p>
           </footer>
 

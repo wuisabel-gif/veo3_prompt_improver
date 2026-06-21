@@ -16,6 +16,8 @@ The platform combines prompt retrieval, visual metadata modeling, aesthetic clas
 
 [**Try the prototype**](https://veo3-prompt-improver.onrender.com)
 
+**Topics:** `veo3` · `veo3-prompt-generator` · `ai-video-prompt` · `cinematic-prompt-engineering` · `prompt-improver` · `google-veo` · `gemini` · `text-to-video` · `generative-video` · `fashion-film` · `music-visualizer`
+
 ## Why AI Video Generation?
 
 Generative AI is rapidly changing how visual content is created across advertising, entertainment, fashion, social media, and digital marketing. Companies increasingly use AI-generated video to prototype campaigns, explore creative concepts, build promotional content, and accelerate production workflows.
