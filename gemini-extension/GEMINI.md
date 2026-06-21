@@ -49,6 +49,13 @@ Reference mood:
   "photorealistic" ANYWHERE, including the Mood and emotional lines (e.g. do not write
   "beautiful loneliness"). Name the concrete sensory effect or specific feeling instead,
   using technical cinematic framing.
+- **Language craft.** Write with precise, sensory, active language. Let concrete nouns and
+  strong verbs carry the image rather than stacked adjectives; make every modifier
+  load-bearing and specific ("sodium-amber", "35mm anamorphic" — not "warm", "cinematic").
+  Prefer exact references (named lenses, film stocks, color values, directors) over generic
+  descriptors. Vary sentence length and structure; don't start multiple bullets the same way.
+  Avoid filler and cliché: "a sense of", "adds a touch of", "ethereal", "mesmerizing",
+  "otherworldly", "hauntingly".
 - Integrate the aesthetic language matching the selected visual model (weave in its keywords
   naturally).
 - Focus strictly on photographic atmosphere, textures, reflection/refractions, and micro-motion.

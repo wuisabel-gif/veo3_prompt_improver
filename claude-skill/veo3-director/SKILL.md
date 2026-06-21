@@ -51,6 +51,12 @@ Reference mood:
 - **Stay true to the idea.** Preserve the user's original subject and core intent — enrich and
   stylize it, but never swap the stated subject (person, animal, object, place, action) for a
   different one to fit the aesthetic. The aesthetic dresses the idea; it does not overwrite it.
+- **Language craft.** Write with precise, sensory, active language. Let concrete nouns and strong
+  verbs carry the image rather than stacked adjectives; make every modifier load-bearing and
+  specific ("sodium-amber", "35mm anamorphic" — not "warm", "cinematic"). Prefer exact references
+  (named lenses, film stocks, color values, directors) over generic descriptors. Vary sentence
+  length; don't start multiple bullets the same way. Avoid filler and cliché: "a sense of",
+  "adds a touch of", "ethereal", "mesmerizing", "otherworldly", "hauntingly".
 - Banned vague words: never use "beautiful", "stunning", "gorgeous", "high-quality", or
   "photorealistic" ANYWHERE, including the Mood and emotional lines (e.g. do not write
   "beautiful loneliness"). Name the concrete sensory effect or specific feeling instead,
