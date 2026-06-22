@@ -344,6 +344,21 @@ function createAppServer() {
         return;
       }
 
+      // Serve a small allowlist of root image assets (e.g. the logo). Filename
+      // only — no slashes — so there's no path traversal.
+      if (req.method === 'GET' && /^\/[\w.-]+\.(png|jpe?g|svg|webp|ico)$/.test(url.pathname)) {
+        const name = url.pathname.slice(1);
+        const filePath = path.join(__dirname, name);
+        if (existsSync(filePath)) {
+          const types = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', svg: 'image/svg+xml', webp: 'image/webp', ico: 'image/x-icon' };
+          const ext = name.split('.').pop().toLowerCase();
+          const buf = await readFile(filePath);
+          res.writeHead(200, { ...headers, 'Content-Type': types[ext] || 'application/octet-stream', 'Cache-Control': 'public, max-age=3600' });
+          res.end(buf);
+          return;
+        }
+      }
+
       sendJson(res, 404, { error: 'Not found' }, headers);
     } catch (error) {
       const status = Number(error.status) || 500;
