@@ -26,6 +26,8 @@ Over the past year, I have spent a significant amount of time experimenting with
 
 ▶️ **Watch the videos:** [youtube.com/@BellaPi314](https://www.youtube.com/@BellaPi314) · For more examples, visit my [website](https://wuisabel-gif.github.io/Bella_PI/index.html).
 
+📖 **The story:** how a math-and-physics study channel became an AI fashion-film studio — [read the background →](BACKGROUND.md)
+
 Through hundreds of prompt iterations, I began documenting recurring patterns that consistently produced stronger visual results. This project is an attempt to organize those observations into a reusable prompt-engineering framework that helps transform rough ideas into structured cinematic briefs.
 
 The platform combines prompt retrieval, visual metadata modeling, aesthetic classification, and structured prompt assembly to generate more coherent Veo 3 prompts — fashion editorials, luxury campaigns, runway films, and beauty close-ups first, with the same engine supporting short films, music videos, and visualizers.
