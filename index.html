@@ -34,19 +34,21 @@
             // Inverted neutral scale — flips the whole UI to a light editorial
             // theme. High numbers (used as backgrounds) read light; low numbers
             // (used as text) read dark. No per-element class changes needed.
+            // Warm editorial paper-and-ink scale (inverted: high = light paper,
+            // low = near-black ink). Magazine-masthead temperature.
             neutral: {
-              50:  '#0b1120',
-              100: '#111827',
-              200: '#1f2937',
-              300: '#374151',
-              400: '#4b5563',
-              500: '#64748b',
-              600: '#94a3b8',
-              700: '#cbd5e1',
-              800: '#e2e8f0',
-              850: '#eaeff5',
-              900: '#f1f5f9',
-              950: '#ffffff',
+              50:  '#17130c',
+              100: '#231d14',
+              200: '#3a3124',
+              300: '#4f4434',
+              400: '#6b5e49',
+              500: '#8a7c64',
+              600: '#ab9d83',
+              700: '#d3c7af',
+              800: '#e7ddc9',
+              850: '#efe7d6',
+              900: '#f4eee0',
+              950: '#faf6ec',
             },
             // Brand blue ramp anchored on the logo color (#057be6 = brand 500).
             // Use 600/700 for accent TEXT on light (contrast), 500 for fills/marks.
@@ -95,7 +97,7 @@
     html { font-size: 18px; }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #f6f8fc;
+      background-color: #f3ecdb;
     }
     /* Editorial high-fashion display face — masthead energy for headlines. */
     .font-display {
@@ -1240,15 +1242,17 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
               <div className="space-y-8 animate-fade-in">
                 
                 {/* Opening copy. */}
-                <div className="max-w-3xl mx-auto space-y-2 text-center">
-                  <h1 className="text-4xl md:text-6xl font-bold tracking-tight font-display leading-[1.04] text-balance">
-                    Your AI Fashion Film Director for{' '}
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-brand-500 to-brand-700">
-                      Veo 3
-                    </span>
+                <div className="max-w-4xl mx-auto text-center space-y-5">
+                  <div className="flex items-center justify-center gap-4 text-[11px] font-mono uppercase tracking-[0.34em] text-neutral-500">
+                    <span className="hidden sm:block h-px w-10 bg-neutral-600"></span>
+                    AI Fashion Film Studio
+                    <span className="hidden sm:block h-px w-10 bg-neutral-600"></span>
+                  </div>
+                  <h1 className="font-display font-semibold text-neutral-50 text-balance tracking-[-0.02em]" style={{ fontSize: 'clamp(2.85rem, 8.5vw, 6rem)', lineHeight: 0.97 }}>
+                    Your AI <span className="italic font-normal">fashion film</span> director for <span className="italic text-brand-500">Veo&nbsp;3</span>
                   </h1>
-                  <p className="text-xs md:text-sm text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-                    Turn a rough idea into a structured, ultra-cinematic Veo 3 brief — built for fashion films, editorials, runway, and beauty, and ready for short films, music videos, and visualizers too.
+                  <p className="text-sm md:text-base text-neutral-300 max-w-xl mx-auto leading-relaxed pt-1">
+                    Turn a rough idea into a structured, ultra-cinematic Veo 3 brief — editorials, runway, beauty, and luxury campaigns, plus short films and music videos.
                   </p>
                   <div className="flex items-center justify-center gap-2 pt-2">
                     <span className="text-[12px] text-neutral-500 uppercase tracking-widest font-mono">Follow me on</span>
