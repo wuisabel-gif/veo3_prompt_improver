@@ -26,7 +26,7 @@ Over the past year, I have spent a significant amount of time experimenting with
 
 ▶️ **Watch the videos:** [youtube.com/@BellaPi314](https://www.youtube.com/@BellaPi314) · For more examples, visit my [website](https://wuisabel-gif.github.io/Bella_PI/index.html).
 
-📖 **The story:** how a math-and-physics study channel became an AI fashion-film studio — [read the background →](BACKGROUND.md)
+📖 **Why I built this:** a math-and-physics student, AI video, and the patterns behind the shots that worked — [read the motivation →](MOTIVATION.md)
 
 Through hundreds of prompt iterations, I began documenting recurring patterns that consistently produced stronger visual results. This project is an attempt to organize those observations into a reusable prompt-engineering framework that helps transform rough ideas into structured cinematic briefs.
 
