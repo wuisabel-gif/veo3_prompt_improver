@@ -22,9 +22,9 @@ A Veo 3 prompt studio built for **fashion film** first — editorials, runway, b
 
 Currently available as a public prototype with potential future commercialization.
 
-Over the past year, I have spent a significant amount of time experimenting with Veo 3 and other AI video-generation models while creating fashion films, editorials, and runway concepts for my Bella Pi YouTube channel.
+Over the past year, I have spent a significant amount of time experimenting with Veo 3 and other AI video-generation models while creating fashion films, editorials, and runway concepts for my [**Bella PI** YouTube channel](https://www.youtube.com/@BellaPi314).
 
-For more examples of my Veo 3 videos, visit my website: [Bella PI](https://wuisabel-gif.github.io/Bella_PI/index.html).
+▶️ **Watch the videos:** [youtube.com/@BellaPi314](https://www.youtube.com/@BellaPi314) · For more examples, visit my [website](https://wuisabel-gif.github.io/Bella_PI/index.html).
 
 Through hundreds of prompt iterations, I began documenting recurring patterns that consistently produced stronger visual results. This project is an attempt to organize those observations into a reusable prompt-engineering framework that helps transform rough ideas into structured cinematic briefs.
 
