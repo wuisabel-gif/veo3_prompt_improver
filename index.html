@@ -172,6 +172,40 @@
       );
     };
 
+    // Typewriter — types/erases through a list of phrases. Honors reduced motion.
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function Typewriter({ phrases, className = "" }) {
+      const [text, setText] = useState(prefersReducedMotion ? phrases[0] : "");
+      const [idx, setIdx] = useState(0);
+      const [deleting, setDeleting] = useState(false);
+
+      useEffect(() => {
+        if (prefersReducedMotion) return;
+        const full = phrases[idx % phrases.length];
+        let t;
+        if (!deleting && text === full) {
+          t = setTimeout(() => setDeleting(true), 1700);
+        } else if (deleting && text === "") {
+          setDeleting(false);
+          setIdx(v => v + 1);
+        } else {
+          t = setTimeout(() => {
+            setText(full.slice(0, text.length + (deleting ? -1 : 1)));
+          }, deleting ? 28 : 62);
+        }
+        return () => clearTimeout(t);
+      }, [text, deleting, idx]);
+
+      return (
+        <span className={className}>
+          {text}
+          <span aria-hidden="true" className="text-brand-500 animate-pulse font-normal">▋</span>
+        </span>
+      );
+    }
+
     const QUICK_VIBE_STARTERS = [
       "studying alone at night",
       "empty hotel lobby after midnight",
@@ -2002,6 +2036,16 @@ Reference mood:
                   <p className="text-xs md:text-sm text-neutral-400 max-w-2xl mx-auto leading-relaxed">
                     VEO 3 Prompt Creation is a structured visual-direction system for turning rough ideas, lyrics, moods, images, and aesthetic references into production-ready cinematic prompts.
                   </p>
+                  <div className="font-mono text-[14px] md:text-[15px] flex items-center justify-center gap-2 pt-3 flex-wrap">
+                    <span className="text-brand-700">rough idea ▸</span>
+                    <span className="text-neutral-100">“<Typewriter phrases={[
+                      "a girl walking through neon rain",
+                      "champagne by a cliffside pool at dusk",
+                      "a lone figure in an endless white room",
+                      "euphoria-lit house party, glitter haze",
+                      "frost on a quiet Seoul apartment window"
+                    ]} />”</span>
+                  </div>
                 </div>
 
                 <div className="bg-neutral-900/30 border border-neutral-850 p-7 rounded-2xl space-y-3">
@@ -2047,7 +2091,7 @@ Reference mood:
                         href={ext.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group bg-neutral-950 border border-neutral-850 hover:border-brand-700/60 rounded-xl p-4 flex gap-3 transition-all hover:shadow-[0_0_24px_rgba(5,123,230,0.08)]"
+                        className="group bg-neutral-950 border border-neutral-850 hover:border-brand-700/60 rounded-xl p-4 flex gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(5,123,230,0.12)]"
                       >
                         <span className="text-lg leading-none">{ext.icon}</span>
                         <div className="space-y-0.5">
