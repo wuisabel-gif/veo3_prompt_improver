@@ -1291,7 +1291,7 @@ Reference mood:
               
               <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setActiveTab('improver')}>
                 <img src="/logo.svg" alt="VEO3 Prompt Improver — make it real" className="h-12 w-auto object-contain group-hover:scale-[1.03] transition-transform duration-300" />
-                <span className="hidden sm:inline text-[11px] text-neutral-500 tracking-widest uppercase font-mono border-l border-neutral-800 pl-3">Make it real</span>
+                <span className="hidden sm:inline text-[13px] text-neutral-500 tracking-widest uppercase font-mono border-l border-neutral-800 pl-3">Make it real</span>
               </div>
 
               {/* Main tabs. */}
@@ -1313,7 +1313,7 @@ Reference mood:
                 >
                   <Icon name="book-open" className="w-3.5 h-3.5" />
                   <span>Prompt Library</span>
-                  <span className="text-[11px] bg-neutral-950 px-1.5 py-0.5 rounded-full text-neutral-400 border border-neutral-800">{prompts.length}</span>
+                  <span className="text-[13px] bg-neutral-950 px-1.5 py-0.5 rounded-full text-neutral-400 border border-neutral-800">{prompts.length}</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('about')}
@@ -1364,7 +1364,7 @@ Reference mood:
                 
                 {/* Opening copy. */}
                 <div className="max-w-4xl mx-auto text-center space-y-5">
-                  <div className="flex items-center justify-center gap-4 text-[11px] font-mono uppercase tracking-[0.34em] text-neutral-500">
+                  <div className="flex items-center justify-center gap-4 text-[13px] font-mono uppercase tracking-[0.34em] text-neutral-500">
                     <span className="hidden sm:block h-px w-10 bg-neutral-600"></span>
                     AI Fashion Film Studio
                     <span className="hidden sm:block h-px w-10 bg-neutral-600"></span>
@@ -1376,7 +1376,7 @@ Reference mood:
                     Turn a rough idea into a structured, ultra-cinematic Veo 3 brief — editorials, runway, beauty, and luxury campaigns, plus short films and music videos.
                   </p>
                   <div className="flex items-center justify-center gap-2 pt-2">
-                    <span className="text-[12px] text-neutral-500 uppercase tracking-widest font-mono">Follow me on</span>
+                    <span className="text-[14px] text-neutral-500 uppercase tracking-widest font-mono">Follow me on</span>
                     <a
                       href="https://github.com/wuisabel-gif"
                       target="_blank"
@@ -1410,13 +1410,13 @@ Reference mood:
                     {/* Raw idea input. */}
                     <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-4 backdrop-blur-md">
                       <div className="flex items-center justify-between">
-                        <label className="text-[12px] font-bold tracking-widest text-brand-700 uppercase flex items-center gap-2 font-mono">
+                        <label className="text-[14px] font-bold tracking-widest text-brand-700 uppercase flex items-center gap-2 font-mono">
                           <Icon name="sparkles" className="w-4 h-4 font-bold" />
                           1. Input Idea or Lyric Snippet
                         </label>
                         <button 
                           onClick={() => setRoughInput('')}
-                          className="text-[12px] text-neutral-500 hover:text-brand-400 flex items-center gap-1 transition font-mono"
+                          className="text-[14px] text-neutral-500 hover:text-brand-400 flex items-center gap-1 transition font-mono"
                         >
                           <Icon name="rotate-ccw" className="w-3 h-3" />
                           Clear
@@ -1430,20 +1430,20 @@ Reference mood:
                           placeholder="Describe a mood, setting, lyric fragment, or visual concept..."
                           className="w-full h-32 bg-neutral-950 border border-neutral-850 rounded-xl p-4 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-brand-500/40 focus:border-brand-500/40 transition resize-none leading-relaxed font-mono"
                         />
-                        <div className="absolute bottom-2.5 right-3 text-[11px] text-neutral-600 font-mono">
+                        <div className="absolute bottom-2.5 right-3 text-[13px] text-neutral-600 font-mono">
                           {roughInput.length} characters
                         </div>
                       </div>
 
                       {/* Random starter ideas. */}
                       <div className="space-y-1.5">
-                        <p className="text-[12px] text-neutral-500 font-bold tracking-wide">Quick Vibe Starts:</p>
+                        <p className="text-[14px] text-neutral-500 font-bold tracking-wide">Quick Vibe Starts:</p>
                         <div className="flex flex-wrap gap-2">
                           {randomVibeStarters.map((tPreset, pIdx) => (
                             <button
                               key={pIdx}
                               onClick={() => setRoughInput(tPreset)}
-                              className="text-[12px] bg-neutral-950 border border-neutral-850/60 hover:border-neutral-700 hover:text-neutral-200 text-neutral-400 px-3 py-1.5 rounded-lg transition text-left truncate max-w-full"
+                              className="text-[14px] bg-neutral-950 border border-neutral-850/60 hover:border-neutral-700 hover:text-neutral-200 text-neutral-400 px-3 py-1.5 rounded-lg transition text-left truncate max-w-full"
                             >
                               "{tPreset}"
                             </button>
@@ -1455,11 +1455,11 @@ Reference mood:
                     {/* Aesthetic selector. */}
                     <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-4 backdrop-blur-md">
                       <div>
-                        <label className="text-[12px] font-bold tracking-widest text-indigo-600 uppercase flex items-center gap-2 font-mono">
+                        <label className="text-[14px] font-bold tracking-widest text-indigo-600 uppercase flex items-center gap-2 font-mono">
                           <Icon name="compass" className="w-4 h-4" />
                           2. Target Aesthetic Style Model
                         </label>
-                        <p className="text-[12px] text-neutral-500 mt-1">Configures specific visualizer rules, props, and negative prompts.</p>
+                        <p className="text-[14px] text-neutral-500 mt-1">Configures specific visualizer rules, props, and negative prompts.</p>
                       </div>
 
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -1478,7 +1478,7 @@ Reference mood:
                               <div className="flex justify-between items-center">
                                 <span className="text-lg">{cat.icon}</span>
                                 {isSelected && (
-                                  <span className="text-[10px] bg-neutral-100 px-1.5 py-0.5 rounded text-white border border-neutral-200 font-mono">
+                                  <span className="text-[12px] bg-neutral-100 px-1.5 py-0.5 rounded text-white border border-neutral-200 font-mono">
                                     ACTIVE
                                   </span>
                                 )}
@@ -1486,7 +1486,7 @@ Reference mood:
                               <h4 className={`font-bold text-sm mt-2 transition-colors ${isSelected ? 'text-neutral-50' : 'text-neutral-300 group-hover:text-neutral-100'}`}>
                                 {cat.name}
                               </h4>
-                              <p className="text-[11px] text-neutral-500 line-clamp-2 mt-0.5 leading-normal group-hover:text-neutral-400">
+                              <p className="text-[13px] text-neutral-500 line-clamp-2 mt-0.5 leading-normal group-hover:text-neutral-400">
                                 {cat.desc}
                               </p>
                             </button>
@@ -1498,16 +1498,16 @@ Reference mood:
                     {/* Generation controls. */}
                     <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-5 backdrop-blur-md">
                       <div>
-                        <label className="text-[12px] font-bold tracking-widest text-brand-700 uppercase flex items-center gap-2 font-mono">
+                        <label className="text-[14px] font-bold tracking-widest text-brand-700 uppercase flex items-center gap-2 font-mono">
                           <Icon name="sliders" className="w-4 h-4" />
                           3. Generation Controls
                         </label>
-                        <p className="text-[12px] text-neutral-500 mt-1">Configure dialogue, music, and output behavior before prompt generation.</p>
+                        <p className="text-[14px] text-neutral-500 mt-1">Configure dialogue, music, and output behavior before prompt generation.</p>
                       </div>
 
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <p className="text-[11px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Dialogue</p>
+                          <p className="text-[13px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Dialogue</p>
                           <div className="flex flex-wrap gap-2">
                             {DIALOGUE_OPTIONS.map(option => {
                               const isSelected = selectedDialogueMode === option;
@@ -1515,7 +1515,7 @@ Reference mood:
                                 <button
                                   key={option}
                                   onClick={() => setSelectedDialogueMode(option)}
-                                  className={`text-[12px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                  className={`text-[14px] px-3 py-1.5 rounded-full border font-mono transition-all ${
                                     isSelected
                                       ? 'bg-brand-500/15 border-brand-500/60 text-brand-200 shadow-[0_0_18px_rgba(5,123,230,0.12)]'
                                       : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
@@ -1529,7 +1529,7 @@ Reference mood:
                         </div>
 
                         <div className="space-y-2">
-                          <p className="text-[11px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Music</p>
+                          <p className="text-[13px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Music</p>
                           <div className="flex flex-wrap gap-2">
                             {MUSIC_OPTIONS.map(option => {
                               const isSelected = selectedMusicMode === option;
@@ -1537,7 +1537,7 @@ Reference mood:
                                 <button
                                   key={option}
                                   onClick={() => setSelectedMusicMode(option)}
-                                  className={`text-[12px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                  className={`text-[14px] px-3 py-1.5 rounded-full border font-mono transition-all ${
                                     isSelected
                                       ? 'bg-brand-500/15 border-brand-400/60 text-indigo-200 shadow-[0_0_18px_rgba(129,140,248,0.12)]'
                                       : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
@@ -1551,7 +1551,7 @@ Reference mood:
                         </div>
 
                         <div className="space-y-2">
-                          <p className="text-[11px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Output Type</p>
+                          <p className="text-[13px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Output Type</p>
                           <div className="flex flex-wrap gap-2">
                             {OUTPUT_TYPE_OPTIONS.map(option => {
                               const isSelected = selectedOutputType === option;
@@ -1559,7 +1559,7 @@ Reference mood:
                                 <button
                                   key={option}
                                   onClick={() => setSelectedOutputType(option)}
-                                  className={`text-[12px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                  className={`text-[14px] px-3 py-1.5 rounded-full border font-mono transition-all ${
                                     isSelected
                                       ? 'bg-pink-500/15 border-pink-400/60 text-pink-200 shadow-[0_0_18px_rgba(244,114,182,0.12)]'
                                       : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
@@ -1574,7 +1574,7 @@ Reference mood:
 
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <p className="text-[11px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Aspect Ratio</p>
+                            <p className="text-[13px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Aspect Ratio</p>
                             <div className="flex flex-wrap gap-2">
                               {ASPECT_RATIO_OPTIONS.map(option => {
                                 const isSelected = selectedAspectRatio === option;
@@ -1582,7 +1582,7 @@ Reference mood:
                                   <button
                                     key={option}
                                     onClick={() => setSelectedAspectRatio(option)}
-                                    className={`text-[12px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                    className={`text-[14px] px-3 py-1.5 rounded-full border font-mono transition-all ${
                                       isSelected
                                         ? 'bg-brand-500/15 border-brand-500/60 text-brand-200 shadow-[0_0_18px_rgba(5,123,230,0.12)]'
                                         : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
@@ -1596,7 +1596,7 @@ Reference mood:
                           </div>
 
                           <div className="space-y-2">
-                            <p className="text-[11px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Duration</p>
+                            <p className="text-[13px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Duration</p>
                             <div className="flex flex-wrap gap-2">
                               {DURATION_OPTIONS.map(option => {
                                 const isSelected = selectedDuration === option;
@@ -1604,7 +1604,7 @@ Reference mood:
                                   <button
                                     key={option}
                                     onClick={() => setSelectedDuration(option)}
-                                    className={`text-[12px] px-3 py-1.5 rounded-full border font-mono transition-all ${
+                                    className={`text-[14px] px-3 py-1.5 rounded-full border font-mono transition-all ${
                                       isSelected
                                         ? 'bg-brand-500/15 border-brand-400/60 text-indigo-200 shadow-[0_0_18px_rgba(129,140,248,0.12)]'
                                         : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
@@ -1619,7 +1619,7 @@ Reference mood:
                         </div>
 
                         <div className="space-y-2">
-                          <p className="text-[11px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Negative Prompt <span className="text-neutral-600 normal-case tracking-normal">(optional)</span></p>
+                          <p className="text-[13px] font-bold tracking-widest text-neutral-500 uppercase font-mono">Negative Prompt <span className="text-neutral-600 normal-case tracking-normal">(optional)</span></p>
                           <input
                             type="text"
                             value={negativePrompt}
@@ -1659,10 +1659,10 @@ Reference mood:
                         <div className="flex items-start gap-2">
                           <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse shadow-[0_0_8px_rgba(5,123,230,0.5)] mt-1.5" />
                           <div className="space-y-1">
-                            <span className="block text-[12px] font-bold tracking-widest text-neutral-400 uppercase font-mono">
+                            <span className="block text-[14px] font-bold tracking-widest text-neutral-400 uppercase font-mono">
                               VEO3 Prompt Output Panel
                             </span>
-                            <p className="text-[13px] text-neutral-500 leading-relaxed max-w-md font-sans tracking-normal normal-case">
+                            <p className="text-[15px] text-neutral-500 leading-relaxed max-w-md font-sans tracking-normal normal-case">
                               ⚠️ This demo runs on a Google free API tier, so responses may occasionally be delayed due to rate limits. For faster response times and higher usage limits, run the project locally and configure your own API key through a .env file for improved performance.{' '}
                               <a
                                 href="https://github.com/wuisabel-gif/veo3_prompt_improver/blob/main/README.md"
@@ -1676,7 +1676,7 @@ Reference mood:
                           </div>
                         </div>
                         {enhancedOutput && (
-                          <span className="text-[11px] font-mono text-brand-700 bg-brand-100 border border-brand-200 px-2.5 py-0.5 rounded-full">
+                          <span className="text-[13px] font-mono text-brand-700 bg-brand-100 border border-brand-200 px-2.5 py-0.5 rounded-full">
                             Curated Output
                           </span>
                         )}
@@ -1699,7 +1699,7 @@ Reference mood:
                         ) : enhancedOutput ? (
                           <div className="space-y-4 flex-1 flex flex-col justify-between">
                             
-                            <div className="bg-neutral-950 border border-neutral-850 p-4 rounded-xl max-h-[320px] overflow-y-auto font-mono text-[11px] text-neutral-300 leading-relaxed space-y-3">
+                            <div className="bg-neutral-950 border border-neutral-850 p-4 rounded-xl max-h-[320px] overflow-y-auto font-mono text-[13px] text-neutral-300 leading-relaxed space-y-3">
                               {enhancedOutput.split('\n').map((line, lIdx) => {
                                 if (line.startsWith('Ultra-cinematic')) {
                                   return <p key={lIdx} className="text-brand-700 font-bold">{line}</p>;
@@ -1708,7 +1708,7 @@ Reference mood:
                                   return <p key={lIdx} className="text-brand-400 font-bold mt-3">{line}</p>;
                                 }
                                 if (line.startsWith('No ')) {
-                                  return <span key={lIdx} className="inline-block bg-neutral-900 border border-neutral-800/80 text-[11px] text-neutral-400 px-2 py-0.5 rounded mr-1.5 font-sans mb-1">{line}</span>;
+                                  return <span key={lIdx} className="inline-block bg-neutral-900 border border-neutral-800/80 text-[13px] text-neutral-400 px-2 py-0.5 rounded mr-1.5 font-sans mb-1">{line}</span>;
                                 }
                                 if (line.startsWith('•')) {
                                   return <p key={lIdx} className="text-neutral-200 pl-2">{line}</p>;
@@ -1719,7 +1719,7 @@ Reference mood:
 
                             {/* Quick refinement buttons. */}
                             <div className="space-y-2">
-                              <p className="text-[11px] font-bold tracking-widest text-neutral-500 uppercase font-mono flex items-center gap-1.5">
+                              <p className="text-[13px] font-bold tracking-widest text-neutral-500 uppercase font-mono flex items-center gap-1.5">
                                 <Icon name="sliders" className="w-3 h-3 text-brand-700" />
                                 Micro-Aesthetic Adjustments
                               </p>
@@ -1733,7 +1733,7 @@ Reference mood:
                                   <button
                                     key={aIdx}
                                     onClick={() => handleModifier(adj.query)}
-                                    className="bg-neutral-950 border border-neutral-850 hover:border-neutral-700 p-2 rounded-lg text-[12px] text-neutral-300 hover:text-white transition-all text-left truncate"
+                                    className="bg-neutral-950 border border-neutral-850 hover:border-neutral-700 p-2 rounded-lg text-[14px] text-neutral-300 hover:text-white transition-all text-left truncate"
                                   >
                                     ➕ <span className="font-semibold">{adj.label}</span>
                                   </button>
@@ -1785,21 +1785,21 @@ Reference mood:
                             </div>
                             <div className="space-y-1">
                               <h5 className="text-xs font-bold text-neutral-300 uppercase tracking-wide">Monitor Standby</h5>
-                              <p className="text-[11px] text-neutral-500 max-w-xs mx-auto leading-relaxed">
+                              <p className="text-[13px] text-neutral-500 max-w-xs mx-auto leading-relaxed">
                                 Preview a shuffled demo sequence while you build a cinematic Veo 3 prompt.
                               </p>
                             </div>
                             <div className="flex items-center justify-center gap-2">
                               <button
                                 onClick={handleSoundOnClick}
-                                className="text-[11px] bg-neutral-950 border border-neutral-850 hover:border-neutral-700 text-neutral-300 hover:text-white px-4 py-2 rounded-xl transition flex items-center gap-2"
+                                className="text-[13px] bg-neutral-950 border border-neutral-850 hover:border-neutral-700 text-neutral-300 hover:text-white px-4 py-2 rounded-xl transition flex items-center gap-2"
                               >
                                 <Icon name="volume-2" className="w-3.5 h-3.5" />
                                 Sound On
                               </button>
                               <button
                                 onClick={advanceDemoVideo}
-                                className="text-[11px] bg-neutral-950 border border-neutral-850 hover:border-neutral-700 text-neutral-300 hover:text-white px-4 py-2 rounded-xl transition flex items-center gap-2"
+                                className="text-[13px] bg-neutral-950 border border-neutral-850 hover:border-neutral-700 text-neutral-300 hover:text-white px-4 py-2 rounded-xl transition flex items-center gap-2"
                               >
                                 <Icon name="shuffle" className="w-3.5 h-3.5" />
                                 Next Video
@@ -1863,7 +1863,7 @@ Reference mood:
                   <div className="flex items-center gap-2 overflow-x-auto w-full no-scrollbar">
                     <button
                       onClick={() => setLibraryFilter('all')}
-                      className={`px-3 py-1.5 rounded-lg text-[12px] font-bold tracking-wide uppercase whitespace-nowrap transition-all ${
+                      className={`px-3 py-1.5 rounded-lg text-[14px] font-bold tracking-wide uppercase whitespace-nowrap transition-all ${
                         libraryFilter === 'all'
                           ? 'bg-brand-500 text-neutral-950 shadow-md'
                           : 'bg-neutral-950 text-neutral-400 hover:text-neutral-200 border border-neutral-850'
@@ -1875,7 +1875,7 @@ Reference mood:
                       <button
                         key={cat.name}
                         onClick={() => setLibraryFilter(cat.name)}
-                        className={`px-3 py-1.5 rounded-lg text-[12px] font-bold tracking-wide uppercase whitespace-nowrap transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-[14px] font-bold tracking-wide uppercase whitespace-nowrap transition-all ${
                           libraryFilter === cat.name
                             ? 'bg-brand-500 text-white shadow-md'
                             : 'bg-neutral-950 text-neutral-400 hover:text-neutral-200 border border-neutral-850'
@@ -1905,7 +1905,7 @@ Reference mood:
 
                           <div className="space-y-3">
                             <div className="flex justify-between items-start">
-                              <span className="text-[11px] uppercase font-bold tracking-wider text-brand-700 flex items-center gap-1 font-mono">
+                              <span className="text-[13px] uppercase font-bold tracking-wider text-brand-700 flex items-center gap-1 font-mono">
                                 <span>{styleRef?.icon}</span>
                                 <span>{item.category}</span>
                               </span>
@@ -1924,20 +1924,20 @@ Reference mood:
                               <h4 className="font-bold text-sm text-neutral-100 group-hover:text-brand-700 transition font-display">
                                 {item.title}
                               </h4>
-                              <p className="text-[12px] text-neutral-500 mt-0.5 italic">
+                              <p className="text-[14px] text-neutral-500 mt-0.5 italic">
                                 {item.mood}
                               </p>
                             </div>
 
                             {/* Prompt excerpt. */}
-                            <div className="bg-neutral-950 border border-neutral-850 p-3 rounded-lg text-[12px] font-mono text-neutral-400 leading-relaxed max-h-32 overflow-y-auto">
+                            <div className="bg-neutral-950 border border-neutral-850 p-3 rounded-lg text-[14px] font-mono text-neutral-400 leading-relaxed max-h-32 overflow-y-auto">
                               {item.prompt}
                             </div>
 
                             {/* Prompt tags. */}
                             <div className="flex flex-wrap gap-1 pt-1">
                               {item.tags.map(t => (
-                                <span key={t} className="text-[11px] bg-neutral-900 text-neutral-400 px-2.5 py-0.5 rounded-full border border-neutral-850">
+                                <span key={t} className="text-[13px] bg-neutral-900 text-neutral-400 px-2.5 py-0.5 rounded-full border border-neutral-850">
                                   #{t}
                                 </span>
                               ))}
@@ -1947,14 +1947,14 @@ Reference mood:
                           <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-neutral-800/60 font-mono">
                             <button
                               onClick={() => handleCopyText(item.prompt)}
-                              className="bg-neutral-950 border border-neutral-850 hover:border-neutral-700 text-[12px] font-bold text-neutral-300 py-2 rounded-lg transition flex items-center justify-center gap-1.5"
+                              className="bg-neutral-950 border border-neutral-850 hover:border-neutral-700 text-[14px] font-bold text-neutral-300 py-2 rounded-lg transition flex items-center justify-center gap-1.5"
                             >
                               <Icon name="copy" className="w-3 h-3" />
                               Copy Text
                             </button>
                             <button
                               onClick={() => loadToWorkspace(item)}
-                              className="bg-neutral-100 hover:bg-neutral-200 text-[12px] font-bold text-white py-2 rounded-lg transition flex items-center justify-center gap-1.5"
+                              className="bg-neutral-100 hover:bg-neutral-200 text-[14px] font-bold text-white py-2 rounded-lg transition flex items-center justify-center gap-1.5"
                             >
                               <Icon name="sliders" className="w-3 h-3" />
                               Edit Model
@@ -1972,7 +1972,7 @@ Reference mood:
                     </div>
                     <div>
                       <h4 className="font-bold text-neutral-300 text-sm">No Templates Found</h4>
-                      <p className="text-[11px] text-neutral-500 max-w-xs mx-auto mt-1">
+                      <p className="text-[13px] text-neutral-500 max-w-xs mx-auto mt-1">
                         Try searching for simpler words or switch back to "All Aesthetics".
                       </p>
                     </div>
@@ -1993,7 +1993,7 @@ Reference mood:
               <div className="max-w-5xl mx-auto space-y-10 animate-fade-in">
                 
                 <div className="text-center space-y-3">
-                  <span className="text-[11px] font-bold tracking-widest text-brand-700 bg-brand-100 border border-brand-200 px-3 py-1 rounded-full uppercase font-mono">
+                  <span className="text-[13px] font-bold tracking-widest text-brand-700 bg-brand-100 border border-brand-200 px-3 py-1 rounded-full uppercase font-mono">
                     System Architecture Documentation
                   </span>
                   <h2 className="text-3xl md:text-5xl font-bold font-display tracking-tight text-balance">
@@ -2030,7 +2030,7 @@ Reference mood:
                 <div className="bg-neutral-900/30 border border-neutral-850 p-7 rounded-2xl space-y-4">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">Available Everywhere — Extensions & Integrations</h3>
-                    <span className="text-[11px] font-bold tracking-widest text-pink-700 bg-pink-100 border border-pink-200 px-2.5 py-1 rounded-full uppercase font-mono">New</span>
+                    <span className="text-[13px] font-bold tracking-widest text-pink-700 bg-pink-100 border border-pink-200 px-2.5 py-1 rounded-full uppercase font-mono">New</span>
                   </div>
                   <p className="text-xs text-neutral-400 leading-relaxed">
                     The same Veo 3 prompt-director engine now runs past this site — in your terminal via the Gemini CLI, in your browser as a Chrome extension, or wired straight into Claude.
@@ -2052,7 +2052,7 @@ Reference mood:
                         <span className="text-lg leading-none">{ext.icon}</span>
                         <div className="space-y-0.5">
                           <p className="text-xs font-bold text-neutral-100 font-mono group-hover:text-brand-200 transition-colors">{ext.name}</p>
-                          <p className="text-[11px] text-neutral-500 leading-snug">{ext.desc}</p>
+                          <p className="text-[13px] text-neutral-500 leading-snug">{ext.desc}</p>
                         </div>
                       </a>
                     ))}
@@ -2134,7 +2134,7 @@ Reference mood:
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {STYLE_CATEGORIES.map(cat => (
-                      <span key={cat.name} className="text-[12px] bg-neutral-950 border border-neutral-850 text-neutral-400 px-3 py-1 rounded-full font-mono">
+                      <span key={cat.name} className="text-[14px] bg-neutral-950 border border-neutral-850 text-neutral-400 px-3 py-1 rounded-full font-mono">
                         {cat.icon} {cat.name}
                       </span>
                     ))}
@@ -2150,24 +2150,24 @@ Reference mood:
                     All outputs follow a consistent creative-director structure so prompts stay visually coherent, stylistically consistent, and optimized for cinematic Veo 3 generation.
                   </p>
 
-                  <div className="bg-neutral-950 border border-neutral-850 rounded-xl p-5 font-mono text-[11px] text-neutral-300 leading-relaxed space-y-2 text-center">
+                  <div className="bg-neutral-950 border border-neutral-850 rounded-xl p-5 font-mono text-[13px] text-neutral-300 leading-relaxed space-y-2 text-center">
                     <p className="text-brand-700 font-bold">### Ultra-cinematic [Style Family] visualizer inspired by [Visual Reference]...</p>
                     <p className="text-neutral-200">A [Main Subject] in [Environment]...</p>
-                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Scene visuals:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[14px]">Scene visuals:</p>
                     <p className="text-neutral-400">• [Visual Detail]</p>
                     <p className="text-neutral-400">• [Motion Cue]</p>
                     <p className="text-neutral-400">• [Environmental Cue]</p>
-                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Visual style:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[14px]">Visual style:</p>
                     <p className="text-neutral-400">[Camera Direction]</p>
                     <p className="text-neutral-400">[Lighting Design]</p>
                     <p className="text-neutral-400">[Cinematic References]</p>
-                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Color palette:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[14px]">Color palette:</p>
                     <p className="text-neutral-400">[Primary Colors]</p>
                     <p className="text-neutral-400">[Accent Colors]</p>
                     <p className="text-neutral-400">[Lighting Tints]</p>
-                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Mood:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[14px]">Mood:</p>
                     <p className="text-neutral-400">[Atmosphere]</p>
-                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Camera:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[14px]">Camera:</p>
                     <p className="text-neutral-400">[Shot Design]</p>
                   </div>
                 </div>
@@ -2196,7 +2196,7 @@ Reference mood:
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[12px] font-bold text-neutral-400 uppercase font-mono">Template Name</label>
+                  <label className="text-[14px] font-bold text-neutral-400 uppercase font-mono">Template Name</label>
                   <input
                     type="text"
                     value={newPromptTitle}
@@ -2206,8 +2206,8 @@ Reference mood:
                 </div>
 
                 <div className="space-y-1 text-xs text-neutral-400">
-                  <span className="font-semibold block text-[12px] font-mono uppercase text-neutral-500">Categorized under:</span>
-                  <span className="inline-block bg-neutral-950 px-3 py-1.5 rounded-lg border border-neutral-850 text-brand-700 font-bold text-[11px] font-mono">
+                  <span className="font-semibold block text-[14px] font-mono uppercase text-neutral-500">Categorized under:</span>
+                  <span className="inline-block bg-neutral-950 px-3 py-1.5 rounded-lg border border-neutral-850 text-brand-700 font-bold text-[13px] font-mono">
                     {selectedCategory}
                   </span>
                 </div>
@@ -2232,14 +2232,14 @@ Reference mood:
           )}
 
           {/* Footer links and credit. */}
-          <footer className="bg-neutral-950 border-t border-neutral-900/60 py-8 px-6 mt-16 text-center text-[11px] text-neutral-500 space-y-3 z-10 relative">
+          <footer className="bg-neutral-950 border-t border-neutral-900/60 py-8 px-6 mt-16 text-center text-[13px] text-neutral-500 space-y-3 z-10 relative">
             <div className="flex flex-wrap justify-center gap-1.5 max-w-3xl mx-auto">
               {[
                 "Veo 3 fashion film", "fashion film prompt", "fashion editorial",
                 "runway film", "beauty film", "luxury campaign", "short film",
                 "music video", "visualizer", "cinematic prompt engineering", "Google Veo", "Gemini"
               ].map(kw => (
-                <span key={kw} className="text-[11px] bg-neutral-900/60 border border-neutral-850 text-neutral-600 px-2 py-0.5 rounded-full font-mono">
+                <span key={kw} className="text-[13px] bg-neutral-900/60 border border-neutral-850 text-neutral-600 px-2 py-0.5 rounded-full font-mono">
                   {kw}
                 </span>
               ))}
