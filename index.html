@@ -45,6 +45,21 @@
               850: '#eaeff5',
               900: '#f1f5f9',
               950: '#ffffff',
+            },
+            // Brand blue ramp anchored on the logo color (#057be6 = brand 500).
+            // Use 600/700 for accent TEXT on light (contrast), 500 for fills/marks.
+            brand: {
+              50:  '#e9f3fe',
+              100: '#cfe6fc',
+              200: '#a1cef9',
+              300: '#68b1f4',
+              400: '#2f93ec',
+              500: '#057be6',
+              600: '#0463bd',
+              700: '#0a4f95',
+              800: '#0e4179',
+              900: '#123861',
+              950: '#0a2342',
             }
           }
         }
@@ -127,7 +142,7 @@
     }
   </style>
 </head>
-<body class="h-full text-neutral-100 antialiased overflow-x-hidden selection:bg-blue-500/30 selection:text-blue-700">
+<body class="h-full text-neutral-100 antialiased overflow-x-hidden selection:bg-brand-500/30 selection:text-brand-700">
 
   <!-- App mount point. -->
   <div id="root" class="min-h-full flex flex-col justify-between"></div>
@@ -1134,15 +1149,15 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
           {/* Lightweight feedback for copy, save, and generation actions. */}
           {toast && (
             <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-neutral-900/90 border border-neutral-800 px-5 py-4 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] backdrop-blur-md transition-all duration-300">
-              <div className={`w-3 h-3 rounded-full ${toast.type === 'success' ? 'bg-blue-600 shadow-[0_0_12px_rgba(37,99,235,0.6)]' : 'bg-blue-500 shadow-[0_0_12px_rgba(244,63,94,0.6)]'}`} />
+              <div className={`w-3 h-3 rounded-full ${toast.type === 'success' ? 'bg-brand-500 shadow-[0_0_12px_rgba(5,123,230,0.6)]' : 'bg-brand-500 shadow-[0_0_12px_rgba(244,63,94,0.6)]'}`} />
               <p className="text-xs font-semibold text-neutral-200">{toast.message}</p>
             </div>
           )}
 
           {/* Soft background glow behind the workspace. */}
           <div className="absolute top-0 left-0 w-full h-[500px] pointer-events-none overflow-hidden z-0">
-            <div className="absolute top-[-20%] left-[10%] w-[600px] h-[600px] rounded-full bg-blue-500/10 blur-[130px] animate-pulse-glow" />
-            <div className="absolute top-[-10%] right-[5%] w-[500px] h-[500px] rounded-full bg-blue-500/10 blur-[140px] animate-pulse-glow" style={{ animationDelay: '-3s' }} />
+            <div className="absolute top-[-20%] left-[10%] w-[600px] h-[600px] rounded-full bg-brand-500/10 blur-[130px] animate-pulse-glow" />
+            <div className="absolute top-[-10%] right-[5%] w-[500px] h-[500px] rounded-full bg-brand-500/10 blur-[140px] animate-pulse-glow" style={{ animationDelay: '-3s' }} />
           </div>
 
           {/* Header and primary navigation. */}
@@ -1226,7 +1241,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                 <div className="max-w-3xl mx-auto space-y-2 text-center">
                   <h1 className="text-4xl md:text-6xl font-bold tracking-tight font-display leading-[1.04] text-balance">
                     Your AI Fashion Film Director for{' '}
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-brand-500 to-brand-700">
                       Veo 3
                     </span>
                   </h1>
@@ -1268,13 +1283,13 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                     {/* Raw idea input. */}
                     <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-4 backdrop-blur-md">
                       <div className="flex items-center justify-between">
-                        <label className="text-[12px] font-bold tracking-widest text-blue-700 uppercase flex items-center gap-2 font-mono">
+                        <label className="text-[12px] font-bold tracking-widest text-brand-700 uppercase flex items-center gap-2 font-mono">
                           <Icon name="sparkles" className="w-4 h-4 font-bold" />
                           1. Input Idea or Lyric Snippet
                         </label>
                         <button 
                           onClick={() => setRoughInput('')}
-                          className="text-[12px] text-neutral-500 hover:text-blue-400 flex items-center gap-1 transition font-mono"
+                          className="text-[12px] text-neutral-500 hover:text-brand-400 flex items-center gap-1 transition font-mono"
                         >
                           <Icon name="rotate-ccw" className="w-3 h-3" />
                           Clear
@@ -1286,7 +1301,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                           value={roughInput}
                           onChange={(e) => setRoughInput(e.target.value)}
                           placeholder="Describe a mood, setting, lyric fragment, or visual concept..."
-                          className="w-full h-32 bg-neutral-950 border border-neutral-850 rounded-xl p-4 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-blue-500/40 focus:border-blue-500/40 transition resize-none leading-relaxed font-mono"
+                          className="w-full h-32 bg-neutral-950 border border-neutral-850 rounded-xl p-4 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-brand-500/40 focus:border-brand-500/40 transition resize-none leading-relaxed font-mono"
                         />
                         <div className="absolute bottom-2.5 right-3 text-[11px] text-neutral-600 font-mono">
                           {roughInput.length} characters
@@ -1329,7 +1344,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                               onClick={() => setSelectedCategory(cat.name)}
                               className={`text-left p-3 rounded-xl border transition-all duration-300 relative group ${
                                 isSelected
-                                  ? `bg-neutral-950 border-blue-600 ring-1 ring-blue-600/30 shadow-[0_6px_24px_rgba(37,99,235,0.12)]`
+                                  ? `bg-neutral-950 border-brand-500 ring-1 ring-brand-500/30 shadow-[0_6px_24px_rgba(5,123,230,0.12)]`
                                   : 'bg-neutral-950 border-neutral-850 hover:border-neutral-700 shadow-sm'
                               }`}
                             >
@@ -1356,7 +1371,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                     {/* Generation controls. */}
                     <div className="bg-neutral-900/30 border border-neutral-850 rounded-2xl p-6 space-y-5 backdrop-blur-md">
                       <div>
-                        <label className="text-[12px] font-bold tracking-widest text-blue-700 uppercase flex items-center gap-2 font-mono">
+                        <label className="text-[12px] font-bold tracking-widest text-brand-700 uppercase flex items-center gap-2 font-mono">
                           <Icon name="sliders" className="w-4 h-4" />
                           3. Generation Controls
                         </label>
@@ -1375,7 +1390,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                                   onClick={() => setSelectedDialogueMode(option)}
                                   className={`text-[12px] px-3 py-1.5 rounded-full border font-mono transition-all ${
                                     isSelected
-                                      ? 'bg-blue-500/15 border-blue-600/60 text-blue-200 shadow-[0_0_18px_rgba(37,99,235,0.12)]'
+                                      ? 'bg-brand-500/15 border-brand-500/60 text-brand-200 shadow-[0_0_18px_rgba(5,123,230,0.12)]'
                                       : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
                                   }`}
                                 >
@@ -1397,7 +1412,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                                   onClick={() => setSelectedMusicMode(option)}
                                   className={`text-[12px] px-3 py-1.5 rounded-full border font-mono transition-all ${
                                     isSelected
-                                      ? 'bg-blue-500/15 border-blue-400/60 text-indigo-200 shadow-[0_0_18px_rgba(129,140,248,0.12)]'
+                                      ? 'bg-brand-500/15 border-brand-400/60 text-indigo-200 shadow-[0_0_18px_rgba(129,140,248,0.12)]'
                                       : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
                                   }`}
                                 >
@@ -1442,7 +1457,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                                     onClick={() => setSelectedAspectRatio(option)}
                                     className={`text-[12px] px-3 py-1.5 rounded-full border font-mono transition-all ${
                                       isSelected
-                                        ? 'bg-blue-500/15 border-blue-600/60 text-blue-200 shadow-[0_0_18px_rgba(37,99,235,0.12)]'
+                                        ? 'bg-brand-500/15 border-brand-500/60 text-brand-200 shadow-[0_0_18px_rgba(5,123,230,0.12)]'
                                         : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
                                     }`}
                                   >
@@ -1464,7 +1479,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                                     onClick={() => setSelectedDuration(option)}
                                     className={`text-[12px] px-3 py-1.5 rounded-full border font-mono transition-all ${
                                       isSelected
-                                        ? 'bg-blue-500/15 border-blue-400/60 text-indigo-200 shadow-[0_0_18px_rgba(129,140,248,0.12)]'
+                                        ? 'bg-brand-500/15 border-brand-400/60 text-indigo-200 shadow-[0_0_18px_rgba(129,140,248,0.12)]'
                                         : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
                                     }`}
                                   >
@@ -1493,7 +1508,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                     <button
                       onClick={() => handleImprovePrompt()}
                       disabled={isGenerating}
-                      className="w-full h-14 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-600 text-neutral-950 font-bold rounded-xl shadow-[0_6px_20px_rgba(37,99,235,0.25)] hover:shadow-[0_6px_30px_rgba(37,99,235,0.4)] hover:brightness-110 active:scale-[0.99] disabled:opacity-40 flex items-center justify-center gap-3 transition-all"
+                      className="w-full h-14 bg-gradient-to-r from-brand-400 via-brand-500 to-brand-700 text-neutral-950 font-bold rounded-xl shadow-[0_6px_20px_rgba(5,123,230,0.25)] hover:shadow-[0_6px_30px_rgba(5,123,230,0.4)] hover:brightness-110 active:scale-[0.99] disabled:opacity-40 flex items-center justify-center gap-3 transition-all"
                     >
                       {isGenerating ? (
                         <div className="flex items-center gap-2 font-mono text-xs text-neutral-900 uppercase">
@@ -1515,7 +1530,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                       
                       <div className="flex items-start justify-between gap-4 border-b border-neutral-800/80 pb-4">
                         <div className="flex items-start gap-2">
-                          <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse shadow-[0_0_8px_rgba(37,99,235,0.5)] mt-1.5" />
+                          <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse shadow-[0_0_8px_rgba(5,123,230,0.5)] mt-1.5" />
                           <div className="space-y-1">
                             <span className="block text-[12px] font-bold tracking-widest text-neutral-400 uppercase font-mono">
                               VEO3 Prompt Output Panel
@@ -1526,7 +1541,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                                 href="https://github.com/wuisabel-gif/veo3_prompt_improver/blob/main/README.md"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-700 hover:text-blue-200 underline underline-offset-2"
+                                className="text-brand-700 hover:text-brand-200 underline underline-offset-2"
                               >
                                 Documentation Under Construction
                               </a>
@@ -1534,7 +1549,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                           </div>
                         </div>
                         {enhancedOutput && (
-                          <span className="text-[11px] font-mono text-blue-700 bg-blue-100 border border-blue-200 px-2.5 py-0.5 rounded-full">
+                          <span className="text-[11px] font-mono text-brand-700 bg-brand-100 border border-brand-200 px-2.5 py-0.5 rounded-full">
                             Curated Output
                           </span>
                         )}
@@ -1560,10 +1575,10 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                             <div className="bg-neutral-950 border border-neutral-850 p-4 rounded-xl max-h-[320px] overflow-y-auto font-mono text-[11px] text-neutral-300 leading-relaxed space-y-3">
                               {enhancedOutput.split('\n').map((line, lIdx) => {
                                 if (line.startsWith('Ultra-cinematic')) {
-                                  return <p key={lIdx} className="text-blue-700 font-bold">{line}</p>;
+                                  return <p key={lIdx} className="text-brand-700 font-bold">{line}</p>;
                                 }
                                 if (line.startsWith('Scene visuals:') || line.startsWith('Visual style:') || line.startsWith('Color palette:') || line.startsWith('Mood:') || line.startsWith('Camera:') || line.startsWith('Music style:') || line.startsWith('Reference mood:')) {
-                                  return <p key={lIdx} className="text-blue-400 font-bold mt-3">{line}</p>;
+                                  return <p key={lIdx} className="text-brand-400 font-bold mt-3">{line}</p>;
                                 }
                                 if (line.startsWith('No ')) {
                                   return <span key={lIdx} className="inline-block bg-neutral-900 border border-neutral-800/80 text-[11px] text-neutral-400 px-2 py-0.5 rounded mr-1.5 font-sans mb-1">{line}</span>;
@@ -1578,7 +1593,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                             {/* Quick refinement buttons. */}
                             <div className="space-y-2">
                               <p className="text-[11px] font-bold tracking-widest text-neutral-500 uppercase font-mono flex items-center gap-1.5">
-                                <Icon name="sliders" className="w-3 h-3 text-blue-700" />
+                                <Icon name="sliders" className="w-3 h-3 text-brand-700" />
                                 Micro-Aesthetic Adjustments
                               </p>
                               <div className="grid grid-cols-2 gap-2">
@@ -1605,12 +1620,12 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                                 onClick={() => handleCopyText(enhancedOutput)}
                                 className="bg-neutral-100 hover:bg-neutral-200 text-white text-xs font-semibold py-2.5 rounded-xl flex justify-center items-center gap-2 transition"
                               >
-                                <Icon name="copy" className="w-4 h-4 text-blue-700" />
+                                <Icon name="copy" className="w-4 h-4 text-brand-700" />
                                 Copy Brief
                               </button>
                               <button
                                 onClick={handleSaveClick}
-                                className="bg-blue-500 hover:bg-blue-600 text-neutral-950 text-xs font-bold py-2.5 rounded-xl flex justify-center items-center gap-2 transition"
+                                className="bg-brand-500 hover:bg-brand-500 text-neutral-950 text-xs font-bold py-2.5 rounded-xl flex justify-center items-center gap-2 transition"
                               >
                                 <Icon name="bookmark" className="w-4 h-4" />
                                 Save Template
@@ -1620,7 +1635,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                             {/* One-click handoff to Google's Veo 3 generator. */}
                             <button
                               onClick={handleOpenInVeo3}
-                              className="mt-3 w-full bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 text-white text-xs font-bold py-2.5 rounded-xl flex justify-center items-center gap-2 hover:brightness-110 active:scale-[0.99] transition"
+                              className="mt-3 w-full bg-gradient-to-r from-brand-400 via-brand-500 to-brand-700 text-white text-xs font-bold py-2.5 rounded-xl flex justify-center items-center gap-2 hover:brightness-110 active:scale-[0.99] transition"
                             >
                               <Icon name="sparkles" className="w-4 h-4" />
                               Open in Veo 3 (copies brief)
@@ -1682,7 +1697,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
                     <h2 className="text-2xl font-bold tracking-tight text-neutral-50 flex items-center gap-2 font-display">
-                      <Icon name="book-open" className="w-6 h-6 text-blue-700" />
+                      <Icon name="book-open" className="w-6 h-6 text-brand-700" />
                       Aesthetic Prompt Repository
                     </h2>
                     <p className="text-xs text-neutral-400 mt-1">
@@ -1698,7 +1713,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                     }}
                     className="bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 text-neutral-200 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition"
                   >
-                    <Icon name="plus" className="w-4 h-4 text-blue-700" />
+                    <Icon name="plus" className="w-4 h-4 text-brand-700" />
                     Write New Template
                   </button>
                 </div>
@@ -1713,7 +1728,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                       placeholder="Search parameters, motifs, tags..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full bg-neutral-950 border border-neutral-850 rounded-xl py-2 pl-10 pr-4 text-xs text-neutral-200 placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                      className="w-full bg-neutral-950 border border-neutral-850 rounded-xl py-2 pl-10 pr-4 text-xs text-neutral-200 placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
                     />
                   </div>
 
@@ -1723,7 +1738,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                       onClick={() => setLibraryFilter('all')}
                       className={`px-3 py-1.5 rounded-lg text-[12px] font-bold tracking-wide uppercase whitespace-nowrap transition-all ${
                         libraryFilter === 'all'
-                          ? 'bg-blue-500 text-neutral-950 shadow-md'
+                          ? 'bg-brand-500 text-neutral-950 shadow-md'
                           : 'bg-neutral-950 text-neutral-400 hover:text-neutral-200 border border-neutral-850'
                       }`}
                     >
@@ -1735,7 +1750,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                         onClick={() => setLibraryFilter(cat.name)}
                         className={`px-3 py-1.5 rounded-lg text-[12px] font-bold tracking-wide uppercase whitespace-nowrap transition-all ${
                           libraryFilter === cat.name
-                            ? 'bg-blue-500 text-white shadow-md'
+                            ? 'bg-brand-500 text-white shadow-md'
                             : 'bg-neutral-950 text-neutral-400 hover:text-neutral-200 border border-neutral-850'
                         }`}
                       >
@@ -1763,7 +1778,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
 
                           <div className="space-y-3">
                             <div className="flex justify-between items-start">
-                              <span className="text-[11px] uppercase font-bold tracking-wider text-blue-700 flex items-center gap-1 font-mono">
+                              <span className="text-[11px] uppercase font-bold tracking-wider text-brand-700 flex items-center gap-1 font-mono">
                                 <span>{styleRef?.icon}</span>
                                 <span>{item.category}</span>
                               </span>
@@ -1771,7 +1786,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                               {isUserCreated && (
                                 <button
                                   onClick={() => deletePromptTemplate(item.id)}
-                                  className="p-1.5 text-neutral-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition"
+                                  className="p-1.5 text-neutral-500 hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition"
                                 >
                                   <Icon name="trash-2" className="w-3.5 h-3.5" />
                                 </button>
@@ -1779,7 +1794,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                             </div>
 
                             <div>
-                              <h4 className="font-bold text-sm text-neutral-100 group-hover:text-blue-700 transition font-display">
+                              <h4 className="font-bold text-sm text-neutral-100 group-hover:text-brand-700 transition font-display">
                                 {item.title}
                               </h4>
                               <p className="text-[12px] text-neutral-500 mt-0.5 italic">
@@ -1851,7 +1866,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
               <div className="max-w-5xl mx-auto space-y-10 animate-fade-in">
                 
                 <div className="text-center space-y-3">
-                  <span className="text-[11px] font-bold tracking-widest text-blue-700 bg-blue-100 border border-blue-200 px-3 py-1 rounded-full uppercase font-mono">
+                  <span className="text-[11px] font-bold tracking-widest text-brand-700 bg-brand-100 border border-brand-200 px-3 py-1 rounded-full uppercase font-mono">
                     System Architecture Documentation
                   </span>
                   <h2 className="text-3xl md:text-5xl font-bold font-display tracking-tight text-balance">
@@ -1866,19 +1881,19 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                   <h3 className="text-sm font-bold text-neutral-100 uppercase tracking-wide font-mono">System Purpose</h3>
                   <ul className="text-xs text-neutral-400 leading-relaxed space-y-2">
                     <li className="flex gap-2">
-                      <span className="text-blue-700 mt-0.5">•</span>
+                      <span className="text-brand-700 mt-0.5">•</span>
                       <span>Explores how structured prompt engineering improves AI video generation.</span>
                     </li>
                     <li className="flex gap-2">
-                      <span className="text-blue-700 mt-0.5">•</span>
+                      <span className="text-brand-700 mt-0.5">•</span>
                       <span>Organizes recurring Veo 3 visual patterns into a reusable cinematic prompt framework.</span>
                     </li>
                     <li className="flex gap-2">
-                      <span className="text-blue-700 mt-0.5">•</span>
+                      <span className="text-brand-700 mt-0.5">•</span>
                       <span>Combines prompt architecture, aesthetic retrieval, visual metadata, and generation constraints.</span>
                     </li>
                     <li className="flex gap-2">
-                      <span className="text-blue-700 mt-0.5">•</span>
+                      <span className="text-brand-700 mt-0.5">•</span>
                       <span>Transforms rough concepts into structured visual briefs with stronger style, atmosphere, and cinematographic intent.</span>
                     </li>
                   </ul>
@@ -1905,11 +1920,11 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                         href={ext.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group bg-neutral-950 border border-neutral-850 hover:border-blue-700/60 rounded-xl p-4 flex gap-3 transition-all hover:shadow-[0_0_24px_rgba(37,99,235,0.08)]"
+                        className="group bg-neutral-950 border border-neutral-850 hover:border-brand-700/60 rounded-xl p-4 flex gap-3 transition-all hover:shadow-[0_0_24px_rgba(5,123,230,0.08)]"
                       >
                         <span className="text-lg leading-none">{ext.icon}</span>
                         <div className="space-y-0.5">
-                          <p className="text-xs font-bold text-neutral-100 font-mono group-hover:text-blue-200 transition-colors">{ext.name}</p>
+                          <p className="text-xs font-bold text-neutral-100 font-mono group-hover:text-brand-200 transition-colors">{ext.name}</p>
                           <p className="text-[11px] text-neutral-500 leading-snug">{ext.desc}</p>
                         </div>
                       </a>
@@ -1923,19 +1938,19 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                     <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono text-center">Research Motivation</h4>
                     <ul className="text-xs text-neutral-400 leading-relaxed space-y-3">
                       <li className="flex gap-2">
-                        <span className="text-blue-700 mt-0.5">•</span>
+                        <span className="text-brand-700 mt-0.5">•</span>
                         <span>Built from long-term testing across Veo 3 video styles, moods, and visual categories.</span>
                       </li>
                       <li className="flex gap-2">
-                        <span className="text-blue-700 mt-0.5">•</span>
+                        <span className="text-brand-700 mt-0.5">•</span>
                         <span>Identifies repeatable prompt patterns behind stronger cinematic generations.</span>
                       </li>
                       <li className="flex gap-2">
-                        <span className="text-blue-700 mt-0.5">•</span>
+                        <span className="text-brand-700 mt-0.5">•</span>
                         <span>Turns successful examples into reusable visual-direction structures.</span>
                       </li>
                       <li className="flex gap-2">
-                        <span className="text-blue-700 mt-0.5">•</span>
+                        <span className="text-brand-700 mt-0.5">•</span>
                         <span>Reduces guesswork by organizing style, mood, camera, and atmosphere into a system.</span>
                       </li>
                     </ul>
@@ -1945,19 +1960,19 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                     <h4 className="font-bold text-xs uppercase tracking-wide text-neutral-200 font-mono text-center">Enhanced Prompt Engineering</h4>
                     <ul className="text-xs text-neutral-400 leading-relaxed space-y-3">
                       <li className="flex gap-2">
-                        <span className="text-blue-400 mt-0.5">•</span>
+                        <span className="text-brand-400 mt-0.5">•</span>
                         <span>Retrieves curated visual models instead of generating from a blank prompt.</span>
                       </li>
                       <li className="flex gap-2">
-                        <span className="text-blue-400 mt-0.5">•</span>
+                        <span className="text-brand-400 mt-0.5">•</span>
                         <span>Combines fashion cues, camera language, lighting, color, and environment metadata.</span>
                       </li>
                       <li className="flex gap-2">
-                        <span className="text-blue-400 mt-0.5">•</span>
+                        <span className="text-brand-400 mt-0.5">•</span>
                         <span>Uses selected generation controls to shape dialogue, music context, and output type.</span>
                       </li>
                       <li className="flex gap-2">
-                        <span className="text-blue-400 mt-0.5">•</span>
+                        <span className="text-brand-400 mt-0.5">•</span>
                         <span>Assembles each result into a structured creative brief for more consistent Veo 3 output.</span>
                       </li>
                     </ul>
@@ -2001,7 +2016,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
 
                 <div className="bg-neutral-900/30 border border-neutral-850 p-8 rounded-3xl space-y-4 shadow-sm">
                   <h3 className="text-md font-bold text-neutral-50 flex items-center gap-2 font-display">
-                    <Icon name="sparkles" className="w-4 h-4 text-blue-700" />
+                    <Icon name="sparkles" className="w-4 h-4 text-brand-700" />
                     Standardized Visual Brief Specification
                   </h3>
                   <p className="text-xs text-neutral-400 leading-relaxed">
@@ -2009,23 +2024,23 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                   </p>
 
                   <div className="bg-neutral-950 border border-neutral-850 rounded-xl p-5 font-mono text-[11px] text-neutral-300 leading-relaxed space-y-2 text-center">
-                    <p className="text-blue-700 font-bold">### Ultra-cinematic [Style Family] visualizer inspired by [Visual Reference]...</p>
+                    <p className="text-brand-700 font-bold">### Ultra-cinematic [Style Family] visualizer inspired by [Visual Reference]...</p>
                     <p className="text-neutral-200">A [Main Subject] in [Environment]...</p>
-                    <p className="text-blue-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Scene visuals:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Scene visuals:</p>
                     <p className="text-neutral-400">• [Visual Detail]</p>
                     <p className="text-neutral-400">• [Motion Cue]</p>
                     <p className="text-neutral-400">• [Environmental Cue]</p>
-                    <p className="text-blue-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Visual style:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Visual style:</p>
                     <p className="text-neutral-400">[Camera Direction]</p>
                     <p className="text-neutral-400">[Lighting Design]</p>
                     <p className="text-neutral-400">[Cinematic References]</p>
-                    <p className="text-blue-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Color palette:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Color palette:</p>
                     <p className="text-neutral-400">[Primary Colors]</p>
                     <p className="text-neutral-400">[Accent Colors]</p>
                     <p className="text-neutral-400">[Lighting Tints]</p>
-                    <p className="text-blue-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Mood:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Mood:</p>
                     <p className="text-neutral-400">[Atmosphere]</p>
-                    <p className="text-blue-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Camera:</p>
+                    <p className="text-brand-400 font-bold mt-3 uppercase tracking-wider text-[12px]">Camera:</p>
                     <p className="text-neutral-400">[Shot Design]</p>
                   </div>
                 </div>
@@ -2042,7 +2057,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                 
                 <div className="flex justify-between items-center">
                   <h3 className="font-bold text-neutral-100 flex items-center gap-2 text-sm font-display">
-                    <Icon name="bookmark" className="w-4 h-4 text-blue-700" />
+                    <Icon name="bookmark" className="w-4 h-4 text-brand-700" />
                     Save Custom Prompt Model
                   </h3>
                   <button 
@@ -2059,13 +2074,13 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                     type="text"
                     value={newPromptTitle}
                     onChange={(e) => setNewPromptTitle(e.target.value)}
-                    className="w-full bg-neutral-950 border border-neutral-850 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                    className="w-full bg-neutral-950 border border-neutral-850 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
                   />
                 </div>
 
                 <div className="space-y-1 text-xs text-neutral-400">
                   <span className="font-semibold block text-[12px] font-mono uppercase text-neutral-500">Categorized under:</span>
-                  <span className="inline-block bg-neutral-950 px-3 py-1.5 rounded-lg border border-neutral-850 text-blue-700 font-bold text-[11px] font-mono">
+                  <span className="inline-block bg-neutral-950 px-3 py-1.5 rounded-lg border border-neutral-850 text-brand-700 font-bold text-[11px] font-mono">
                     {selectedCategory}
                   </span>
                 </div>
@@ -2079,7 +2094,7 @@ Mood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour.
                   </button>
                   <button
                     onClick={confirmSavePrompt}
-                    className="bg-blue-500 hover:bg-blue-600 text-neutral-950 text-xs font-bold py-2.5 rounded-xl transition"
+                    className="bg-brand-500 hover:bg-brand-500 text-neutral-950 text-xs font-bold py-2.5 rounded-xl transition"
                   >
                     Confirm Save
                   </button>
