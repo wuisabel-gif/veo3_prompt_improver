@@ -1,3 +1,5 @@
+<p align="center"><img src="logo-web.png" alt="Real" width="110"></p>
+
 # Real — Veo 3 Fashion Film Prompt Studio
 
 > **Make it real.**

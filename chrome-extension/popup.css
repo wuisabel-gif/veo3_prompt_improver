@@ -31,13 +31,9 @@ html, body {
 
 .brand { display: flex; align-items: center; gap: 10px; }
 .brand-mark {
-  font-size: 16px;
-  color: var(--bg);
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   width: 30px; height: 30px;
-  display: grid; place-items: center;
-  border-radius: 8px;
-  font-weight: 700;
+  object-fit: contain;
+  display: block;
 }
 .brand-title { font-weight: 700; letter-spacing: -0.01em; }
 .brand-sub { font-size: 11px; color: var(--muted); }
