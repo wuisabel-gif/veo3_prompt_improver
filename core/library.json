@@ -263,5 +263,83 @@
     ],
     "mood": "Confident feminine energy, hypnotic elegance",
     "prompt": "Cinematic tropical-night dance visualizer featuring the same glamorous girl with long black hair, layered gold jewelry, and a sparkling red skirt dancing confidently inside a luxurious open-air villa at night. Warm candlelight and pink-orange sunset tones reflect across marble floors while soft tropical wind moves the flowing red fabric around her waist.\n\nScene visuals:\n• Slow-motion belly dancing and graceful arm movements.\n• Close-up shots of gold jewelry sparkling.\n• Sheer red fabrics flowing dramatically.\n• Flower details moving during spins.\n• Warm lanterns and candles glowing in the background.\n• Handheld cinematic camera movement.\n• Soft wind moving her hair and skirt.\n• Dreamy rooftop overlooking ocean lights.\nVisual style: Ultra-realistic tropical Y2K glamour, dreamy luxury nightlife aesthetic, subtle 35mm film grain, realistic skin texture, warm cinematic lighting, fashion-editorial cinematography, non-AI-looking visuals.\nMood: Confident feminine energy, hypnotic elegance, dreamy summer-night glamour."
+  },
+  {
+    "id": "lib-20",
+    "title": "Liquid Chrome Beauty",
+    "category": "Beauty Editorial",
+    "tags": [
+      "beauty",
+      "chrome",
+      "macro",
+      "editorial"
+    ],
+    "mood": "Clinical glamour, composed and magnetic",
+    "prompt": "Ultra-cinematic Beauty Editorial visualizer inspired by Pat McGrath campaigns and liquid-metal makeup artistry.\nA close-up beauty portrait of a model with mirror-chrome eyelids and glassed skin against a seamless graphite backdrop.\nScene visuals:\n• Extreme macro of chrome-silver eyeshadow catching a sweeping studio light, micro-glitter shifting as she blinks.\n• A slow tilt across dewy cheekbones and a single drop of clear gloss tracing the lip.\n• Sculptural silver ear cuffs and a wet-look slick-back, reflections bending across the metal.\nVisual style: 100mm macro lens, beauty-dish key with soft fill, crisp skin micro-texture, controlled specular highlights.\nColor palette: Liquid chrome silver, cool graphite, porcelain skin, a thread of icy blue.\nMood: Clinical glamour, composed and magnetic, future-couture restraint.\nCamera: Locked macro with millimeter focus pulls, one slow vertical reveal.\nMusic style: Minimal ambient techno, low sub pulse, glassy synth taps.\nReference mood:\n\"The face as polished metal — every reflection a deliberate choice.\" "
+  },
+  {
+    "id": "lib-21",
+    "title": "Rouge & Pearl",
+    "category": "Beauty Editorial",
+    "tags": [
+      "beauty",
+      "pearl",
+      "oxblood",
+      "vintage-vogue"
+    ],
+    "mood": "Old-world opulence, quiet drama",
+    "prompt": "Ultra-cinematic Beauty Editorial visualizer inspired by vintage Vogue beauty pages and old-world jewellery houses.\nA close-up of a model with matte rouge lips and a single teardrop pearl earring against deep oxblood velvet.\nScene visuals:\n• Macro of the pearl swaying, catching a warm Rembrandt key that rolls off into shadow.\n• A held frame on matte crimson lips, fine powder texture and a faint gold-leaf fleck at the cheek.\n• Gloved fingertips adjusting a hair pin, soft motion blur trailing the hand.\nVisual style: 85mm portrait lens, single warm key with deep falloff, painterly chiaroscuro, fine film grain.\nColor palette: Oxblood velvet, warm crimson, pearl white, antique gold.\nMood: Old-world opulence, quiet drama, editorial poise.\nCamera: Slow push to the earring, a delicate rack focus to the eyes.\nMusic style: Muted strings, vinyl warmth, a slow waltz tempo.\nReference mood:\n\"One pearl, one breath, the whole frame holding still.\" "
+  },
+  {
+    "id": "lib-22",
+    "title": "Crimson Finale",
+    "category": "Runway Couture",
+    "tags": [
+      "runway",
+      "couture",
+      "crimson",
+      "finale"
+    ],
+    "mood": "Commanding, ceremonial couture power",
+    "prompt": "Ultra-cinematic Runway Couture visualizer inspired by Paris Fashion Week finales and Alexander McQueen drama.\nA model in a sweeping crimson taffeta gown striding the final length of a mirrored runway under hard spotlights.\nScene visuals:\n• The train unfurling and snapping in the walk, fabric catching light like molten silk.\n• A low hero angle as she turns at the runway end, jaw set, flashbulbs scattering behind her.\n• Mirror floor doubling the silhouette into an endless corridor of crimson.\nVisual style: 35mm anamorphic, hard front spotlight with theatrical haze, deep blacks, crisp fabric specular.\nColor palette: Molten crimson, jet black, cold flashbulb white, mirror silver.\nMood: Commanding, ceremonial, high-drama couture power.\nCamera: Slow dolly-in along the runway, a crane lift on the turn.\nMusic style: Orchestral build with a hard percussive drop on the turn.\nTechnical specs: 16:9, 8s.\nReference mood:\n\"The last walk — the room holds its breath.\" "
+  },
+  {
+    "id": "lib-23",
+    "title": "Concrete Atrium",
+    "category": "Architectural Muse",
+    "tags": [
+      "concrete",
+      "ivory-tailoring",
+      "daylight",
+      "minimal"
+    ],
+    "mood": "Composed solitude, architectural calm",
+    "prompt": "Ultra-cinematic Architectural Muse visualizer inspired by Tadao Ando concrete and minimalist couture campaigns.\nA model in sculptural ivory tailoring standing in a vast raw-concrete atrium pierced by a single shaft of daylight.\nScene visuals:\n• The light shaft crossing the floor, the figure stepping precisely into its edge.\n• A wide architectural frame dwarfing the subject against board-formed concrete walls.\n• A close detail of structured shoulders and a clean hemline against the grey texture.\nVisual style: 28mm wide, soft north-window daylight, museum-grade negative space, matte concrete grain.\nColor palette: Board-formed grey, ivory wool, soft shadow blue, warm daylight.\nMood: Composed solitude, architectural calm, understated luxury.\nCamera: Static wide held long, then a slow lateral dolly tracking the walk.\nMusic style: Sparse piano notes, long reverb tails, distant room tone.\nReference mood:\n\"Architecture as the only accessory she needs.\" "
+  },
+  {
+    "id": "lib-24",
+    "title": "Glacier Atelier",
+    "category": "Ice Queen Muse",
+    "tags": [
+      "glacier",
+      "pale-blue-coat",
+      "diamonds",
+      "cold-light"
+    ],
+    "mood": "Aloof, regal, frozen elegance",
+    "prompt": "Ultra-cinematic Ice Queen Muse visualizer inspired by alpine couture editorials and cold-light luxury.\nA platinum-blonde model in a structured pale-blue coat inside a glass atelier overlooking a glacier.\nScene visuals:\n• Frost creeping at the window edges as she gazes out, breath faint in the cold air.\n• Diamond drop earrings throwing tiny refractions across porcelain skin.\n• A close detail of gloved hands resting on a frosted steel rail.\nVisual style: Ultra-sharp detail, cool diffused daylight, fine micro-mist, crisp specular on ice.\nColor palette: Pale glacier blue, platinum silver, diamond white, cold graphite.\nMood: Aloof, regal, frozen elegance.\nCamera: Slow rotating dolly around the profile, a soft zoom to the eyes.\nMusic style: Crystalline bells, airy pads, a slow cold pulse.\nReference mood:\n\"Cold enough to keep, warm enough to want.\" "
+  },
+  {
+    "id": "lib-25",
+    "title": "Jacaranda Courtyard",
+    "category": "Campus K-Style",
+    "tags": [
+      "off-duty",
+      "pastel",
+      "jacaranda",
+      "campus"
+    ],
+    "mood": "Soft, nostalgic, effortless youth",
+    "prompt": "Ultra-cinematic Campus K-Style visualizer inspired by idol off-duty fashion and golden campus afternoons.\nA model in a pastel cardigan and pleated skirt walking a tree-lined courtyard scattered with jacaranda petals.\nScene visuals:\n• Petals drifting through warm afternoon light as she adjusts a canvas tote on her shoulder.\n• A low detail of chunky loafers stepping over fallen purple blossoms on stone.\n• A soft over-the-shoulder frame catching a shy half-smile toward the lens.\nVisual style: 50mm, warm backlit afternoon sun, gentle lens bloom, natural skin texture, light film grain.\nColor palette: Pastel lilac, cream knit, jacaranda purple, warm honey light.\nMood: Soft, nostalgic, effortless youth.\nCamera: Handheld follow with a gentle sway, a slow focus pull to the petals.\nMusic style: Bright dream-pop guitars, soft shaker, easy mid-tempo.\nReference mood:\n\"An ordinary afternoon that somehow feels like a memory already.\" "
   }
 ]
